@@ -135,8 +135,9 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
   <button onclick="go('rules',this)"><span>📋</span>SOP & Peraturan</button>
   <button onclick="go('faq',this)"><span>❔</span>FAQ</button>
 
-  <div class="nav-title">CALON ANGGOTA</div>
-  <button onclick="go('pendaftaran',this)" style="color:#16a36a;"><span>📝</span>Pendaftaran Agency</button>
+  <div class="nav-title">PENDAFTARAN</div>
+  <button onclick="go('daftar_agency',this)" style="color:#16a36a;"><span>📝</span>Daftar Agency</button>
+  <button onclick="go('daftar_creator',this)" style="color:#7652e8;"><span>🎥</span>Daftar Creator</button>
 
   <div class="nav-title">BANTUAN</div>
   <button onclick="go('help',this)"><span>💬</span>Pusat Bantuan</button>
@@ -144,7 +145,7 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
 
  <div class="sidebar-footer">
   <b>VIBE TRANS PORTAL</b><br>
-  Pusat informasi, panduan dan edukasi member agency.
+  Pusat informasi, panduan dan edukasi member.
  </div>
 </aside>
 
@@ -172,8 +173,8 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
    <p>Pusat informasi, arahan, dan tutorial member. Belum bergabung? Daftar sekarang untuk mendapatkan bimbingan penuh.</p>
    
    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:19px;">
-       <button onclick="goById('announcement')">Lihat Pengumuman →</button>
-       <button onclick="bukaPendaftaran()" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.5); color:white;">📝 Daftar Jadi Anggota</button>
+       <button onclick="bukaDaftarCreator()" style="background:#fff; color:#7652e8;">🎥 Daftar Creator Baru</button>
+       <button onclick="bukaDaftarAgency()" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.5); color:white;">📝 Gabung Agency</button>
    </div>
   </div>
 
@@ -197,13 +198,13 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
   <div class="video-grid" id="homeVideo"><div class="empty">Memuat data dari server...</div></div>
  </section>
 
- <!-- HALAMAN PENDAFTARAN -->
- <section class="page" id="pendaftaran">
-  <h1>Pendaftaran Anggota Baru</h1>
+ <!-- HALAMAN DAFTAR AGENCY -->
+ <section class="page" id="daftar_agency">
+  <h1>Pendaftaran Agency Resmi</h1>
   <p class="subtitle">Bergabunglah bersama Vibe Trans Agency dan dapatkan akses penuh ke grup VIP serta bimbingan dari nol hingga mahir.</p>
   
   <div class="help-box" style="background:linear-gradient(130deg,#e8f5e9,#f1f8e9); border: 1px solid #c8e6c9;">
-   <h2 style="color:#1b5e20;">Langkah Pendaftaran Agency</h2>
+   <h2 style="color:#1b5e20;">Langkah Gabung Agency</h2>
    <ol style="margin-left: 20px; font-size: 13px; color: #388e3c; line-height: 1.8; margin-bottom: 20px; font-weight: 500;">
        <li>Klik tombol pendaftaran berwarna hijau di bawah.</li>
        <li>Anda akan diarahkan ke Grup Pendaftaran (Calon Anggota).</li>
@@ -211,8 +212,28 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
        <li>Setelah disetujui, Anda akan dimasukkan ke Grup Member Resmi.</li>
    </ol>
    
-   <button onclick="bukaPendaftaran()" class="btn" style="background:#16a36a; padding: 14px 20px; font-size: 14px; box-shadow: 0 4px 10px rgba(22,163,106,0.3);">
-       ✅ Klik Disini Untuk Mendaftar
+   <button onclick="bukaDaftarAgency()" class="btn" style="background:#16a36a; padding: 14px 20px; font-size: 14px; box-shadow: 0 4px 10px rgba(22,163,106,0.3);">
+       ✅ Klik Disini Untuk Gabung Agency
+   </button>
+  </div>
+ </section>
+
+ <!-- HALAMAN DAFTAR CREATOR (BARU) -->
+ <section class="page" id="daftar_creator">
+  <h1>Pendaftaran Creator CapCut</h1>
+  <p class="subtitle">Daftarkan akun CapCut Anda untuk menjadi kreator resmi dan mulai menghasilkan pendapatan dari template.</p>
+  
+  <div class="help-box" style="background:linear-gradient(130deg,#f3e5f5,#ede7f6); border: 1px solid #d1c4e9;">
+   <h2 style="color:#4a148c;">Langkah Menjadi Creator</h2>
+   <ol style="margin-left: 20px; font-size: 13px; color: #512da8; line-height: 1.8; margin-bottom: 20px; font-weight: 500;">
+       <li>Klik tombol pendaftaran ungu di bawah.</li>
+       <li>Isi formulir pendaftaran kreator CapCut dengan data valid.</li>
+       <li>Masukkan kode agency (jika diminta) yang diberikan admin.</li>
+       <li>Tunggu proses review dari pihak aplikasi.</li>
+   </ol>
+   
+   <button onclick="bukaDaftarCreator()" class="btn" style="background:#7652e8; padding: 14px 20px; font-size: 14px; box-shadow: 0 4px 10px rgba(118,82,232,0.3);">
+       🎥 Formulir Pendaftaran Creator
    </button>
   </div>
  </section>
@@ -278,7 +299,7 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
 
 <script>
 // ==========================================
-// KODE FIREBASE BOS
+// KODE FIREBASE BOS (SUDAH DIPASANG)
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s",
@@ -294,11 +315,11 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-let globalSettings = { wa: '', name: 'Vibe Trans Agency', regLink: '' };
+let globalSettings = { wa: '', name: 'Vibe Trans Agency', regAgencyLink: '', regCreatorLink: '' };
 let activeFilter = 'Semua';
 let data = { announcements:[], videos:[], guides:[], agendas:[], rules:[], faqs:[] };
 
-// FUNGSI LOAD DATA (TERMASUK SETTINGS SECARA REAL-TIME) DARI FIREBASE
+// FUNGSI LOAD DATA DARI FIREBASE
 async function loadDataFromFirebase() {
     const collections = ['announcements', 'videos', 'guides', 'agendas', 'rules', 'faqs'];
     for (let c of collections) {
@@ -309,7 +330,7 @@ async function loadDataFromFirebase() {
         } catch (e) { console.error("Gagal load " + c, e); }
     }
     
-    // Dengarkan perubahan pengaturan (seperti Link Pendaftaran) secara Real-Time
+    // Dengarkan perubahan pengaturan (Real-Time)
     db.collection('settings').doc('global').onSnapshot((doc) => {
         if (doc.exists) {
             globalSettings = doc.data();
@@ -352,7 +373,7 @@ function go(id,btn){
  else document.querySelectorAll('.nav button').forEach(b=>{
   if(b.getAttribute('onclick')?.includes("'"+id+"'"))b.classList.add('active');
  });
- const titles = { home:'Dashboard',announcement:'Pengumuman',guide:'Panduan Member', tutorial:'Video Tutorial',agenda:'Jadwal & Agenda', rules:'SOP & Peraturan',faq:'FAQ',help:'Pusat Bantuan',pendaftaran:'Pendaftaran Agency'};
+ const titles = { home:'Dashboard',announcement:'Pengumuman',guide:'Panduan Member', tutorial:'Video Tutorial',agenda:'Jadwal & Agenda', rules:'SOP & Peraturan',faq:'FAQ',help:'Pusat Bantuan',daftar_agency:'Pendaftaran Agency',daftar_creator:'Pendaftaran Creator'};
  const pt = document.getElementById('pageTitle');
  if(pt) pt.textContent = titles[id]||id;
  
@@ -466,23 +487,27 @@ function renderFAQ(){
  el.innerHTML=data.faqs.map(f=>`<div class="faq-item"><details><summary style="font-weight:bold;font-size:13px;cursor:pointer">${safe(f.question)}</summary><p style="margin-top:12px">${safe(f.answer)}</p></details></div>`).join('')||'<div class="empty">Belum ada FAQ.</div>';
 }
 
-// BUKA LINK PENDAFTARAN DARI FIREBASE SETTINGS (VERSI PERBAIKAN)
-function bukaPendaftaran() {
-    let linkTarget = globalSettings.regLink;
+// BUKA LINK DAFTAR AGENCY
+function bukaDaftarAgency() {
+    let linkTarget = globalSettings.regAgencyLink;
     if(!linkTarget || linkTarget.trim() === '') {
-        alert('Mohon maaf, link pendaftaran belum diatur oleh Admin Agency.'); 
-        return;
+        alert('Mohon maaf, link Daftar Agency belum diatur oleh Admin.'); return;
     }
-    
-    // Pastikan link valid berawalan http atau https agar browser tidak bingung
-    if (!linkTarget.startsWith('http://') && !linkTarget.startsWith('https://')) {
-        linkTarget = 'https://' + linkTarget;
-    }
-    
+    if (!linkTarget.startsWith('http://') && !linkTarget.startsWith('https://')) { linkTarget = 'https://' + linkTarget; }
     window.open(linkTarget, '_blank');
 }
 
-// BUKA LINK WA ADMIN DARI FIREBASE SETTINGS
+// BUKA LINK DAFTAR CREATOR
+function bukaDaftarCreator() {
+    let linkTarget = globalSettings.regCreatorLink;
+    if(!linkTarget || linkTarget.trim() === '') {
+        alert('Mohon maaf, link Daftar Creator belum diatur oleh Admin.'); return;
+    }
+    if (!linkTarget.startsWith('http://') && !linkTarget.startsWith('https://')) { linkTarget = 'https://' + linkTarget; }
+    window.open(linkTarget, '_blank');
+}
+
+// BUKA LINK WA ADMIN
 function contactAdmin(){
  if(!globalSettings.wa){alert('Nomor WhatsApp admin belum diatur.');return}
  window.open('https://wa.me/'+globalSettings.wa+'?text='+encodeURIComponent('Halo Admin Agency, saya membutuhkan bantuan.'),'_blank');
