@@ -4,203 +4,95 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#ffffff">
-<title>CapCut Agency Portal</title>
+<title>Vibe Trans Agency Portal</title>
+
+<!-- FIREBASE SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
 <style>
-:root {
-  --primary:#7652e8;
-  --primary2:#9b7afa;
-  --bg:#f7f7fb;
-  --card:#ffffff;
-  --text:#202033;
-  --muted:#85859a;
-  --border:#ececf3;
-  --success:#16a36a;
-}
+:root{--primary:#7652e8;--primary2:#9b7afa;--bg:#f7f7fb;--card:#ffffff;--text:#202033;--muted:#85859a;--border:#ececf3;--success:#16a36a}
 *{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
+body{font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
 button,input,textarea,select{font:inherit}
 button{cursor:pointer;border:0}
 .app{display:flex;min-height:100vh}
-.sidebar{
-  width:245px;background:#fff;border-right:1px solid var(--border);
-  padding:25px 17px;position:fixed;inset:0 auto 0 0;
-  overflow-y:auto;z-index:20;
-}
+.sidebar{width:245px;background:#fff;border-right:1px solid var(--border);padding:25px 17px;position:fixed;inset:0 auto 0 0;overflow-y:auto;z-index:20}
 .brand{display:flex;align-items:center;gap:11px;margin-bottom:35px;padding:0 8px}
-.brand-icon{
-  background:linear-gradient(135deg,#7652e8,#ad8bff);
-  width:42px;height:42px;border-radius:13px;
-  display:grid;place-items:center;color:white;font-size:21px;font-weight:bold
-}
+.brand-icon{background:linear-gradient(135deg,#7652e8,#ad8bff);width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:white;font-size:21px;font-weight:bold}
 .brand h2{font-size:17px}
 .brand small{color:var(--muted);font-size:10px}
 .nav-title{font-size:10px;color:#aaa;margin:23px 10px 10px;font-weight:bold;letter-spacing:1px}
-.nav button{
-  width:100%;display:flex;align-items:center;gap:12px;
-  padding:12px;border-radius:10px;background:transparent;
-  text-align:left;color:#737387;font-size:13px;margin:3px 0;
-}
+.nav button{width:100%;display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:transparent;text-align:left;color:#737387;font-size:13px;margin:3px 0}
 .nav button:hover,.nav button.active{background:#f1edff;color:var(--primary);font-weight:bold}
 .nav button span{font-size:18px;width:22px}
 .sidebar-footer{margin-top:35px;padding:14px;background:#f7f4ff;border-radius:12px;font-size:12px;line-height:1.7}
 .main{margin-left:245px;width:calc(100% - 245px);min-width:0}
-.topbar{
-  background:#fff;border-bottom:1px solid var(--border);
-  padding:16px 28px;display:flex;align-items:center;
-  justify-content:space-between;position:sticky;top:0;z-index:10;
-}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
 .topbar small{color:var(--muted)}
 .top-actions{display:flex;align-items:center;gap:10px}
-.avatar{
-  width:35px;height:35px;background:#eee8ff;color:var(--primary);
-  border-radius:50%;display:grid;place-items:center;font-weight:bold
-}
+.avatar{width:35px;height:35px;background:#eee8ff;color:var(--primary);border-radius:50%;display:grid;place-items:center;font-weight:bold}
 .menu-btn{display:none;background:white;font-size:23px}
 .content{padding:28px;max-width:1250px;margin:auto}
 .page{display:none}
 .page.active{display:block}
 h1{font-size:25px;margin-bottom:9px}
 .subtitle{font-size:13px;color:var(--muted);line-height:1.6}
-.hero{
-  background:linear-gradient(120deg,#34205f,#7652e8,#a58aff);
-  color:white;border-radius:20px;padding:30px;
-  margin-bottom:24px;position:relative;overflow:hidden;
-}
-.hero:after{
-  content:"✦";position:absolute;font-size:160px;
-  right:35px;top:-35px;opacity:.12
-}
+.hero{background:linear-gradient(120deg,#34205f,#7652e8,#a58aff);color:white;border-radius:20px;padding:30px;margin-bottom:24px;position:relative;overflow:hidden}
+.hero:after{content:"✦";position:absolute;font-size:160px;right:35px;top:-35px;opacity:.12}
 .hero h1{font-size:28px;max-width:500px;line-height:1.3}
 .hero p{font-size:13px;opacity:.85;margin-top:12px;max-width:470px;line-height:1.7}
-.hero button{
-  background:white;color:#6844d2;padding:12px 18px;
-  border-radius:9px;margin-top:19px;font-weight:bold;font-size:12px
-}
-.section-head{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:10px;margin:25px 0 15px
-}
+.hero button{background:white;color:#6844d2;padding:12px 18px;border-radius:9px;margin-top:19px;font-weight:bold;font-size:12px}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:25px 0 15px}
 .section-head h2{font-size:17px}
 .section-head p{font-size:12px;color:var(--muted);margin-top:5px}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.stat,.card{
-  background:white;border:1px solid var(--border);
-  border-radius:14px;padding:18px
-}
+.stat,.card{background:white;border:1px solid var(--border);border-radius:14px;padding:18px}
 .stat .ico{font-size:23px}
 .stat h2{font-size:24px;margin:13px 0 5px}
 .stat p{font-size:12px;color:var(--muted)}
 .card{margin-bottom:0}
 .card h3{font-size:15px;margin:10px 0 7px}
 .card p{font-size:12px;color:var(--muted);line-height:1.7}
-.tag{
-  display:inline-block;background:#f1edff;color:#7652e8;
-  padding:6px 9px;border-radius:7px;font-size:10px;font-weight:bold
-}
-.tag.green{background:#e7f8ef;color:#16945e}
-.tag.orange{background:#fff3e2;color:#ca8525}
+.tag{display:inline-block;background:#f1edff;color:#7652e8;padding:6px 9px;border-radius:7px;font-size:10px;font-weight:bold}
 .card-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.btn{
-  background:var(--primary);color:white;padding:11px 15px;
-  border-radius:9px;font-size:12px;font-weight:bold
-}
-.btn:hover{opacity:.9}
+.btn{background:var(--primary);color:white;padding:11px 15px;border-radius:9px;font-size:12px;font-weight:bold}
 .btn-light{background:#f0edff;color:var(--primary)}
-.btn-danger{background:#fff0f0;color:#db4141}
 .btn-small{padding:7px 10px;font-size:11px}
-.announcement{
-  background:#fff;border:1px solid var(--border);
-  border-radius:13px;padding:17px;margin-bottom:12px
-}
+.announcement{background:#fff;border:1px solid var(--border);border-radius:13px;padding:17px;margin-bottom:12px}
 .announcement h3{font-size:14px;margin:10px 0}
 .announcement p{font-size:12px;color:#777;line-height:1.7;white-space:pre-wrap}
 .date{font-size:11px;color:#aaa}
 .video-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.video-card{
-  background:#fff;border:1px solid var(--border);
-  border-radius:14px;overflow:hidden
-}
-.video-thumb{
-  aspect-ratio:16/9;background:linear-gradient(135deg,#35205e,#9874ef);
-  display:grid;place-items:center;color:white;font-size:42px;
-  cursor:pointer;position:relative
-}
+.video-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.video-thumb{aspect-ratio:16/9;background:linear-gradient(135deg,#35205e,#9874ef);display:grid;place-items:center;color:white;font-size:42px;cursor:pointer}
 .video-thumb img{width:100%;height:100%;object-fit:cover}
 .video-body{padding:14px}
 .video-body h3{font-size:14px;margin:10px 0}
 .video-body p{font-size:11px;color:var(--muted);line-height:1.6}
 .video-meta{display:flex;justify-content:space-between;margin-top:12px;align-items:center}
-.searchbar{
-  width:100%;padding:12px 14px;border:1px solid var(--border);
-  border-radius:10px;background:white;outline:none;margin-bottom:15px;
-  font-size:13px
-}
+.searchbar{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:white;outline:none;margin-bottom:15px;font-size:13px}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.filters button{
-  background:white;border:1px solid var(--border);border-radius:20px;
-  padding:8px 13px;font-size:11px;color:#777
-}
+.filters button{background:white;border:1px solid var(--border);border-radius:20px;padding:8px 13px;font-size:11px;color:#777}
 .filters button.active{background:#eee9ff;color:var(--primary);border-color:#d8ccff}
-.guide-item,.faq-item{
-  background:white;border:1px solid var(--border);
-  border-radius:12px;padding:16px;margin-bottom:10px
-}
+.guide-item,.faq-item{background:white;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
 .guide-item h3{font-size:14px;margin-bottom:7px}
 .guide-item p,.faq-item p{font-size:12px;color:#777;line-height:1.7;white-space:pre-wrap}
 .guide-item details{margin-top:10px}
 .guide-item summary{font-size:12px;color:var(--primary);cursor:pointer}
-.agenda-item{
-  display:flex;gap:15px;padding:17px;background:white;
-  border:1px solid var(--border);border-radius:12px;margin-bottom:11px
-}
-.agenda-date{
-  background:#f1edff;color:var(--primary);border-radius:10px;
-  min-width:53px;height:53px;display:grid;place-items:center;
-  font-size:12px;font-weight:bold;text-align:center
-}
+.agenda-item{display:flex;gap:15px;padding:17px;background:white;border:1px solid var(--border);border-radius:12px;margin-bottom:11px}
+.agenda-date{background:#f1edff;color:var(--primary);border-radius:10px;min-width:53px;height:53px;display:grid;place-items:center;font-size:12px;font-weight:bold;text-align:center}
 .empty{text-align:center;padding:35px;color:#999;font-size:13px}
-.help-box{
-  background:linear-gradient(130deg,#eee8ff,#f8f5ff);
-  border-radius:16px;padding:25px;margin-top:20px
-}
+.help-box{background:linear-gradient(130deg,#eee8ff,#f8f5ff);border-radius:16px;padding:25px;margin-top:20px}
 .help-box h2{font-size:18px;margin-bottom:10px}
-.admin-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
-.admin-panel{display:none}
-.admin-panel.show{display:block}
-.modal{
-  display:none;position:fixed;inset:0;background:#0008;
-  z-index:100;align-items:center;justify-content:center;padding:15px
-}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:100;align-items:center;justify-content:center;padding:15px}
 .modal.show{display:flex}
-.modal-box{
-  background:white;border-radius:17px;width:100%;max-width:520px;
-  max-height:90vh;overflow:auto;padding:22px
-}
-.modal-box h2{font-size:19px;margin-bottom:18px}
-.form-group{margin-bottom:14px}
-.form-group label{display:block;font-size:12px;font-weight:bold;margin-bottom:7px}
-.form-group input,.form-group textarea,.form-group select{
-  width:100%;padding:12px;border:1px solid var(--border);
-  border-radius:9px;outline:none;font-size:13px;background:white
-}
-.form-group textarea{min-height:100px;resize:vertical}
-.modal-buttons{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
-.player{
-  width:100%;aspect-ratio:16/9;background:#111;border-radius:12px;
-  overflow:hidden;margin:15px 0
-}
+.modal-box{background:white;border-radius:17px;width:100%;max-width:520px;max-height:90vh;overflow:auto;padding:22px}
+.player{width:100%;aspect-ratio:16/9;background:#111;border-radius:12px;overflow:hidden;margin:15px 0}
 .player iframe{width:100%;height:100%;border:0}
 footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
-@media(max-width:900px){
- .grid{grid-template-columns:repeat(2,1fr)}
- .video-grid{grid-template-columns:repeat(2,1fr)}
- .grid-3{grid-template-columns:repeat(2,1fr)}
-}
+@media(max-width:900px){.grid,.video-grid,.grid-3{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:650px){
  .sidebar{transform:translateX(-100%);transition:.25s}
  .sidebar.open{transform:translateX(0);box-shadow:0 0 0 100vmax #0005}
@@ -218,14 +110,15 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
 }
 </style>
 </head>
+
 <body>
 <div class="app">
 
 <aside class="sidebar" id="sidebar">
  <div class="brand">
-  <div class="brand-icon">C</div>
+  <div class="brand-icon">V</div>
   <div>
-   <h2>CAPCUT AGENCY</h2>
+   <h2>VIBE TRANS AGENCY</h2>
    <small>MEMBER PORTAL</small>
   </div>
  </div>
@@ -244,12 +137,11 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
   <button onclick="go('help',this)"><span>💬</span>Pusat Bantuan</button>
 
   <div class="nav-title">PENGELOLAAN</div>
-  <!-- Trigger pindah ke Admin panel lewat JS -->
   <button onclick="adminLogin()"><span>⚙</span>Dashboard Admin</button>
  </div>
 
  <div class="sidebar-footer">
-  <b>CAPCUT AGENCY PORTAL</b><br>
+  <b>VIBE TRANS PORTAL</b><br>
   Pusat informasi, panduan dan edukasi member agency.
  </div>
 </aside>
@@ -270,11 +162,11 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
  </header>
 
  <div class="content">
- <!-- DASHBOARD -->
+
  <section class="page active" id="home">
   <div class="hero">
    <span class="tag" style="background:#ffffff30;color:white">WELCOME TO AGENCY</span>
-   <h1>Selamat Datang di CapCut Agency Portal!</h1>
+   <h1>Selamat Datang di Portal Vibe Trans Agency!</h1>
    <p>Semua informasi, arahan, panduan, dan video tutorial untuk member agency tersedia dalam satu tempat.</p>
    <button onclick="goById('announcement')">Lihat Pengumuman →</button>
   </div>
@@ -290,79 +182,59 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
    <div><h2>Pengumuman Terbaru</h2><p>Informasi penting dari agency</p></div>
    <button class="btn btn-light" onclick="goById('announcement')">Lihat Semua</button>
   </div>
-  <div id="homeAnn"></div>
+  <div id="homeAnn"><div class="empty">Memuat data dari server...</div></div>
 
   <div class="section-head">
    <div><h2>Video Tutorial Terbaru</h2><p>Pelajari materi dari agency</p></div>
    <button class="btn btn-light" onclick="goById('tutorial')">Semua Video</button>
   </div>
-  <div class="video-grid" id="homeVideo"></div>
+  <div class="video-grid" id="homeVideo"><div class="empty">Memuat data dari server...</div></div>
  </section>
 
- <!-- ANNOUNCEMENTS -->
  <section class="page" id="announcement">
   <h1>Informasi & Pengumuman</h1>
-  <p class="subtitle">Seluruh arahan dan informasi resmi dari agency.</p>
-  <div style="margin-top:20px" id="annList"></div>
+  <div style="margin-top:20px" id="annList"><div class="empty">Memuat data...</div></div>
  </section>
 
- <!-- GUIDE -->
  <section class="page" id="guide">
   <h1>Panduan Member</h1>
-  <p class="subtitle">Panduan untuk membantu member memahami alur kerja agency.</p>
   <input class="searchbar" id="guideSearch" placeholder="Cari panduan..." oninput="renderGuides()">
-  <div id="guideList"></div>
+  <div id="guideList"><div class="empty">Memuat data...</div></div>
  </section>
 
- <!-- TUTORIAL -->
  <section class="page" id="tutorial">
   <h1>Video Tutorial</h1>
-  <p class="subtitle">Kumpulan video pembelajaran dan tutorial member.</p>
   <input class="searchbar" id="videoSearch" placeholder="Cari video tutorial..." oninput="renderVideos()">
   <div class="filters" id="videoFilters"></div>
-  <div class="video-grid" id="videoList"></div>
+  <div class="video-grid" id="videoList"><div class="empty">Memuat data...</div></div>
  </section>
 
- <!-- AGENDA -->
  <section class="page" id="agenda">
-  <h1>Jadwal & Agenda Agency</h1>
-  <p class="subtitle">Informasi kegiatan, meeting, dan agenda agency.</p>
-  <div id="agendaList" style="margin-top:20px"></div>
+  <h1>Jadwal & Agenda</h1>
+  <div id="agendaList" style="margin-top:20px"><div class="empty">Memuat data...</div></div>
  </section>
 
- <!-- RULES -->
  <section class="page" id="rules">
-  <h1>SOP & Peraturan Agency</h1>
-  <p class="subtitle">Standar operasional dan ketentuan yang harus diperhatikan member.</p>
-  <div id="rulesList" style="margin-top:20px"></div>
+  <h1>SOP & Peraturan</h1>
+  <div id="rulesList" style="margin-top:20px"><div class="empty">Memuat data...</div></div>
  </section>
 
- <!-- FAQ -->
  <section class="page" id="faq">
   <h1>Frequently Asked Questions</h1>
-  <p class="subtitle">Pertanyaan umum seputar aktivitas agency.</p>
-  <div id="faqList" style="margin-top:20px"></div>
+  <div id="faqList" style="margin-top:20px"><div class="empty">Memuat data...</div></div>
  </section>
 
- <!-- HELP -->
  <section class="page" id="help">
   <h1>Pusat Bantuan</h1>
-  <p class="subtitle">Butuh bantuan? Hubungi pengelola agency.</p>
   <div class="help-box">
    <h2>Butuh bantuan dari tim agency?</h2>
    <p class="subtitle">Silakan hubungi admin melalui WhatsApp untuk pertanyaan, kendala, maupun konsultasi.</p>
    <button class="btn" style="margin-top:18px" onclick="contactAdmin()">Hubungi Admin WhatsApp</button>
   </div>
-  <div class="section-head"><h2>Alur Permintaan Bantuan</h2></div>
-  <div class="grid-3">
-   <div class="card"><span>01</span><h3>Identifikasi</h3><p>Jelaskan kendala yang sedang dialami.</p></div>
-   <div class="card"><span>02</span><h3>Kirim Laporan</h3><p>Sertakan bukti atau screenshot jika diperlukan.</p></div>
-   <div class="card"><span>03</span><h3>Tindak Lanjut</h3><p>Tunggu arahan dari tim agency.</p></div>
-  </div>
  </section>
 
  </div>
- <footer>© <span id="year"></span> CapCut Agency Portal · Information & Learning Center</footer>
+ <footer>© <span id="year"></span> Vibe Trans Agency Portal</footer>
 </main>
 </div>
 
@@ -379,58 +251,47 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
 </div>
 
 <script>
-const KEY='capcut_agency_portal_v1';
-const SETTINGS='capcut_agency_settings_v1';
-const ADMIN_PASSWORD='admin123';
-
-let isAdmin = sessionStorage.getItem('isAdmin') === 'true';
-
-// Proteksi akses ke admin
-if (window.location.pathname.includes('admin.html') && !isAdmin) {
-    window.location.href = 'index.html';
-}
-
-let currentType='';
-let editId=null;
-let activeFilter='Semua';
-
-const defaults={
- announcements:[
-  {id:'a1',title:'Selamat Datang di CapCut Agency',category:'Informasi',content:'Selamat datang kepada seluruh member. Silakan pelajari panduan, SOP, dan video tutorial yang tersedia di portal ini.',date:'2026-11-13'}
- ],
- videos:[
-  {id:'v1',title:'Pengenalan CapCut Agency',category:'Onboarding',url:'https://www.youtube.com/watch?v=ScMzIvxBSi4',desc:'Pengenalan dan informasi awal untuk member baru.'}
- ],
- guides:[
-  {id:'g1',title:'Panduan Onboarding Member',category:'Onboarding',content:'1. Pelajari informasi agency.\n2. Baca SOP dan peraturan.'}
- ],
- agendas:[
-  {id:'j1',title:'Evaluasi Member',date:'2026-11-20',time:'19:00',desc:'Agenda evaluasi dan diskusi internal member.'}
- ],
- rules:[
-  {id:'r1',title:'Mengikuti Arahan Resmi',content:'Member wajib memperhatikan informasi dan arahan yang disampaikan oleh tim agency.'}
- ],
- faqs:[
-  {id:'f1',question:'Di mana saya bisa melihat informasi terbaru?',answer:'Buka menu Pengumuman untuk melihat informasi dan arahan terbaru.'}
- ]
+// ==========================================
+// KODE FIREBASE BOS (SUDAH DIPASANG)
+// ==========================================
+const firebaseConfig = {
+  apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s",
+  authDomain: "vibetransagency.firebaseapp.com",
+  projectId: "vibetransagency",
+  storageBucket: "vibetransagency.firebasestorage.app",
+  messagingSenderId: "588292416360",
+  appId: "1:588292416360:web:9caf952b41f16525cb2cdd",
+  measurementId: "G-81QD53XMR2"
 };
 
-function loadData(){
- try{
-  const data=JSON.parse(localStorage.getItem(KEY));
-  if(data && data.announcements) return data;
- }catch(e){}
- return JSON.parse(JSON.stringify(defaults));
-}
-let data=loadData();
+// Inisialisasi Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-function persist(){
- localStorage.setItem(KEY,JSON.stringify(data));
- renderAll();
+const SETTINGS = 'vibe_agency_settings_v1';
+let activeFilter = 'Semua';
+let data = { announcements:[], videos:[], guides:[], agendas:[], rules:[], faqs:[] };
+
+// FUNGSI LOAD DATA DARI FIREBASE
+async function loadDataFromFirebase() {
+    const collections = ['announcements', 'videos', 'guides', 'agendas', 'rules', 'faqs'];
+    for (let c of collections) {
+        data[c] = [];
+        try {
+            const snapshot = await db.collection(c).get();
+            snapshot.forEach(doc => {
+                data[c].push({ id: doc.id, ...doc.data() });
+            });
+        } catch (e) {
+            console.error("Gagal load " + c, e);
+        }
+    }
+    renderAll();
 }
+
 function settings(){
- try{return JSON.parse(localStorage.getItem(SETTINGS))||{wa:'',name:'CapCut Agency'}}
- catch(e){return {wa:'',name:'CapCut Agency'}}
+ try{return JSON.parse(localStorage.getItem(SETTINGS))||{wa:'',name:'Vibe Trans Agency'}}
+ catch(e){return {wa:'',name:'Vibe Trans Agency'}}
 }
 
 function toggleMenu(){
@@ -448,13 +309,9 @@ function go(id,btn){
  else document.querySelectorAll('.nav button').forEach(b=>{
   if(b.getAttribute('onclick')?.includes("'"+id+"'"))b.classList.add('active');
  });
- const titles={
-  home:'Dashboard',announcement:'Pengumuman',guide:'Panduan Member',
-  tutorial:'Video Tutorial',agenda:'Jadwal & Agenda',
-  rules:'SOP & Peraturan',faq:'FAQ',help:'Pusat Bantuan',admin:'Dashboard Admin'
- };
+ const titles = { home:'Dashboard',announcement:'Pengumuman',guide:'Panduan Member', tutorial:'Video Tutorial',agenda:'Jadwal & Agenda', rules:'SOP & Peraturan',faq:'FAQ',help:'Pusat Bantuan'};
  const pt = document.getElementById('pageTitle');
- if(pt) pt.textContent=titles[id]||id;
+ if(pt) pt.textContent = titles[id]||id;
  
  const s = document.getElementById('sidebar');
  if(s) s.classList.remove('open');
@@ -463,25 +320,7 @@ function go(id,btn){
 function goById(id){go(id)}
 
 function adminLogin(){
- if(isAdmin){ window.location.href = 'admin.html'; return; }
- const pass=prompt('Masukkan password admin:');
- if(pass===null)return;
- if(pass!==ADMIN_PASSWORD){alert('Password admin salah!');return}
- 
- sessionStorage.setItem('isAdmin', 'true');
- alert('Login admin berhasil!');
  window.location.href = 'admin.html';
-}
-
-function logoutAdmin(){
- sessionStorage.removeItem('isAdmin');
- isAdmin=false;
- window.location.href = 'index.html';
-}
-
-function canAdmin(){
- if(!isAdmin){alert('Silakan login sebagai admin terlebih dahulu.');return false}
- return true;
 }
 
 function dateFormat(date){
@@ -491,11 +330,8 @@ function dateFormat(date){
 }
 
 function safe(text){
- return String(text??'').replace(/[&<>"']/g,c=>({
- '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
- }[c]));
+ return String(text??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
-function newId(){return 'id'+Date.now()+Math.random().toString(16).slice(2)}
 
 function renderAll(){
  renderHome();
@@ -505,7 +341,6 @@ function renderAll(){
  renderAgenda();
  renderRules();
  renderFAQ();
- renderAdmin();
  const elYear = document.getElementById('year');
  if(elYear) elYear.textContent=new Date().getFullYear();
 }
@@ -536,7 +371,6 @@ function renderAnnouncements(){
   <div class="card-top"><span class="tag">${safe(a.category)}</span><span class="date">${dateFormat(a.date)}</span></div>
   <h3>${safe(a.title)}</h3>
   <p>${safe(a.content)}</p>
-  ${adminButtons('announcement',a.id)}
  </div>`).join('')||'<div class="empty">Belum ada pengumuman.</div>';
 }
 
@@ -550,7 +384,6 @@ function renderGuides(){
   <span class="tag">${safe(g.category)}</span>
   <h3 style="margin-top:12px">${safe(g.title)}</h3>
   <details><summary>Baca selengkapnya</summary><p style="margin-top:10px">${safe(g.content)}</p></details>
-  ${adminButtons('guide',g.id)}
  </div>`).join('')||'<div class="empty">Panduan tidak ditemukan.</div>';
 }
 
@@ -565,7 +398,6 @@ function videoCard(v){
     <button class="btn btn-small" onclick="playVideo('${v.id}')">Tonton Video</button>
     <span style="font-size:10px;color:#aaa">Tutorial</span>
    </div>
-   ${adminButtons('video',v.id)}
   </div>
  </div>`;
 }
@@ -626,7 +458,6 @@ function renderAgenda(){
    <h3 style="font-size:14px;margin-bottom:6px">${safe(a.title)}</h3>
    <p class="date">${dateFormat(a.date)} · ${safe(a.time||'-')} WIB</p>
    <p style="font-size:12px;color:#888;margin-top:8px;line-height:1.6">${safe(a.desc)}</p>
-   ${adminButtons('agenda',a.id)}
   </div>
  </div>`).join('')||'<div class="empty">Belum ada agenda.</div>';
 }
@@ -637,7 +468,6 @@ function renderRules(){
  el.innerHTML=data.rules.map(r=>`
  <div class="guide-item">
   <h3>${safe(r.title)}</h3><p>${safe(r.content)}</p>
-  ${adminButtons('rules',r.id)}
  </div>`).join('')||'<div class="empty">Belum ada peraturan.</div>';
 }
 
@@ -648,134 +478,7 @@ function renderFAQ(){
  <div class="faq-item">
   <details><summary style="font-weight:bold;font-size:13px;cursor:pointer">${safe(f.question)}</summary>
   <p style="margin-top:12px">${safe(f.answer)}</p></details>
-  ${adminButtons('faq',f.id)}
  </div>`).join('')||'<div class="empty">Belum ada FAQ.</div>';
-}
-
-function renderAdmin(){
- const counts=[
-  ['adminAnn',data.announcements.length],['adminVideo',data.videos.length],
-  ['adminGuide',data.guides.length],['adminAgenda',data.agendas.length]
- ];
- counts.forEach(([id,n])=>{
-   const el = document.getElementById(id);
-   if(el) el.textContent=n;
- });
-}
-
-function adminButtons(type,id){
- if(!isAdmin)return '';
- return `<div class="admin-actions">
- <button class="btn btn-light btn-small" onclick="editContent('${type}','${id}')">Edit</button>
- <button class="btn btn-danger btn-small" onclick="deleteContent('${type}','${id}')">Hapus</button>
- </div>`;
-}
-
-const collection={
- announcement:'announcements',video:'videos',guide:'guides',
- agenda:'agendas',rules:'rules',faq:'faqs'
-};
-
-function openForm(type,id=null){
- if(!canAdmin())return;
- currentType=type;editId=id;
- const item=id?data[collection[type]].find(x=>x.id===id):{};
- const fields={
- announcement:[
-  ['title','Judul Pengumuman','text'],
-  ['category','Kategori','text'],
-  ['date','Tanggal','date'],
-  ['content','Isi Pengumuman','textarea']
- ],
- video:[
-  ['title','Judul Video','text'],
-  ['category','Kategori Video','text'],
-  ['url','Link YouTube','url'],
-  ['desc','Deskripsi Video','textarea']
- ],
- guide:[
-  ['title','Judul Panduan','text'],
-  ['category','Kategori','text'],
-  ['content','Isi Panduan','textarea']
- ],
- agenda:[
-  ['title','Nama Agenda','text'],
-  ['date','Tanggal','date'],
-  ['time','Waktu (WIB)','time'],
-  ['desc','Deskripsi','textarea']
- ],
- rules:[
-  ['title','Judul Peraturan','text'],
-  ['content','Isi Peraturan','textarea']
- ],
- faq:[
-  ['question','Pertanyaan','text'],
-  ['answer','Jawaban','textarea']
- ]
- };
- const names={
- announcement:'Pengumuman',video:'Video Tutorial',
- guide:'Panduan Member',agenda:'Agenda',rules:'Peraturan',faq:'FAQ'
- };
- document.getElementById('formTitle').textContent=(id?'Edit ':'Tambah ')+names[type];
- document.getElementById('formFields').innerHTML=fields[type].map(([key,label,kind])=>`
- <div class="form-group">
- <label>${label}</label>
- ${kind==='textarea'
- ?`<textarea id="field_${key}" placeholder="${label}">${safe(item[key]||'')}</textarea>`
- :`<input id="field_${key}" type="${kind}" value="${safe(item[key]||'')}" placeholder="${label}">`}
- </div>`).join('');
- document.getElementById('formModal').classList.add('show');
-}
-
-function editContent(type,id){openForm(type,id)}
-function closeModal(){document.getElementById('formModal').classList.remove('show')}
-
-function saveContent(){
- if(!canAdmin())return;
- const fields={
- announcement:['title','category','date','content'],
- video:['title','category','url','desc'],
- guide:['title','category','content'],
- agenda:['title','date','time','desc'],
- rules:['title','content'],
- faq:['question','answer']
- }[currentType];
-
- const obj={};
- for(const key of fields){
-  obj[key]=document.getElementById('field_'+key).value.trim();
-  if(!obj[key]){alert('Semua kolom wajib diisi.');return}
- }
- if(currentType==='video'&&!youtubeId(obj.url)){
-  alert('Masukkan link YouTube yang valid.');return
- }
- const list=data[collection[currentType]];
- if(editId){
-  const index=list.findIndex(x=>x.id===editId);
-  if(index>=0)list[index]={...list[index],...obj};
- }else{
-  obj.id=newId();
-  list.push(obj);
- }
- persist();
- closeModal();
- alert('Konten berhasil disimpan.');
-}
-
-function deleteContent(type,id){
- if(!canAdmin())return;
- if(!confirm('Yakin ingin menghapus konten ini?'))return;
- data[collection[type]]=data[collection[type]].filter(x=>x.id!==id);
- persist();
-}
-
-function saveSettings(){
- if(!canAdmin())return;
- const wa=document.getElementById('waNumber').value.trim().replace(/\D/g,'');
- const name=document.getElementById('agencyName').value.trim();
- localStorage.setItem(SETTINGS,JSON.stringify({wa,name:name||'CapCut Agency'}));
- alert('Pengaturan berhasil disimpan.');
 }
 
 function contactAdmin(){
@@ -784,19 +487,8 @@ function contactAdmin(){
  window.open('https://wa.me/'+s.wa+'?text='+encodeURIComponent('Halo Admin Agency, saya membutuhkan bantuan.'),'_blank');
 }
 
-function init(){
- const s=settings();
- if(document.getElementById('waNumber')) document.getElementById('waNumber').value=s.wa||'';
- if(document.getElementById('agencyName')) document.getElementById('agencyName').value=s.name||'CapCut Agency';
- 
- if(isAdmin) {
-   document.querySelectorAll('.admin-panel').forEach(x=>x.classList.add('show'));
-   document.querySelectorAll('.admin-panel').forEach(x=>x.style.display='block');
- }
- 
- renderAll();
-}
-init();
+// JALANKAN SAAT WEB DIBUKA
+loadDataFromFirebase();
 </script>
 </body>
 </html>
