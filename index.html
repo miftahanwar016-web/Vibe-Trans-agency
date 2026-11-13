@@ -42,7 +42,8 @@ h1{font-size:25px;margin-bottom:9px}
 .hero:after{content:"✦";position:absolute;font-size:160px;right:35px;top:-35px;opacity:.12}
 .hero h1{font-size:28px;max-width:500px;line-height:1.3}
 .hero p{font-size:13px;opacity:.85;margin-top:12px;max-width:470px;line-height:1.7}
-.hero button{background:white;color:#6844d2;padding:12px 18px;border-radius:9px;margin-top:19px;font-weight:bold;font-size:12px}
+.hero button{background:white;color:#6844d2;padding:12px 18px;border-radius:9px;font-weight:bold;font-size:12px; transition: 0.3s;}
+.hero button:hover{transform: translateY(-2px); opacity: 0.9;}
 .section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:25px 0 15px}
 .section-head h2{font-size:17px}
 .section-head p{font-size:12px;color:var(--muted);margin-top:5px}
@@ -57,7 +58,8 @@ h1{font-size:25px;margin-bottom:9px}
 .card p{font-size:12px;color:var(--muted);line-height:1.7}
 .tag{display:inline-block;background:#f1edff;color:#7652e8;padding:6px 9px;border-radius:7px;font-size:10px;font-weight:bold}
 .card-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.btn{background:var(--primary);color:white;padding:11px 15px;border-radius:9px;font-size:12px;font-weight:bold}
+.btn{background:var(--primary);color:white;padding:11px 15px;border-radius:9px;font-size:12px;font-weight:bold; text-decoration:none; display:inline-block; transition:0.3s;}
+.btn:hover{opacity:0.9; transform: translateY(-1px);}
 .btn-light{background:#f0edff;color:var(--primary)}
 .btn-small{padding:7px 10px;font-size:11px}
 .announcement{background:#fff;border:1px solid var(--border);border-radius:13px;padding:17px;margin-bottom:12px}
@@ -133,6 +135,9 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
   <button onclick="go('rules',this)"><span>📋</span>SOP & Peraturan</button>
   <button onclick="go('faq',this)"><span>❔</span>FAQ</button>
 
+  <div class="nav-title">CALON ANGGOTA</div>
+  <button onclick="go('pendaftaran',this)" style="color:#16a36a;"><span>📝</span>Pendaftaran Agency</button>
+
   <div class="nav-title">BANTUAN</div>
   <button onclick="go('help',this)"><span>💬</span>Pusat Bantuan</button>
  </div>
@@ -164,8 +169,12 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
   <div class="hero">
    <span class="tag" style="background:#ffffff30;color:white">WELCOME TO AGENCY</span>
    <h1>Selamat Datang di Portal Vibe Trans Agency!</h1>
-   <p>Semua informasi, arahan, panduan, dan video tutorial untuk member agency tersedia dalam satu tempat.</p>
-   <button onclick="goById('announcement')">Lihat Pengumuman →</button>
+   <p>Pusat informasi, arahan, dan tutorial member. Belum bergabung? Daftar sekarang untuk mendapatkan bimbingan penuh.</p>
+   
+   <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:19px;">
+       <button onclick="goById('announcement')">Lihat Pengumuman →</button>
+       <button onclick="goById('pendaftaran')" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.5); color:white;">📝 Daftar Jadi Anggota</button>
+   </div>
   </div>
 
   <div class="grid">
@@ -186,6 +195,27 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
    <button class="btn btn-light" onclick="goById('tutorial')">Semua Video</button>
   </div>
   <div class="video-grid" id="homeVideo"><div class="empty">Memuat data dari server...</div></div>
+ </section>
+
+ <!-- HALAMAN PENDAFTARAN (BARU) -->
+ <section class="page" id="pendaftaran">
+  <h1>Pendaftaran Anggota Baru</h1>
+  <p class="subtitle">Bergabunglah bersama Vibe Trans Agency dan dapatkan akses penuh ke grup VIP serta bimbingan dari nol hingga mahir.</p>
+  
+  <div class="help-box" style="background:linear-gradient(130deg,#e8f5e9,#f1f8e9); border: 1px solid #c8e6c9;">
+   <h2 style="color:#1b5e20;">Langkah Pendaftaran Agency</h2>
+   <ol style="margin-left: 20px; font-size: 13px; color: #388e3c; line-height: 1.8; margin-bottom: 20px; font-weight: 500;">
+       <li>Klik tombol pendaftaran berwarna hijau di bawah.</li>
+       <li>Anda akan diarahkan ke Grup Pendaftaran (Calon Anggota).</li>
+       <li>Ikuti instruksi dari Admin di dalam grup tersebut.</li>
+       <li>Setelah disetujui, Anda akan dimasukkan ke Grup Member Resmi.</li>
+   </ol>
+   
+   <!-- GANTI TANDA PAGAR (#) DI BAWAH INI DENGAN LINK GRUP WA / GOOGLE FORM PENDAFTARAN BOS -->
+   <a href="#" target="_blank" class="btn" style="background:#16a36a; padding: 14px 20px; font-size: 14px; box-shadow: 0 4px 10px rgba(22,163,106,0.3);">
+       ✅ Klik Disini Untuk Mendaftar
+   </a>
+  </div>
  </section>
 
  <section class="page" id="announcement">
@@ -249,7 +279,7 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
 
 <script>
 // ==========================================
-// KODE FIREBASE BOS
+// KODE FIREBASE BOS (SUDAH DIPASANG)
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s",
@@ -331,7 +361,7 @@ function go(id,btn){
  else document.querySelectorAll('.nav button').forEach(b=>{
   if(b.getAttribute('onclick')?.includes("'"+id+"'"))b.classList.add('active');
  });
- const titles = { home:'Dashboard',announcement:'Pengumuman',guide:'Panduan Member', tutorial:'Video Tutorial',agenda:'Jadwal & Agenda', rules:'SOP & Peraturan',faq:'FAQ',help:'Pusat Bantuan'};
+ const titles = { home:'Dashboard',announcement:'Pengumuman',guide:'Panduan Member', tutorial:'Video Tutorial',agenda:'Jadwal & Agenda', rules:'SOP & Peraturan',faq:'FAQ',help:'Pusat Bantuan',pendaftaran:'Pendaftaran Agency'};
  const pt = document.getElementById('pageTitle');
  if(pt) pt.textContent = titles[id]||id;
  
