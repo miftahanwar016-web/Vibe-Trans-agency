@@ -100,7 +100,6 @@
    <div class="form-group"><label>Nama Agency</label><input id="agencyName" placeholder="Vibe Trans Agency"></div>
    <div class="form-group"><label>Nomor WA Admin (Contoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
    
-   <!-- HANYA MENAMPILKAN CAPCUT PRO SEKARANG -->
    <div class="form-group"><label style="color:#10b981;">💎 Link Akses CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
 
    <div class="form-group"><label>Link Form Daftar Creator</label><input id="regCreator" placeholder="https://form..."></div>
@@ -180,7 +179,7 @@ const collectionMap = {
     showcase:'showcases' 
 };
 
-// LOAD DATA & SETTINGS SINKRON
+// LOAD DATA
 async function loadDataFromFirebase() {
     const collections = ['announcements', 'videos', 'guides', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules'];
     for (let c of collections) { 
@@ -188,9 +187,13 @@ async function loadDataFromFirebase() {
         try { 
             const snapshot = await db.collection(c).get(); 
             snapshot.forEach(doc => { data[c].push({ id: doc.id, ...doc.data() }); }); 
-        } catch (e) {} 
+        } catch (e) { console.error("Error loading: ", c, e); } 
     }
     
+    // Panggil render setelah data dipastikan ditarik semua
+    renderAll();
+
+    // Listener realtime untuk Pengaturan Umum
     db.collection('settings').doc('global').onSnapshot((doc) => {
         if(doc.exists) { 
             const s = doc.data(); 
@@ -211,8 +214,6 @@ async function loadDataFromFirebase() {
             }
         } 
     });
-    
-    renderAll();
 }
 
 function go(id,btn){
@@ -223,23 +224,39 @@ function go(id,btn){
 }
 function toggleMenu(){ const s=document.getElementById('sidebar'); if(s){ s.classList.toggle('open'); let ov=document.getElementById('sidebarOverlay'); if(s.classList.contains('open')){ if(!ov){ ov=document.createElement('div'); ov.id='sidebarOverlay'; ov.style.position='fixed'; ov.style.inset='0'; ov.style.background='rgba(0,0,0,0.5)'; ov.style.zIndex='15'; document.body.appendChild(ov); ov.addEventListener('click',function(){s.classList.remove('open');this.remove();}); } }else{ if(ov)ov.remove(); } } }
 
-function safe(text){ return String(text??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function renderList(id, arr, template) { const el=document.getElementById(id); if(el) el.innerHTML = arr.length ? arr.map(template).join('') : '<p style="color:#888; text-align:center; padding:20px; background:#fff; border-radius:10px;">Belum ada data</p>'; }
+// PENGAMAN STRING
+function safe(text){ return String(text ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// RENDER AMAN: Mengabaikan error pada satu data sehingga list lainnya tidak hilang
+function safeRenderList(id, arr, template) { 
+    try {
+        const el = document.getElementById(id); 
+        if(el) {
+            el.innerHTML = (arr && arr.length > 0) 
+                ? arr.map(template).join('') 
+                : '<p style="color:#888; text-align:center; padding:20px; background:#fff; border-radius:10px;">Belum ada data</p>';
+        }
+    } catch(e) { console.error("Error merender list " + id, e); }
+}
+
 function act(type, id) { return `<div class="admin-actions"><button class="btn btn-small" style="background:#4b5563;" onclick="openForm('${type}','${id}')">Edit</button><button class="btn btn-danger btn-small" onclick="deleteContent('${type}','${id}')">Hapus</button></div>`; }
 
 function renderAll(){
- renderList('announcementList', data.announcements, a => `<div class="item-box"><div class="item-info"><h3>${safe(a.title)}</h3><p>${safe(a.category)}</p></div>${act('announcement',a.id)}</div>`);
- renderList('guideList', data.guides, g => `<div class="item-box"><div class="item-info"><h3>${safe(g.title)}</h3><p>${safe(g.category)}</p></div>${act('guide',g.id)}</div>`);
- renderList('videoList', data.videos, v => `<div class="item-box"><div class="item-info"><h3>${safe(v.title)}</h3><p>${safe(v.category)}</p></div>${act('video',v.id)}</div>`);
+ safeRenderList('announcementList', data.announcements, a => `<div class="item-box"><div class="item-info"><h3>${safe(a.title)}</h3><p>${safe(a.category)}</p></div>${act('announcement',a.id)}</div>`);
+ 
+ // PANDUAN CREATOR (Koleksi Guides)
+ safeRenderList('guideList', data.guides, g => `<div class="item-box"><div class="item-info"><h3>${safe(g.title)}</h3><p>${safe(g.category)}</p></div>${act('guide',g.id)}</div>`);
+ 
+ safeRenderList('videoList', data.videos, v => `<div class="item-box"><div class="item-info"><h3>${safe(v.title)}</h3><p>${safe(v.category)}</p></div>${act('video',v.id)}</div>`);
  
  const combinedEvents = [...data.events, ...data.agendas];
- renderList('eventList', combinedEvents, e => `<div class="item-box"><div class="item-info"><h3>${safe(e.title)}</h3><p>Waktu: ${safe(e.date)}</p></div>${act('event',e.id)}</div>`);
+ safeRenderList('eventList', combinedEvents, e => `<div class="item-box"><div class="item-info"><h3>${safe(e.title)}</h3><p>Waktu: ${safe(e.date)}</p></div>${act('event',e.id)}</div>`);
  
  const combinedTips = [...data.tips, ...data.rules];
- renderList('tipsList', combinedTips, t => `<div class="item-box"><div class="item-info"><h3>${safe(t.title)}</h3></div>${act('tips',t.id)}</div>`);
+ safeRenderList('tipsList', combinedTips, t => `<div class="item-box"><div class="item-info"><h3>${safe(t.title)}</h3></div>${act('tips',t.id)}</div>`);
  
- renderList('faqList', data.faqs, f => `<div class="item-box"><div class="item-info"><h3>${safe(f.question)}</h3></div>${act('faq',f.id)}</div>`);
- renderList('showcaseList', data.showcases, s => `<div class="item-box"><div class="item-info"><h3>${safe(s.name)}</h3><p>${safe(s.achievement)}</p></div>${act('showcase',s.id)}</div>`);
+ safeRenderList('faqList', data.faqs, f => `<div class="item-box"><div class="item-info"><h3>${safe(f.question)}</h3></div>${act('faq',f.id)}</div>`);
+ safeRenderList('showcaseList', data.showcases, s => `<div class="item-box"><div class="item-info"><h3>${safe(s.name)}</h3><p>${safe(s.achievement)}</p></div>${act('showcase',s.id)}</div>`);
 }
 
 function openForm(type,id=null){
@@ -301,7 +318,8 @@ async function saveContent(){
      } else { 
          await db.collection(dbName).add(obj); 
      }
-     closeModal(); 
+     closeModal();
+     loadDataFromFirebase(); 
  } catch(e) { 
      alert('Gagal simpan ke Firebase: ' + e.message); 
  }
@@ -313,6 +331,7 @@ async function deleteContent(type,id){
  try { 
      const dbName = collectionMap[type];
      await db.collection(dbName).doc(id).delete(); 
+     loadDataFromFirebase();
  } catch(e) { alert(e.message); }
 }
 
@@ -328,7 +347,6 @@ async function saveSettings(){
      const logoUrl = document.getElementById('logoUrl') ? document.getElementById('logoUrl').value.trim() : '';
      const capcutPro = document.getElementById('capcutPro') ? document.getElementById('capcutPro').value.trim() : '';
      
-     // Hapus loginLink dari pembaruan karena fiturnya dibuang
      await db.collection('settings').doc('global').set({ 
          wa: wa, 
          name: name, 
