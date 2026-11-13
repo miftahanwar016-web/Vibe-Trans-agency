@@ -100,12 +100,12 @@
    <div class="form-group"><label>Nama Agency</label><input id="agencyName" placeholder="Vibe Trans Agency"></div>
    <div class="form-group"><label>Nomor WA Admin (Contoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
    
-   <!-- TAMBAHAN LINK CAPCUT PRO -->
+   <!-- HANYA MENAMPILKAN CAPCUT PRO SEKARANG -->
    <div class="form-group"><label style="color:#10b981;">💎 Link Akses CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
 
    <div class="form-group"><label>Link Form Daftar Creator</label><input id="regCreator" placeholder="https://form..."></div>
    <div class="form-group"><label>Link Grup Gabung Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
-   <div class="form-group"><label>Link Login Creator (Dashboard)</label><input id="loginLink" placeholder="https://capcut.com/..."></div>
+   
    <button class="btn" onclick="saveSettings()" id="btnSaveSettings">Simpan Pengaturan</button>
   </div>
  </section>
@@ -180,7 +180,7 @@ const collectionMap = {
     showcase:'showcases' 
 };
 
-// LOAD DATA
+// LOAD DATA & SETTINGS SINKRON
 async function loadDataFromFirebase() {
     const collections = ['announcements', 'videos', 'guides', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules'];
     for (let c of collections) { 
@@ -198,7 +198,6 @@ async function loadDataFromFirebase() {
             if(document.getElementById('agencyName') && s.name) document.getElementById('agencyName').value = s.name;
             if(document.getElementById('regCreator') && s.regCreator) document.getElementById('regCreator').value = s.regCreator;
             if(document.getElementById('regAgency') && s.regAgency) document.getElementById('regAgency').value = s.regAgency;
-            if(document.getElementById('loginLink') && s.loginLink) document.getElementById('loginLink').value = s.loginLink;
             if(document.getElementById('logoUrl') && s.logoUrl) document.getElementById('logoUrl').value = s.logoUrl;
             if(document.getElementById('capcutPro') && s.capcutPro) document.getElementById('capcutPro').value = s.capcutPro;
 
@@ -326,17 +325,16 @@ async function saveSettings(){
      const name = document.getElementById('agencyName') ? document.getElementById('agencyName').value.trim() : 'Vibe Trans Agency'; 
      const regCreator = document.getElementById('regCreator') ? document.getElementById('regCreator').value.trim() : ''; 
      const regAgency = document.getElementById('regAgency') ? document.getElementById('regAgency').value.trim() : ''; 
-     const loginLink = document.getElementById('loginLink') ? document.getElementById('loginLink').value.trim() : '';
      const logoUrl = document.getElementById('logoUrl') ? document.getElementById('logoUrl').value.trim() : '';
      const capcutPro = document.getElementById('capcutPro') ? document.getElementById('capcutPro').value.trim() : '';
      
+     // Hapus loginLink dari pembaruan karena fiturnya dibuang
      await db.collection('settings').doc('global').set({ 
          wa: wa, 
          name: name, 
          regCreator: regCreator, 
          regAgency: regAgency, 
-         regLink: regAgency,
-         loginLink: loginLink,
+         regLink: regAgency, // backward compatibility
          logoUrl: logoUrl,
          capcutPro: capcutPro
      }, {merge:true}); 
