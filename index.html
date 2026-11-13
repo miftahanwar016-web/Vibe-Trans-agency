@@ -17,7 +17,7 @@ body{font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
 button,input,textarea,select{font:inherit}
 button{cursor:pointer;border:0}
 .app{display:flex;min-height:100vh}
-.sidebar{width:245px;background:#fff;border-right:1px solid var(--border);padding:25px 17px;position:fixed;inset:0 auto 0 0;overflow-y:auto;z-index:20}
+.sidebar{width:245px;background:#fff;border-right:1px solid var(--border);padding:25px 17px;position:fixed;inset:0 auto 0 0;overflow-y:auto;z-index:20; transition: transform 0.3s ease;}
 .brand{display:flex;align-items:center;gap:11px;margin-bottom:35px;padding:0 8px}
 .brand-icon{background:linear-gradient(135deg,#7652e8,#ad8bff);width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:white;font-size:21px;font-weight:bold}
 .brand h2{font-size:17px}
@@ -94,8 +94,8 @@ h1{font-size:25px;margin-bottom:9px}
 footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
 @media(max-width:900px){.grid,.video-grid,.grid-3{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:650px){
- .sidebar{transform:translateX(-100%);transition:.25s}
- .sidebar.open{transform:translateX(0);box-shadow:0 0 0 100vmax #0005}
+ .sidebar{transform:translateX(-100%);}
+ .sidebar.open{transform:translateX(0);box-shadow: 2px 0 10px rgba(0,0,0,0.1);}
  .main{margin-left:0;width:100%}
  .menu-btn{display:block}
  .topbar{padding:12px 15px}
@@ -249,7 +249,7 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
 
 <script>
 // ==========================================
-// KODE FIREBASE BOS (SUDAH DIPASANG)
+// KODE FIREBASE BOS
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s",
@@ -291,9 +291,34 @@ function settings(){
  catch(e){return {wa:'',name:'Vibe Trans Agency'}}
 }
 
+// ==========================================
+// FUNGSI TOGGLE MENU + KLIK SEMBARANG OVERLAY
+// ==========================================
 function toggleMenu(){
- const s = document.getElementById('sidebar');
- if(s) s.classList.toggle('open');
+ const sidebar = document.getElementById('sidebar');
+ if(sidebar) {
+     sidebar.classList.toggle('open');
+     
+     let overlay = document.getElementById('sidebarOverlay');
+     if (sidebar.classList.contains('open')) {
+         if (!overlay) {
+             overlay = document.createElement('div');
+             overlay.id = 'sidebarOverlay';
+             overlay.style.position = 'fixed';
+             overlay.style.inset = '0';
+             overlay.style.background = 'rgba(0,0,0,0.5)';
+             overlay.style.zIndex = '15';
+             document.body.appendChild(overlay);
+             
+             overlay.addEventListener('click', function() {
+                 sidebar.classList.remove('open');
+                 this.remove();
+             });
+         }
+     } else {
+         if (overlay) overlay.remove();
+     }
+ }
 }
 
 function go(id,btn){
@@ -311,9 +336,14 @@ function go(id,btn){
  if(pt) pt.textContent = titles[id]||id;
  
  const s = document.getElementById('sidebar');
- if(s) s.classList.remove('open');
+ if(s) {
+     s.classList.remove('open');
+     const overlay = document.getElementById('sidebarOverlay');
+     if(overlay) overlay.remove();
+ }
  window.scrollTo(0,0);
 }
+
 function goById(id){go(id)}
 
 function dateFormat(date){
