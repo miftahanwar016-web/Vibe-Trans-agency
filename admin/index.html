@@ -1,1 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>Admin Panel - Vibe Trans</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<style>
+:root{--primary:#7652e8;--bg:#f7f7fb;--card:#ffffff;--text:#202033;--muted:#85859a;--border:#ececf3;}
+*{box-sizing:border-box;margin:0;padding:0} body{font-family:Arial,sans-serif;background:var(--bg);color:var(--text)} button,input,textarea,select{font:inherit} button{cursor:pointer;border:0}
+.app{display:none;min-height:100vh} .app.show{display:flex}
+.sidebar{width:260px;background:#1e1e2d;border-right:1px solid #2a2a3c;padding:25px 17px;position:fixed;inset:0 auto 0 0;overflow-y:auto;z-index:20; transition: transform 0.3s ease;}
+.brand{display:flex;align-items:center;gap:11px;margin-bottom:25px;padding:0 8px}
+.brand-icon{background:linear-gradient(135deg,#f59e0b,#ef4444);width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:white;font-size:21px;font-weight:bold; overflow:hidden;}
+.nav-title{font-size:10px;color:#888;margin:20px 10px 8px;font-weight:bold;letter-spacing:1px}
+.nav button{width:100%;display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:transparent;text-align:left;color:#a0a0b2;font-size:13px;margin:2px 0; transition:0.2s;}
+.nav button:hover,.nav button.active{background:rgba(255,255,255,0.1);color:white;}
+.nav button span{font-size:18px;width:22px;}
+.main{margin-left:260px;width:calc(100% - 260px);min-width:0}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.page{display:none; padding:28px; max-width:1250px; margin:auto;} .page.active{display:block; animation: fadeIn 0.3s ease;}
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px; margin-bottom:30px;}
+.card{background:white;border:1px solid var(--border);border-radius:14px;padding:20px}
+.btn{background:var(--primary);color:white;padding:12px 15px;border-radius:9px;font-size:12px;font-weight:bold; width:100%; margin-top:10px; transition:0.2s;} .btn:hover{opacity:0.9;}
+.btn-small{width:auto; padding:8px 12px; margin-top:0;} .btn-danger{background:#fff0f0;color:#db4141;}
+.form-group{margin-bottom:15px} .form-group label{display:block;font-size:12px;font-weight:bold;margin-bottom:5px; color:#555;}
+.form-group input,.form-group textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;outline:none;font-size:13px;}
+.form-group textarea{height:100px;resize:vertical;}
+.item-box{background:white;border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; gap:15px;}
+.item-info h3{font-size:15px; margin-bottom:5px;} .item-info p{font-size:12px; color:#888;}
+.admin-actions{display:flex;gap:5px;}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:100;align-items:center;justify-content:center;padding:15px} .modal.show{display:flex}
+.modal-box{background:white;border-radius:15px;width:100%;max-width:500px;padding:25px;}
+
+/* LOGIN SCREEN */
+.login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#1e1e2d,#3a2c68);display:flex;justify-content:center;align-items:center;z-index:1000;padding:20px;}
+.login-box{background:white;border-radius:20px;padding:40px 30px;width:100%;max-width:350px;text-align:center;}
+@media(max-width:650px){ .sidebar{transform:translateX(-100%);} .sidebar.open{transform:translateX(0);} .main{margin-left:0;width:100%} .topbar button{display:block;} .item-box{flex-direction:column; align-items:flex-start;} }
+</style>
+</head>
+<body>
+
+<div class="login-screen" id="loginScreen">
+    <div class="login-box">
+        <h2 style="margin-bottom:10px;">Login Admin</h2>
+        <input type="password" id="adminPassword" style="width:100%;padding:15px;border:2px solid #ddd;border-radius:10px;text-align:center;margin-bottom:20px;" placeholder="Password">
+        <button class="btn" onclick="verifyLogin()">Masuk</button>
+        <!-- Perubahan link kembali ke luar folder (../) -->
+        <a href="../index.html" style="display:block; margin-top:20px; font-size:13px; color:#85859a; text-decoration:none;">← Kembali ke Halaman Utama</a>
+    </div>
+</div>
+
+<div class="app" id="adminApp">
+<aside class="sidebar" id="sidebar">
+ <div class="brand">
+  <div class="brand-icon" id="brandLogoBox">
+      <span id="brandLogoText">A</span>
+      <img id="brandLogoImg" src="" style="display:none; width:100%; height:100%; object-fit:cover;">
+  </div>
+  <div><h2 style="color:white;">ADMIN PANEL</h2><small style="color:#aaa;">Control Center</small></div>
+ </div>
+ <div class="nav">
+  <div class="nav-title">KONTEN HALAMAN</div>
+  <button class="active" onclick="go('admin',this)"><span>⚙</span>Pengaturan Umum</button>
+  <button onclick="go('guide',this)"><span>📚</span>Panduan Creator</button>
+  <button onclick="go('announcement',this)"><span>📢</span>Pengumuman</button>
+  <button onclick="go('tutorial',this)"><span>▶</span>Video Tutorial</button>
+  <button onclick="go('event',this)"><span>🏆</span>Event & Agenda</button>
+  <button onclick="go('tips',this)"><span>💡</span>Tips & SOP</button>
+  <button onclick="go('faq',this)"><span>❔</span>FAQ</button>
+  <button onclick="go('showcase',this)"><span>🌟</span>Creator Showcase</button>
+  <div class="nav-title">AKSES</div>
+  <button onclick="logoutAdmin()" style="color:#ef4444;"><span>🚪</span>Keluar</button>
+ </div>
+</aside>
+
+<main class="main">
+ <header class="topbar">
+  <div style="display:flex; align-items:center; gap:15px;">
+   <button class="menu-btn" onclick="toggleMenu()" style="display:inline-block; font-size:20px; background:transparent;">☰</button>
+   <b id="pageTitle">Pengaturan Umum</b>
+  </div>
+ </header>
+
+ <section class="page active" id="admin">
+  <div class="card" style="max-width:600px;">
+   <h2 style="margin-bottom:20px;">Link & Pengaturan Web</h2>
+   
+   <div class="form-group">
+       <label style="color:#7652e8;">Link Logo Web (Upload di GitHub, Paste link raw-nya di sini)</label>
+       <input id="logoUrl" placeholder="https://raw.githubusercontent.com/.../logo.png">
+   </div>
+   <hr style="border:0; border-top:1px dashed #ddd; margin:20px 0;">
+
+   <div class="form-group"><label>Nama Agency</label><input id="agencyName" placeholder="Vibe Trans Agency"></div>
+   <div class="form-group"><label>Nomor WA Admin (Contoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
+   <div class="form-group"><label>Link Form Daftar Creator</label><input id="regCreator" placeholder="https://form..."></div>
+   <div class="form-group"><label>Link Grup Gabung Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
+   <div class="form-group"><label>Link Login Creator (Dashboard)</label><input id="loginLink" placeholder="https://capcut.com/..."></div>
+   <button class="btn" onclick="saveSettings()" id="btnSaveSettings">Simpan Pengaturan</button>
+  </div>
+ </section>
+
+ <section class="page" id="guide"> <button class="btn" onclick="openForm('guide')" style="width:auto; margin-bottom:20px;">+ Tambah Panduan</button> <div id="guideList"></div> </section>
+ <section class="page" id="announcement"> <button class="btn" onclick="openForm('announcement')" style="width:auto; margin-bottom:20px;">+ Tambah Pengumuman</button> <div id="announcementList"></div> </section>
+ <section class="page" id="tutorial"> <button class="btn" onclick="openForm('video')" style="width:auto; margin-bottom:20px;">+ Tambah Tutorial</button> <div id="videoList"></div> </section>
+ <section class="page" id="event"> <button class="btn" onclick="openForm('event')" style="width:auto; margin-bottom:20px;">+ Tambah Event / Agenda</button> <div id="eventList"></div> </section>
+ <section class="page" id="tips"> <button class="btn" onclick="openForm('tips')" style="width:auto; margin-bottom:20px;">+ Tambah Tips / SOP</button> <div id="tipsList"></div> </section>
+ <section class="page" id="faq"> <button class="btn" onclick="openForm('faq')" style="width:auto; margin-bottom:20px;">+ Tambah FAQ</button> <div id="faqList"></div> </section>
+ <section class="page" id="showcase"> <button class="btn" onclick="openForm('showcase')" style="width:auto; margin-bottom:20px;">+ Tambah Creator</button> <div id="showcaseList"></div> </section>
+</main>
+</div>
+
+<div class="modal" id="formModal">
+ <div class="modal-box">
+  <h2 id="formTitle">Tambah Data</h2>
+  <div id="formFields"></div>
+  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+   <button class="btn btn-danger btn-small" onclick="closeModal()">Batal</button>
+   <button class="btn btn-small" onclick="saveContent()" id="saveBtn">Simpan</button>
+  </div>
+ </div>
+</div>
+
+<script>
+// ==========================================
+// KODE FIREBASE BOS
+// ==========================================
+const firebaseConfig = {
+  apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", 
+  authDomain: "vibetransagency.firebaseapp.com",
+  projectId: "vibetransagency", 
+  storageBucket: "vibetransagency.firebasestorage.app",
+  messagingSenderId: "588292416360", 
+  appId: "1:588292416360:web:9caf952b41f16525cb2cdd"
+};
+firebase.initializeApp(firebaseConfig); 
+const db = firebase.firestore();
+
+// PASSWORD ADMIN
+const ADMIN_PASSWORD = 'admin123'; 
+
+// LOGIKA LOGIN
+if (sessionStorage.getItem('isAdmin') === 'true') { 
+    document.getElementById('loginScreen').style.display = 'none'; 
+    document.getElementById('adminApp').classList.add('show'); 
+    loadDataFromFirebase(); 
+}
+
+function verifyLogin() { 
+    if(document.getElementById('adminPassword').value === ADMIN_PASSWORD) { 
+        sessionStorage.setItem('isAdmin', 'true'); 
+        location.reload(); 
+    } else { 
+        alert('Password Salah!'); 
+    } 
+}
+
+// Perubahan link keluar mengarah ke ../index.html
+function logoutAdmin(){ sessionStorage.removeItem('isAdmin'); window.location.href = '../index.html'; }
+
+let data = { announcements:[], videos:[], guides:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[] };
+let currentType=''; let editId=null;
+
+const collectionMap = { 
+    announcement:'announcements', 
+    video:'videos', 
+    guide:'guides', 
+    event:'agendas',  
+    tips:'rules',     
+    faq:'faqs', 
+    showcase:'showcases' 
+};
+
+// LOAD DATA
+async function loadDataFromFirebase() {
+    const collections = ['announcements', 'videos', 'guides', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules'];
+    for (let c of collections) { 
+        data[c] = []; 
+        try { 
+            const snapshot = await db.collection(c).get(); 
+            snapshot.forEach(doc => { data[c].push({ id: doc.id, ...doc.data() }); }); 
+        } catch (e) {
+            console.error("Gagal load koleksi: ", c);
+        } 
+    }
+    
+    // ON SNAPSHOT AGAR FORM TIDAK RESET SAAT DI REFRESH
+    db.collection('settings').doc('global').onSnapshot((doc) => {
+        if(doc.exists) { 
+            const s = doc.data(); 
+            if(document.getElementById('waNumber') && s.wa) document.getElementById('waNumber').value = s.wa;
+            if(document.getElementById('agencyName') && s.name) document.getElementById('agencyName').value = s.name;
+            if(document.getElementById('regCreator') && s.regCreator) document.getElementById('regCreator').value = s.regCreator;
+            if(document.getElementById('regAgency') && s.regAgency) document.getElementById('regAgency').value = s.regAgency;
+            if(document.getElementById('loginLink') && s.loginLink) document.getElementById('loginLink').value = s.loginLink;
+            if(document.getElementById('logoUrl') && s.logoUrl) document.getElementById('logoUrl').value = s.logoUrl;
+
+            const logoImg = document.getElementById('brandLogoImg');
+            const logoText = document.getElementById('brandLogoText');
+            const logoBox = document.getElementById('brandLogoBox');
+            if (s.logoUrl && s.logoUrl.trim() !== '') {
+                if(logoImg) { logoImg.src = s.logoUrl; logoImg.style.display = 'block'; }
+                if(logoText) logoText.style.display = 'none';
+                if(logoBox) logoBox.style.background = 'transparent';
+            }
+        } 
+    });
+    
+    renderAll();
+}
+
+// LOGIKA NAVIGASI SIDEBAR
+function go(id,btn){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); if(btn)btn.classList.add('active');
+ document.getElementById('pageTitle').textContent = btn.innerText.substring(btn.innerText.indexOf(' ')+1);
+ const s = document.getElementById('sidebar'); if(window.innerWidth<=650 && s) { s.classList.remove('open'); const ov=document.getElementById('sidebarOverlay'); if(ov)ov.remove(); }
+}
+function toggleMenu(){ const s=document.getElementById('sidebar'); if(s){ s.classList.toggle('open'); let ov=document.getElementById('sidebarOverlay'); if(s.classList.contains('open')){ if(!ov){ ov=document.createElement('div'); ov.id='sidebarOverlay'; ov.style.position='fixed'; ov.style.inset='0'; ov.style.background='rgba(0,0,0,0.5)'; ov.style.zIndex='15'; document.body.appendChild(ov); ov.addEventListener('click',function(){s.classList.remove('open');this.remove();}); } }else{ if(ov)ov.remove(); } } }
+
+function safe(text){ return String(text??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function renderList(id, arr, template) { const el=document.getElementById(id); if(el) el.innerHTML = arr.length ? arr.map(template).join('') : '<p style="color:#888; text-align:center; padding:20px; background:#fff; border-radius:10px;">Belum ada data</p>'; }
+function act(type, id) { return `<div class="admin-actions"><button class="btn btn-small" style="background:#4b5563;" onclick="openForm('${type}','${id}')">Edit</button><button class="btn btn-danger btn-small" onclick="deleteContent('${type}','${id}')">Hapus</button></div>`; }
+
+function renderAll(){
+ renderList('announcementList', data.announcements, a => `<div class="item-box"><div class="item-info"><h3>${safe(a.title)}</h3><p>${safe(a.category)}</p></div>${act('announcement',a.id)}</div>`);
+ renderList('guideList', data.guides, g => `<div class="item-box"><div class="item-info"><h3>${safe(g.title)}</h3><p>${safe(g.category)}</p></div>${act('guide',g.id)}</div>`);
+ renderList('videoList', data.videos, v => `<div class="item-box"><div class="item-info"><h3>${safe(v.title)}</h3><p>${safe(v.category)}</p></div>${act('video',v.id)}</div>`);
+ 
+ const combinedEvents = [...data.events, ...data.agendas];
+ renderList('eventList', combinedEvents, e => `<div class="item-box"><div class="item-info"><h3>${safe(e.title)}</h3><p>Waktu: ${safe(e.date)}</p></div>${act('event',e.id)}</div>`);
+ 
+ const combinedTips = [...data.tips, ...data.rules];
+ renderList('tipsList', combinedTips, t => `<div class="item-box"><div class="item-info"><h3>${safe(t.title)}</h3></div>${act('tips',t.id)}</div>`);
+ 
+ renderList('faqList', data.faqs, f => `<div class="item-box"><div class="item-info"><h3>${safe(f.question)}</h3></div>${act('faq',f.id)}</div>`);
+ renderList('showcaseList', data.showcases, s => `<div class="item-box"><div class="item-info"><h3>${safe(s.name)}</h3><p>${safe(s.achievement)}</p></div>${act('showcase',s.id)}</div>`);
+}
+
+function openForm(type,id=null){
+ currentType = type; editId = id; 
+ 
+ const mappedCollectionName = collectionMap[type]; 
+ const item = id ? data[mappedCollectionName].find(x=>x.id===id) : {};
+ 
+ const fields={
+ announcement:[['title','Judul','text'],['category','Kategori Label','text'],['date','Tanggal (YYYY-MM-DD)','date'],['content','Isi Pengumuman','textarea']],
+ video:[['title','Judul','text'],['category','Kategori Label','text'],['url','Link YouTube','url'],['desc','Deskripsi Singkat','textarea']],
+ guide:[['title','Judul Panduan / Arahan','text'],['category','Kategori Label','text'],['content','Isi Teks Arahan','textarea'],['videoUrl','Link YouTube (Opsional)','url']],
+ event:[['title','Nama Event / Agenda','text'],['date','Tgl Berakhir (YYYY-MM-DD)','date'],['time','Waktu (Opsional)','time'],['desc','Detail Teks','textarea']],
+ tips:[['title','Judul Tips / SOP','text'],['content','Isi Teks','textarea']], 
+ faq:[['question','Pertanyaan','text'],['answer','Jawaban','textarea']],
+ showcase:[['name','Nama Creator','text'],['achievement','Pencapaian (cth: Top 1 Bulan Ini)','text'],['link','Link Profil CapCut','url']]
+ };
+ document.getElementById('formTitle').textContent=(id?'Edit ':'Tambah ')+type.toUpperCase();
+ document.getElementById('formFields').innerHTML=fields[type].map(([k,l,t])=>`<div class="form-group"><label>${l}</label>${t==='textarea'?`<textarea id="f_${k}">${safe(item[k]||'')}</textarea>`:`<input id="f_${k}" type="${t}" placeholder="${t==='url'?'https://...':''}" value="${safe(item[k]||'')}">`}</div>`).join('');
+ document.getElementById('formModal').classList.add('show');
+}
+
+function closeModal(){ document.getElementById('formModal').classList.remove('show'); }
+
+async function saveContent(){
+ const btn = document.getElementById('saveBtn'); 
+ btn.textContent="Proses..."; btn.disabled=true;
+ 
+ const fields = { 
+     announcement:['title','category','date','content'], 
+     video:['title','category','url','desc'], 
+     guide:['title','category','content','videoUrl'], 
+     event:['title','date','time','desc'], 
+     tips:['title','content'], 
+     faq:['question','answer'], 
+     showcase:['name','achievement','link'] 
+ }[currentType];
+ 
+ const obj={}; 
+ let isError = false;
+
+ for(const k of fields){ 
+     const el = document.getElementById('f_'+k);
+     if (el) {
+         obj[k] = el.value.trim(); 
+         if(!obj[k] && k !== 'videoUrl' && k !== 'time'){
+             alert('Isi semua kolom wajib!'); 
+             isError = true; break;
+         }
+     }
+ }
+
+ if (isError) { btn.textContent="Simpan"; btn.disabled=false; return; }
+
+ try { 
+     const dbName = collectionMap[currentType]; 
+     if(editId) { 
+         await db.collection(dbName).doc(editId).update(obj); 
+     } else { 
+         await db.collection(dbName).add(obj); 
+     }
+     closeModal(); 
+ } catch(e) { 
+     alert('Gagal simpan ke Firebase: ' + e.message); 
+ }
+ btn.textContent="Simpan"; btn.disabled=false;
+}
+
+async function deleteContent(type,id){
+ if(!confirm('Yakin hapus item ini?')) return;
+ try { 
+     const dbName = collectionMap[type];
+     await db.collection(dbName).doc(id).delete(); 
+ } catch(e) { alert(e.message); }
+}
+
+async function saveSettings(){
+ const btn = document.getElementById('btnSaveSettings'); 
+ btn.textContent="Menyimpan..."; btn.disabled = true;
+
+ try {
+     const wa = document.getElementById('waNumber') ? document.getElementById('waNumber').value.trim().replace(/\D/g,'') : ''; 
+     const name = document.getElementById('agencyName') ? document.getElementById('agencyName').value.trim() : 'Vibe Trans Agency'; 
+     const regCreator = document.getElementById('regCreator') ? document.getElementById('regCreator').value.trim() : ''; 
+     const regAgency = document.getElementById('regAgency') ? document.getElementById('regAgency').value.trim() : ''; 
+     const loginLink = document.getElementById('loginLink') ? document.getElementById('loginLink').value.trim() : '';
+     const logoUrl = document.getElementById('logoUrl') ? document.getElementById('logoUrl').value.trim() : '';
+     
+     await db.collection('settings').doc('global').set({ 
+         wa: wa, 
+         name: name, 
+         regCreator: regCreator, 
+         regAgency: regAgency, 
+         regLink: regAgency,
+         loginLink: loginLink,
+         logoUrl: logoUrl 
+     }, {merge:true}); 
+     
+     alert('Pengaturan Berhasil Disimpan!'); 
+ } catch(e) {
+     alert('Error menyimpan data: ' + e.message);
+ }
+ 
+ btn.textContent="Simpan Pengaturan"; btn.disabled = false;
+}
+</script>
+</body>
+</html>
 
