@@ -115,10 +115,10 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
 <body>
 <div class="app">
 
-<!-- SIDEBAR MENU 10 ITEM -->
+<!-- SIDEBAR MENU 10 ITEM + 1 MENU CAPCUT PRO -->
 <aside class="sidebar" id="sidebar">
  <div class="brand">
-  <!-- KOTAK LOGO DINAMIS (Bisa Text, Bisa Gambar GitHub) -->
+  <!-- KOTAK LOGO DINAMIS -->
   <div class="brand-icon" id="brandLogoBox">
       <span id="brandLogoText">V</span>
       <img id="brandLogoImg" src="" style="display:none; width:100%; height:100%; object-fit:cover;">
@@ -143,8 +143,9 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
   <button onclick="go('faq',this)"><span>❔</span>8. FAQ</button>
   <button onclick="go('showcase',this)"><span>🌟</span>9. Creator Showcase</button>
 
-  <div class="nav-title">SISTEM</div>
-  <button onclick="bukaLoginCreator()" style="color:#f59e0b;"><span>🔒</span>10. Login Creator</button>
+  <div class="nav-title">SISTEM & TOOLS</div>
+  <button onclick="bukaLink('loginLink')" style="color:#f59e0b;"><span>🔒</span>10. Login Creator</button>
+  <button onclick="bukaLink('capcutPro')" style="color:#10b981;"><span>💎</span>11. Akses CapCut Pro</button>
  </div>
 </aside>
 
@@ -170,9 +171,10 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
    <span class="tag" style="background:rgba(255,255,255,0.2);color:white">AGENCY TERBAIK</span>
    <h1>Pusat Informasi & Edukasi Kreator Vibe Trans</h1>
    <p>Selamat datang! Temukan semua materi CapCut, event berhadiah, dan arahan terbaru dari admin di portal ini.</p>
-   <div style="display:flex; gap:10px; margin-top:20px;">
+   <div style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;">
        <button onclick="goById('pendaftaran')" style="background:#fff; color:#7652e8;">Gabung Sekarang</button>
        <button onclick="goById('tutorial')" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.5); color:white;">Mulai Belajar</button>
+       <button onclick="bukaLink('capcutPro')" style="background:linear-gradient(135deg,#10b981,#059669); border:none; color:white; padding:12px 18px; border-radius:9px; font-weight:bold; cursor:pointer; font-size:12px;">💎 CapCut Pro</button>
    </div>
   </div>
 
@@ -287,13 +289,11 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-let globalSettings = { wa: '', regAgency: '', regCreator: '', loginLink: '', logoUrl: '', regLink: '' };
+// Penambahan capcutPro di default settings
+let globalSettings = { wa: '', regAgency: '', regCreator: '', loginLink: '', logoUrl: '', regLink: '', capcutPro: '' };
 let activeFilter = 'Semua';
-
-// KITA TAMBAH AGENDAS & RULES KEMBALI AGAR DATA LAMA TIDAK HILANG!
 let data = { announcements:[], videos:[], guides:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[] };
 
-// FUNGSI LOAD DATA
 async function loadDataFromFirebase() {
     const collections = ['announcements', 'videos', 'guides', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules'];
     for (let c of collections) {
@@ -304,12 +304,11 @@ async function loadDataFromFirebase() {
         } catch (e) {}
     }
     
-    // Realtime Settings untuk Link & LOGO
+    // Realtime Settings
     db.collection('settings').doc('global').onSnapshot((doc) => {
         if (doc.exists) {
             globalSettings = doc.data();
             
-            // PERUBAHAN LOGO DINAMIS
             const logoImg = document.getElementById('brandLogoImg');
             const logoText = document.getElementById('brandLogoText');
             const logoBox = document.getElementById('brandLogoBox');
@@ -330,7 +329,6 @@ async function loadDataFromFirebase() {
     renderAll();
 }
 
-// TOGGLE MENU MOBILE
 function toggleMenu(){
  const sidebar = document.getElementById('sidebar');
  if(sidebar) {
@@ -376,7 +374,7 @@ function safe(text){ return String(text??'').replace(/[&<>"']/g,c=>({'&':'&amp;'
 function renderAll(){
  if(document.getElementById('countAnn')) document.getElementById('countAnn').textContent=data.announcements.length;
  if(document.getElementById('countVideo')) document.getElementById('countVideo').textContent=data.videos.length;
- if(document.getElementById('countEvent')) document.getElementById('countEvent').textContent=(data.events.length + data.agendas.length); // Gabungan Data Lama & Baru
+ if(document.getElementById('countEvent')) document.getElementById('countEvent').textContent=(data.events.length + data.agendas.length);
  if(document.getElementById('countShow')) document.getElementById('countShow').textContent=data.showcases.length;
 
  const renderList = (elId, array, renderFn, emptyMsg) => {
@@ -386,11 +384,9 @@ function renderAll(){
 
  renderList('annList', data.announcements.slice().reverse(), a => `<div class="item-box"><div class="card-top"><span class="tag">${safe(a.category)}</span><span class="date">${dateFormat(a.date)}</span></div><h3>${safe(a.title)}</h3><p>${safe(a.content)}</p></div>`, 'Belum ada pengumuman.');
  
- // RENDER EVENT + AGENDA LAMA (TIDAK ADA DATA HILANG)
  const combinedEvents = [...data.events, ...data.agendas].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
  renderList('eventList', combinedEvents, e => `<div class="item-box" style="border-left:4px solid #f59e0b;"><div class="card-top"><span class="tag" style="background:#fffbeb; color:#f59e0b;">Event & Agenda</span><span class="date">${dateFormat(e.date)} ${e.time ? safe(e.time)+' WIB' : ''}</span></div><h3>${safe(e.title)}</h3><p>${safe(e.content || e.desc)}</p></div>`, 'Belum ada event atau agenda.');
  
- // RENDER TIPS + SOP LAMA (TIDAK ADA DATA HILANG)
  const combinedTips = [...data.tips, ...data.rules];
  renderList('tipsList', combinedTips, t => `<div class="item-box"><h3>💡 ${safe(t.title)}</h3><p>${safe(t.content)}</p></div>`, 'Belum ada tips & trik.');
  
@@ -400,7 +396,6 @@ function renderAll(){
  document.getElementById('year').textContent=new Date().getFullYear();
 }
 
-// RENDER PANDUAN (ARAHAN + VIDEO TUTORIAL)
 function renderGuides(){
  const el = document.getElementById('guideList'); const q=(document.getElementById('guideSearch')?.value||'').toLowerCase();
  if(!el) return;
@@ -441,20 +436,15 @@ function playAnyVideo(url, title, desc=''){
 }
 function closeVideo(){ document.getElementById('videoModal').classList.remove('show'); document.getElementById('playerArea').innerHTML=''; }
 
-// LINK PENDAFTARAN AMAN (TERMASUK DATA LAMA)
 function bukaLink(jenis) {
-    // Kalau regAgency kosong, coba ambil data regLink (yang lama) biar tidak hilang
     let link = globalSettings[jenis];
-    if (jenis === 'regAgency' && !link) {
-        link = globalSettings.regLink;
-    }
+    if (jenis === 'regAgency' && !link) { link = globalSettings.regLink; }
     
     if(!link || link.trim() === '') { alert('Mohon maaf, link belum diatur oleh Admin.'); return; }
     if(!link.startsWith('http')) link = 'https://' + link;
     window.open(link, '_blank');
 }
 
-function bukaLoginCreator(){ bukaLink('loginLink'); }
 function contactAdmin(){
  if(!globalSettings.wa){alert('Nomor WA admin belum diatur.');return}
  window.open('https://wa.me/'+globalSettings.wa,'_blank');
@@ -463,5 +453,4 @@ function contactAdmin(){
 loadDataFromFirebase();
 </script>
 </body>
-</html> 
-
+</html>
