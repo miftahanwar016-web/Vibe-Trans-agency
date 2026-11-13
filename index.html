@@ -58,7 +58,7 @@ h1{font-size:25px;margin-bottom:9px}
 .card p{font-size:12px;color:var(--muted);line-height:1.7}
 .tag{display:inline-block;background:#f1edff;color:#7652e8;padding:6px 9px;border-radius:7px;font-size:10px;font-weight:bold}
 .card-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.btn{background:var(--primary);color:white;padding:11px 15px;border-radius:9px;font-size:12px;font-weight:bold; text-decoration:none; display:inline-block; transition:0.3s;}
+.btn{background:var(--primary);color:white;padding:11px 15px;border-radius:9px;font-size:12px;font-weight:bold; text-decoration:none; display:inline-block; transition:0.3s; cursor:pointer;}
 .btn:hover{opacity:0.9; transform: translateY(-1px);}
 .btn-light{background:#f0edff;color:var(--primary)}
 .btn-small{padding:7px 10px;font-size:11px}
@@ -173,7 +173,7 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
    
    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:19px;">
        <button onclick="goById('announcement')">Lihat Pengumuman →</button>
-       <button onclick="goById('pendaftaran')" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.5); color:white;">📝 Daftar Jadi Anggota</button>
+       <button onclick="bukaPendaftaran()" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.5); color:white;">📝 Daftar Jadi Anggota</button>
    </div>
   </div>
 
@@ -197,7 +197,7 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
   <div class="video-grid" id="homeVideo"><div class="empty">Memuat data dari server...</div></div>
  </section>
 
- <!-- HALAMAN PENDAFTARAN (BARU) -->
+ <!-- HALAMAN PENDAFTARAN -->
  <section class="page" id="pendaftaran">
   <h1>Pendaftaran Anggota Baru</h1>
   <p class="subtitle">Bergabunglah bersama Vibe Trans Agency dan dapatkan akses penuh ke grup VIP serta bimbingan dari nol hingga mahir.</p>
@@ -211,10 +211,9 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
        <li>Setelah disetujui, Anda akan dimasukkan ke Grup Member Resmi.</li>
    </ol>
    
-   <!-- GANTI TANDA PAGAR (#) DI BAWAH INI DENGAN LINK GRUP WA / GOOGLE FORM PENDAFTARAN BOS -->
-   <a href="#" target="_blank" class="btn" style="background:#16a36a; padding: 14px 20px; font-size: 14px; box-shadow: 0 4px 10px rgba(22,163,106,0.3);">
+   <button onclick="bukaPendaftaran()" class="btn" style="background:#16a36a; padding: 14px 20px; font-size: 14px; box-shadow: 0 4px 10px rgba(22,163,106,0.3);">
        ✅ Klik Disini Untuk Mendaftar
-   </a>
+   </button>
   </div>
  </section>
 
@@ -279,7 +278,7 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
 
 <script>
 // ==========================================
-// KODE FIREBASE BOS (SUDAH DIPASANG)
+// KODE FIREBASE BOS
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s",
@@ -295,54 +294,46 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const SETTINGS = 'vibe_agency_settings_v1';
+let globalSettings = { wa: '', name: 'Vibe Trans Agency', regLink: '' };
 let activeFilter = 'Semua';
 let data = { announcements:[], videos:[], guides:[], agendas:[], rules:[], faqs:[] };
 
-// FUNGSI LOAD DATA DARI FIREBASE
+// FUNGSI LOAD DATA (TERMASUK SETTINGS SECARA REAL-TIME) DARI FIREBASE
 async function loadDataFromFirebase() {
     const collections = ['announcements', 'videos', 'guides', 'agendas', 'rules', 'faqs'];
     for (let c of collections) {
         data[c] = [];
         try {
             const snapshot = await db.collection(c).get();
-            snapshot.forEach(doc => {
-                data[c].push({ id: doc.id, ...doc.data() });
-            });
-        } catch (e) {
-            console.error("Gagal load " + c, e);
-        }
+            snapshot.forEach(doc => { data[c].push({ id: doc.id, ...doc.data() }); });
+        } catch (e) { console.error("Gagal load " + c, e); }
     }
+    
+    // Dengarkan perubahan pengaturan (seperti Link Pendaftaran) secara Real-Time
+    db.collection('settings').doc('global').onSnapshot((doc) => {
+        if (doc.exists) {
+            globalSettings = doc.data();
+        }
+    });
+
     renderAll();
 }
 
-function settings(){
- try{return JSON.parse(localStorage.getItem(SETTINGS))||{wa:'',name:'Vibe Trans Agency'}}
- catch(e){return {wa:'',name:'Vibe Trans Agency'}}
-}
-
-// ==========================================
-// FUNGSI TOGGLE MENU + KLIK SEMBARANG OVERLAY
-// ==========================================
+// TOGGLE MENU KHUSUS MOBILE (KLIK SEMBARANG)
 function toggleMenu(){
  const sidebar = document.getElementById('sidebar');
  if(sidebar) {
      sidebar.classList.toggle('open');
-     
      let overlay = document.getElementById('sidebarOverlay');
      if (sidebar.classList.contains('open')) {
          if (!overlay) {
              overlay = document.createElement('div');
              overlay.id = 'sidebarOverlay';
-             overlay.style.position = 'fixed';
-             overlay.style.inset = '0';
-             overlay.style.background = 'rgba(0,0,0,0.5)';
-             overlay.style.zIndex = '15';
+             overlay.style.position = 'fixed'; overlay.style.inset = '0';
+             overlay.style.background = 'rgba(0,0,0,0.5)'; overlay.style.zIndex = '15';
              document.body.appendChild(overlay);
-             
              overlay.addEventListener('click', function() {
-                 sidebar.classList.remove('open');
-                 this.remove();
+                 sidebar.classList.remove('open'); this.remove();
              });
          }
      } else {
@@ -375,25 +366,15 @@ function go(id,btn){
 }
 
 function goById(id){go(id)}
-
 function dateFormat(date){
- if(!date)return '-';
- const d=new Date(date+'T00:00:00');
+ if(!date)return '-'; const d=new Date(date+'T00:00:00');
  return isNaN(d)?date:d.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
 }
-
-function safe(text){
- return String(text??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+function safe(text){ return String(text??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 function renderAll(){
- renderHome();
- renderAnnouncements();
- renderGuides();
- renderVideos();
- renderAgenda();
- renderRules();
- renderFAQ();
+ renderHome(); renderAnnouncements(); renderGuides();
+ renderVideos(); renderAgenda(); renderRules(); renderFAQ();
  const elYear = document.getElementById('year');
  if(elYear) elYear.textContent=new Date().getFullYear();
 }
@@ -406,12 +387,9 @@ function renderHome(){
 
  if(document.getElementById('homeAnn')) {
    document.getElementById('homeAnn').innerHTML=data.announcements.slice().reverse().slice(0,2).map(a=>`
-    <div class="announcement">
-     <div class="card-top"><span class="tag">${safe(a.category)}</span><span class="date">${dateFormat(a.date)}</span></div>
-     <h3>${safe(a.title)}</h3><p>${safe(a.content)}</p>
-    </div>`).join('')||'<div class="empty">Belum ada pengumuman.</div>';
+    <div class="announcement"><div class="card-top"><span class="tag">${safe(a.category)}</span><span class="date">${dateFormat(a.date)}</span></div>
+     <h3>${safe(a.title)}</h3><p>${safe(a.content)}</p></div>`).join('')||'<div class="empty">Belum ada pengumuman.</div>';
  }
-
  if(document.getElementById('homeVideo')) {
    document.getElementById('homeVideo').innerHTML=data.videos.slice(0,3).map(v=>videoCard(v)).join('')||'<div class="empty">Belum ada video.</div>';
  }
@@ -420,54 +398,30 @@ function renderHome(){
 function renderAnnouncements(){
  const el=document.getElementById('annList');
  if(el) el.innerHTML=data.announcements.slice().reverse().map(a=>`
- <div class="announcement">
-  <div class="card-top"><span class="tag">${safe(a.category)}</span><span class="date">${dateFormat(a.date)}</span></div>
-  <h3>${safe(a.title)}</h3>
-  <p>${safe(a.content)}</p>
- </div>`).join('')||'<div class="empty">Belum ada pengumuman.</div>';
+ <div class="announcement"><div class="card-top"><span class="tag">${safe(a.category)}</span><span class="date">${dateFormat(a.date)}</span></div>
+  <h3>${safe(a.title)}</h3><p>${safe(a.content)}</p></div>`).join('')||'<div class="empty">Belum ada pengumuman.</div>';
 }
 
 function renderGuides(){
- const searchEl = document.getElementById('guideSearch');
- const el = document.getElementById('guideList');
- if(!el) return;
- const q=(searchEl?.value||'').toLowerCase();
+ const searchEl = document.getElementById('guideSearch'); const el = document.getElementById('guideList');
+ if(!el) return; const q=(searchEl?.value||'').toLowerCase();
  el.innerHTML=data.guides.filter(g=>(g.title+' '+g.content+' '+g.category).toLowerCase().includes(q)).map(g=>`
- <div class="guide-item">
-  <span class="tag">${safe(g.category)}</span>
-  <h3 style="margin-top:12px">${safe(g.title)}</h3>
-  <details><summary>Baca selengkapnya</summary><p style="margin-top:10px">${safe(g.content)}</p></details>
- </div>`).join('')||'<div class="empty">Panduan tidak ditemukan.</div>';
+ <div class="guide-item"><span class="tag">${safe(g.category)}</span><h3 style="margin-top:12px">${safe(g.title)}</h3>
+ <details><summary>Baca selengkapnya</summary><p style="margin-top:10px">${safe(g.content)}</p></details></div>`).join('')||'<div class="empty">Panduan tidak ditemukan.</div>';
 }
 
 function videoCard(v){
- return `<div class="video-card">
-  <div class="video-thumb" onclick="playVideo('${v.id}')">▶</div>
-  <div class="video-body">
-   <span class="tag">${safe(v.category)}</span>
-   <h3>${safe(v.title)}</h3>
-   <p>${safe(v.desc)}</p>
-   <div class="video-meta">
-    <button class="btn btn-small" onclick="playVideo('${v.id}')">Tonton Video</button>
-    <span style="font-size:10px;color:#aaa">Tutorial</span>
-   </div>
-  </div>
- </div>`;
+ return `<div class="video-card"><div class="video-thumb" onclick="playVideo('${v.id}')">▶</div>
+  <div class="video-body"><span class="tag">${safe(v.category)}</span><h3>${safe(v.title)}</h3><p>${safe(v.desc)}</p>
+   <div class="video-meta"><button class="btn btn-small" onclick="playVideo('${v.id}')">Tonton Video</button><span style="font-size:10px;color:#aaa">Tutorial</span></div>
+  </div></div>`;
 }
 
 function renderVideos(){
- const searchEl = document.getElementById('videoSearch');
- const filterEl = document.getElementById('videoFilters');
- const listEl = document.getElementById('videoList');
- if(!listEl) return;
- 
- const q=(searchEl?.value||'').toLowerCase();
+ const searchEl = document.getElementById('videoSearch'); const filterEl = document.getElementById('videoFilters'); const listEl = document.getElementById('videoList');
+ if(!listEl) return; const q=(searchEl?.value||'').toLowerCase();
  const categories=['Semua',...new Set(data.videos.map(v=>v.category))];
- if(filterEl) {
-   filterEl.innerHTML=categories.map(c=>`
-   <button class="${activeFilter===c?'active':''}" onclick="setFilter('${safe(c)}')">${safe(c)}</button>
-   `).join('');
- }
+ if(filterEl) { filterEl.innerHTML=categories.map(c=>`<button class="${activeFilter===c?'active':''}" onclick="setFilter('${safe(c)}')">${safe(c)}</button>`).join(''); }
  const list=data.videos.filter(v=>(activeFilter==='Semua'||v.category===activeFilter)&&(v.title+' '+v.desc+' '+v.category).toLowerCase().includes(q));
  listEl.innerHTML=list.map(videoCard).join('')||'<div class="empty">Video tidak ditemukan.</div>';
 }
@@ -478,66 +432,60 @@ function youtubeId(url){
   const u=new URL(url);
   if(u.hostname.includes('youtu.be'))return u.pathname.slice(1);
   if(u.searchParams.get('v'))return u.searchParams.get('v');
-  const m=u.pathname.match(/\/(?:embed|shorts)\/([^/]+)/);
-  return m?m[1]:'';
+  const m=u.pathname.match(/\/(?:embed|shorts)\/([^/]+)/); return m?m[1]:'';
  }catch(e){return ''}
 }
 
 function playVideo(id){
- const v=data.videos.find(x=>x.id===id);
- if(!v)return;
- const videoId=youtubeId(v.url);
- if(!videoId){alert('Link video YouTube tidak valid.');return}
+ const v=data.videos.find(x=>x.id===id); if(!v)return;
+ const videoId=youtubeId(v.url); if(!videoId){alert('Link video YouTube tidak valid.');return}
  document.getElementById('playerTitle').textContent=v.title;
  document.getElementById('playerDesc').textContent=v.desc;
- document.getElementById('playerArea').innerHTML=
- `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+ document.getElementById('playerArea').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
  document.getElementById('videoModal').classList.add('show');
 }
 function closeVideo(){
- const mod = document.getElementById('videoModal');
- if(mod) mod.classList.remove('show');
- const area = document.getElementById('playerArea');
- if(area) area.innerHTML='';
+ const mod = document.getElementById('videoModal'); if(mod) mod.classList.remove('show');
+ const area = document.getElementById('playerArea'); if(area) area.innerHTML='';
 }
 
 function renderAgenda(){
- const el = document.getElementById('agendaList');
- if(!el) return;
+ const el = document.getElementById('agendaList'); if(!el) return;
  el.innerHTML=data.agendas.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(a=>`
- <div class="agenda-item">
-  <div class="agenda-date">${safe((a.date||'').slice(8,10))}<br>${safe((a.date||'').slice(5,7))}</div>
-  <div style="flex:1">
-   <h3 style="font-size:14px;margin-bottom:6px">${safe(a.title)}</h3>
-   <p class="date">${dateFormat(a.date)} · ${safe(a.time||'-')} WIB</p>
-   <p style="font-size:12px;color:#888;margin-top:8px;line-height:1.6">${safe(a.desc)}</p>
-  </div>
- </div>`).join('')||'<div class="empty">Belum ada agenda.</div>';
+ <div class="agenda-item"><div class="agenda-date">${safe((a.date||'').slice(8,10))}<br>${safe((a.date||'').slice(5,7))}</div>
+ <div style="flex:1"><h3 style="font-size:14px;margin-bottom:6px">${safe(a.title)}</h3><p class="date">${dateFormat(a.date)} · ${safe(a.time||'-')} WIB</p><p style="font-size:12px;color:#888;margin-top:8px;line-height:1.6">${safe(a.desc)}</p></div></div>`).join('')||'<div class="empty">Belum ada agenda.</div>';
 }
 
 function renderRules(){
- const el = document.getElementById('rulesList');
- if(!el) return;
- el.innerHTML=data.rules.map(r=>`
- <div class="guide-item">
-  <h3>${safe(r.title)}</h3><p>${safe(r.content)}</p>
- </div>`).join('')||'<div class="empty">Belum ada peraturan.</div>';
+ const el = document.getElementById('rulesList'); if(!el) return;
+ el.innerHTML=data.rules.map(r=>`<div class="guide-item"><h3>${safe(r.title)}</h3><p>${safe(r.content)}</p></div>`).join('')||'<div class="empty">Belum ada peraturan.</div>';
 }
 
 function renderFAQ(){
- const el = document.getElementById('faqList');
- if(!el) return;
- el.innerHTML=data.faqs.map(f=>`
- <div class="faq-item">
-  <details><summary style="font-weight:bold;font-size:13px;cursor:pointer">${safe(f.question)}</summary>
-  <p style="margin-top:12px">${safe(f.answer)}</p></details>
- </div>`).join('')||'<div class="empty">Belum ada FAQ.</div>';
+ const el = document.getElementById('faqList'); if(!el) return;
+ el.innerHTML=data.faqs.map(f=>`<div class="faq-item"><details><summary style="font-weight:bold;font-size:13px;cursor:pointer">${safe(f.question)}</summary><p style="margin-top:12px">${safe(f.answer)}</p></details></div>`).join('')||'<div class="empty">Belum ada FAQ.</div>';
 }
 
+// BUKA LINK PENDAFTARAN DARI FIREBASE SETTINGS (VERSI PERBAIKAN)
+function bukaPendaftaran() {
+    let linkTarget = globalSettings.regLink;
+    if(!linkTarget || linkTarget.trim() === '') {
+        alert('Mohon maaf, link pendaftaran belum diatur oleh Admin Agency.'); 
+        return;
+    }
+    
+    // Pastikan link valid berawalan http atau https agar browser tidak bingung
+    if (!linkTarget.startsWith('http://') && !linkTarget.startsWith('https://')) {
+        linkTarget = 'https://' + linkTarget;
+    }
+    
+    window.open(linkTarget, '_blank');
+}
+
+// BUKA LINK WA ADMIN DARI FIREBASE SETTINGS
 function contactAdmin(){
- const s=settings();
- if(!s.wa){alert('Nomor WhatsApp admin belum diatur.');return}
- window.open('https://wa.me/'+s.wa+'?text='+encodeURIComponent('Halo Admin Agency, saya membutuhkan bantuan.'),'_blank');
+ if(!globalSettings.wa){alert('Nomor WhatsApp admin belum diatur.');return}
+ window.open('https://wa.me/'+globalSettings.wa+'?text='+encodeURIComponent('Halo Admin Agency, saya membutuhkan bantuan.'),'_blank');
 }
 
 // JALANKAN SAAT WEB DIBUKA
