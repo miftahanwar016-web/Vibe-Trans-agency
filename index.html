@@ -180,10 +180,10 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
   </div>
  </section>
 
- <!-- 2. PANDUAN CREATOR -->
+ <!-- 2. PANDUAN CREATOR (ARAHAN & VIDEO TUTORIAL) -->
  <section class="page" id="guide">
   <h1>Panduan Menjadi Kreator CapCut</h1>
-  <p class="subtitle">Pelajari alur kerja, standar konten, dan peraturan resmi agency.</p>
+  <p class="subtitle">Pelajari alur kerja, standar konten, dan peraturan resmi agency beserta video arahannya.</p>
   <input class="searchbar" id="guideSearch" placeholder="Cari panduan (contoh: 'SOP', 'Syarat')..." oninput="renderGuides()">
   <div id="guideList"><div class="empty">Memuat data...</div></div>
  </section>
@@ -256,7 +256,7 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
 </main>
 </div>
 
-<!-- VIDEO MODAL -->
+<!-- VIDEO MODAL (Bisa Dipakai untuk Menu Panduan & Menu Video Tutorial) -->
 <div class="modal" id="videoModal">
  <div class="modal-box">
   <div style="display:flex;justify-content:space-between;align-items:center; margin-bottom:15px;">
@@ -355,7 +355,6 @@ function renderAll(){
  if(document.getElementById('countEvent')) document.getElementById('countEvent').textContent=data.events.length;
  if(document.getElementById('countShow')) document.getElementById('countShow').textContent=data.showcases.length;
 
- // Render Lists
  const renderList = (elId, array, renderFn, emptyMsg) => {
      const el = document.getElementById(elId);
      if(el) el.innerHTML = array.length ? array.map(renderFn).join('') : `<div class="empty">${emptyMsg}</div>`;
@@ -370,9 +369,17 @@ function renderAll(){
  document.getElementById('year').textContent=new Date().getFullYear();
 }
 
+// RENDER PANDUAN (ARAHAN + VIDEO TUTORIAL)
 function renderGuides(){
  const el = document.getElementById('guideList'); const q=(document.getElementById('guideSearch')?.value||'').toLowerCase();
- if(el) el.innerHTML=data.guides.filter(g=>(g.title+' '+g.content+' '+g.category).toLowerCase().includes(q)).map(g=>`<div class="item-box"><span class="tag">${safe(g.category)}</span><h3 style="margin-top:12px">${safe(g.title)}</h3><details><summary style="font-size:12px; color:#7652e8; cursor:pointer; margin-top:10px;">Baca selengkapnya</summary><p style="margin-top:10px">${safe(g.content)}</p></details></div>`).join('')||'<div class="empty">Panduan tidak ditemukan.</div>';
+ if(!el) return;
+ el.innerHTML=data.guides.filter(g=>(g.title+' '+g.content+' '+g.category).toLowerCase().includes(q)).map(g=>`
+ <div class="item-box" style="display:block;">
+  <span class="tag">${safe(g.category)}</span>
+  <h3 style="margin-top:12px">${safe(g.title)}</h3>
+  <div style="font-size:13px; color:#666; line-height:1.7; white-space:pre-wrap; margin-top:10px;">${safe(g.content)}</div>
+  ${g.videoUrl ? `<button class="btn btn-small" style="margin-top:15px; background:#f0edff; color:#7652e8; border:1px solid #d8ccff;" onclick="playAnyVideo('${safe(g.videoUrl)}', '${safe(g.title).replace(/'/g, "\\'")}')">▶ Tonton Video Panduan</button>` : ''}
+ </div>`).join('')||'<div class="empty">Panduan tidak ditemukan.</div>';
 }
 
 function videoCard(v){
@@ -389,15 +396,21 @@ function renderVideos(){
  listEl.innerHTML=data.videos.filter(v=>(activeFilter==='Semua'||v.category===activeFilter)&&(v.title+' '+v.desc+' '+v.category).toLowerCase().includes(q)).map(videoCard).join('')||'<div class="empty">Video tidak ditemukan.</div>';
 }
 
-// FUNGSI YOUTUBE
+// FUNGSI YOUTUBE (Untuk Menu Video Tutorial)
 function playVideo(id){
  const v=data.videos.find(x=>x.id===id); if(!v)return;
- let vidId=''; try{ const u=new URL(v.url); vidId = u.hostname.includes('youtu.be') ? u.pathname.slice(1) : (u.searchParams.get('v') || (u.pathname.match(/\/(?:embed|shorts)\/([^/]+)/)||[])[1]); }catch(e){}
+ playAnyVideo(v.url, v.title, v.desc);
+}
+
+// FUNGSI YOUTUBE (Bisa dipanggil dari mana saja, termasuk Panduan)
+function playAnyVideo(url, title, desc=''){
+ let vidId=''; try{ const u=new URL(url); vidId = u.hostname.includes('youtu.be') ? u.pathname.slice(1) : (u.searchParams.get('v') || (u.pathname.match(/\/(?:embed|shorts)\/([^/]+)/)||[])[1]); }catch(e){}
  if(!vidId){alert('Link video YouTube tidak valid.');return}
- document.getElementById('playerTitle').textContent=v.title; document.getElementById('playerDesc').textContent=v.desc;
+ document.getElementById('playerTitle').textContent=title; document.getElementById('playerDesc').textContent=desc;
  document.getElementById('playerArea').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${vidId}?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
  document.getElementById('videoModal').classList.add('show');
 }
+
 function closeVideo(){ document.getElementById('videoModal').classList.remove('show'); document.getElementById('playerArea').innerHTML=''; }
 
 // LINK & TOMBOL
