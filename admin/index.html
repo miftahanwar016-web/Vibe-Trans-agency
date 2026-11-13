@@ -13,7 +13,10 @@
 .app{display:none;min-height:100vh} .app.show{display:flex}
 .sidebar{width:260px;background:#1e1e2d;border-right:1px solid #2a2a3c;padding:25px 17px;position:fixed;inset:0 auto 0 0;overflow-y:auto;z-index:20; transition: transform 0.3s ease;}
 .brand{display:flex;align-items:center;gap:11px;margin-bottom:25px;padding:0 8px}
+
+/* KOTAK LOGO */
 .brand-icon{background:linear-gradient(135deg,#f59e0b,#ef4444);width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:white;font-size:21px;font-weight:bold; overflow:hidden;}
+
 .nav-title{font-size:10px;color:#888;margin:20px 10px 8px;font-weight:bold;letter-spacing:1px}
 .nav button{width:100%;display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:transparent;text-align:left;color:#a0a0b2;font-size:13px;margin:2px 0; transition:0.2s;}
 .nav button:hover,.nav button.active{background:rgba(255,255,255,0.1);color:white;}
@@ -48,7 +51,6 @@
         <h2 style="margin-bottom:10px;">Login Admin</h2>
         <input type="password" id="adminPassword" style="width:100%;padding:15px;border:2px solid #ddd;border-radius:10px;text-align:center;margin-bottom:20px;" placeholder="Password">
         <button class="btn" onclick="verifyLogin()">Masuk</button>
-        <!-- Perubahan link kembali ke luar folder (../) -->
         <a href="../index.html" style="display:block; margin-top:20px; font-size:13px; color:#85859a; text-decoration:none;">← Kembali ke Halaman Utama</a>
     </div>
 </div>
@@ -97,6 +99,10 @@
 
    <div class="form-group"><label>Nama Agency</label><input id="agencyName" placeholder="Vibe Trans Agency"></div>
    <div class="form-group"><label>Nomor WA Admin (Contoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
+   
+   <!-- TAMBAHAN LINK CAPCUT PRO -->
+   <div class="form-group"><label style="color:#10b981;">💎 Link Akses CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
+
    <div class="form-group"><label>Link Form Daftar Creator</label><input id="regCreator" placeholder="https://form..."></div>
    <div class="form-group"><label>Link Grup Gabung Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
    <div class="form-group"><label>Link Login Creator (Dashboard)</label><input id="loginLink" placeholder="https://capcut.com/..."></div>
@@ -159,7 +165,6 @@ function verifyLogin() {
     } 
 }
 
-// Perubahan link keluar mengarah ke ../index.html
 function logoutAdmin(){ sessionStorage.removeItem('isAdmin'); window.location.href = '../index.html'; }
 
 let data = { announcements:[], videos:[], guides:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[] };
@@ -183,12 +188,9 @@ async function loadDataFromFirebase() {
         try { 
             const snapshot = await db.collection(c).get(); 
             snapshot.forEach(doc => { data[c].push({ id: doc.id, ...doc.data() }); }); 
-        } catch (e) {
-            console.error("Gagal load koleksi: ", c);
-        } 
+        } catch (e) {} 
     }
     
-    // ON SNAPSHOT AGAR FORM TIDAK RESET SAAT DI REFRESH
     db.collection('settings').doc('global').onSnapshot((doc) => {
         if(doc.exists) { 
             const s = doc.data(); 
@@ -198,6 +200,7 @@ async function loadDataFromFirebase() {
             if(document.getElementById('regAgency') && s.regAgency) document.getElementById('regAgency').value = s.regAgency;
             if(document.getElementById('loginLink') && s.loginLink) document.getElementById('loginLink').value = s.loginLink;
             if(document.getElementById('logoUrl') && s.logoUrl) document.getElementById('logoUrl').value = s.logoUrl;
+            if(document.getElementById('capcutPro') && s.capcutPro) document.getElementById('capcutPro').value = s.capcutPro;
 
             const logoImg = document.getElementById('brandLogoImg');
             const logoText = document.getElementById('brandLogoText');
@@ -213,7 +216,6 @@ async function loadDataFromFirebase() {
     renderAll();
 }
 
-// LOGIKA NAVIGASI SIDEBAR
 function go(id,btn){
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active');
  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); if(btn)btn.classList.add('active');
@@ -326,6 +328,7 @@ async function saveSettings(){
      const regAgency = document.getElementById('regAgency') ? document.getElementById('regAgency').value.trim() : ''; 
      const loginLink = document.getElementById('loginLink') ? document.getElementById('loginLink').value.trim() : '';
      const logoUrl = document.getElementById('logoUrl') ? document.getElementById('logoUrl').value.trim() : '';
+     const capcutPro = document.getElementById('capcutPro') ? document.getElementById('capcutPro').value.trim() : '';
      
      await db.collection('settings').doc('global').set({ 
          wa: wa, 
@@ -334,7 +337,8 @@ async function saveSettings(){
          regAgency: regAgency, 
          regLink: regAgency,
          loginLink: loginLink,
-         logoUrl: logoUrl 
+         logoUrl: logoUrl,
+         capcutPro: capcutPro
      }, {merge:true}); 
      
      alert('Pengaturan Berhasil Disimpan!'); 
@@ -347,4 +351,3 @@ async function saveSettings(){
 </script>
 </body>
 </html>
-
