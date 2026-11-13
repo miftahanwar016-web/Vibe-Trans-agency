@@ -135,9 +135,6 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
 
   <div class="nav-title">BANTUAN</div>
   <button onclick="go('help',this)"><span>💬</span>Pusat Bantuan</button>
-
-  <div class="nav-title">PENGELOLAAN</div>
-  <button onclick="adminLogin()"><span>⚙</span>Dashboard Admin</button>
  </div>
 
  <div class="sidebar-footer">
@@ -318,10 +315,6 @@ function go(id,btn){
  window.scrollTo(0,0);
 }
 function goById(id){go(id)}
-
-function adminLogin(){
- window.location.href = 'admin.html';
-}
 
 function dateFormat(date){
  if(!date)return '-';
