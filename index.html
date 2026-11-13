@@ -18,10 +18,10 @@ button,input,textarea,select{font:inherit}
 button{cursor:pointer;border:0}
 .app{display:flex;min-height:100vh}
 
-/* SIDEBAR KIRI */
+/* SIDEBAR KIRI & LOGO */
 .sidebar{width:260px;background:#1e1e2d;border-right:1px solid #2a2a3c;padding:25px 17px;position:fixed;inset:0 auto 0 0;overflow-y:auto;z-index:20; transition: transform 0.3s ease;}
 .brand{display:flex;align-items:center;gap:11px;margin-bottom:25px;padding:0 8px}
-.brand-icon{background:linear-gradient(135deg,#7652e8,#ad8bff);width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:white;font-size:21px;font-weight:bold}
+.brand-icon{background:linear-gradient(135deg,#7652e8,#ad8bff);width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:white;font-size:21px;font-weight:bold; overflow:hidden;}
 .brand h2{font-size:17px; color: white;}
 .brand small{color:#aaa;font-size:10px}
 .nav-title{font-size:10px;color:#888;margin:20px 10px 8px;font-weight:bold;letter-spacing:1px}
@@ -118,7 +118,11 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
 <!-- SIDEBAR MENU 10 ITEM -->
 <aside class="sidebar" id="sidebar">
  <div class="brand">
-  <div class="brand-icon">V</div>
+  <!-- KOTAK LOGO DINAMIS (Bisa Text, Bisa Gambar GitHub) -->
+  <div class="brand-icon" id="brandLogoBox">
+      <span id="brandLogoText">V</span>
+      <img id="brandLogoImg" src="" style="display:none; width:100%; height:100%; object-fit:cover;">
+  </div>
   <div>
    <h2>VIBE TRANS</h2>
    <small>AGENCY PORTAL</small>
@@ -154,7 +158,7 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
    </div>
   </div>
   <div class="top-actions">
-   <div class="avatar" style="background:#f1edff; color:#7652e8;" onclick="contactAdmin()">💬</div>
+   <div class="avatar" style="background:#f1edff; color:#7652e8; cursor:pointer;" onclick="contactAdmin()">💬</div>
   </div>
  </header>
 
@@ -180,7 +184,7 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
   </div>
  </section>
 
- <!-- 2. PANDUAN CREATOR (ARAHAN & VIDEO TUTORIAL) -->
+ <!-- 2. PANDUAN CREATOR -->
  <section class="page" id="guide">
   <h1>Panduan Menjadi Kreator CapCut</h1>
   <p class="subtitle">Pelajari alur kerja, standar konten, dan peraturan resmi agency beserta video arahannya.</p>
@@ -256,7 +260,7 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
 </main>
 </div>
 
-<!-- VIDEO MODAL (Bisa Dipakai untuk Menu Panduan & Menu Video Tutorial) -->
+<!-- VIDEO MODAL -->
 <div class="modal" id="videoModal">
  <div class="modal-box">
   <div style="display:flex;justify-content:space-between;align-items:center; margin-bottom:15px;">
@@ -283,7 +287,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-let globalSettings = { wa: '', regAgency: '', regCreator: '', loginLink: '' };
+let globalSettings = { wa: '', regAgency: '', regCreator: '', loginLink: '', logoUrl: '' };
 let activeFilter = 'Semua';
 let data = { announcements:[], videos:[], guides:[], events:[], tips:[], faqs:[], showcases:[] };
 
@@ -298,9 +302,27 @@ async function loadDataFromFirebase() {
         } catch (e) {}
     }
     
-    // Realtime Settings
+    // Realtime Settings untuk Link & LOGO
     db.collection('settings').doc('global').onSnapshot((doc) => {
-        if (doc.exists) globalSettings = doc.data();
+        if (doc.exists) {
+            globalSettings = doc.data();
+            
+            // PERUBAHAN LOGO DINAMIS (DARI GITHUB/URL)
+            const logoImg = document.getElementById('brandLogoImg');
+            const logoText = document.getElementById('brandLogoText');
+            const logoBox = document.getElementById('brandLogoBox');
+            
+            if (globalSettings.logoUrl && globalSettings.logoUrl.trim() !== '') {
+                logoImg.src = globalSettings.logoUrl;
+                logoImg.style.display = 'block';
+                logoText.style.display = 'none';
+                logoBox.style.background = 'transparent'; 
+            } else {
+                logoImg.style.display = 'none';
+                logoText.style.display = 'block';
+                logoBox.style.background = 'linear-gradient(135deg,#7652e8,#ad8bff)';
+            }
+        }
     });
 
     renderAll();
@@ -337,7 +359,7 @@ function go(id,btn){
  const pt = document.getElementById('pageTitle');
  if(pt && titles[id]) {
      pt.textContent = titles[id];
-     pt.nextElementSibling.textContent = btn.innerText.substring(btn.innerText.indexOf('.') + 2); // Ambil teks menu
+     pt.nextElementSibling.textContent = btn.innerText.substring(btn.innerText.indexOf('.') + 2);
  }
  
  const s = document.getElementById('sidebar');
@@ -369,7 +391,6 @@ function renderAll(){
  document.getElementById('year').textContent=new Date().getFullYear();
 }
 
-// RENDER PANDUAN (ARAHAN + VIDEO TUTORIAL)
 function renderGuides(){
  const el = document.getElementById('guideList'); const q=(document.getElementById('guideSearch')?.value||'').toLowerCase();
  if(!el) return;
@@ -396,13 +417,11 @@ function renderVideos(){
  listEl.innerHTML=data.videos.filter(v=>(activeFilter==='Semua'||v.category===activeFilter)&&(v.title+' '+v.desc+' '+v.category).toLowerCase().includes(q)).map(videoCard).join('')||'<div class="empty">Video tidak ditemukan.</div>';
 }
 
-// FUNGSI YOUTUBE (Untuk Menu Video Tutorial)
 function playVideo(id){
  const v=data.videos.find(x=>x.id===id); if(!v)return;
  playAnyVideo(v.url, v.title, v.desc);
 }
 
-// FUNGSI YOUTUBE (Bisa dipanggil dari mana saja, termasuk Panduan)
 function playAnyVideo(url, title, desc=''){
  let vidId=''; try{ const u=new URL(url); vidId = u.hostname.includes('youtu.be') ? u.pathname.slice(1) : (u.searchParams.get('v') || (u.pathname.match(/\/(?:embed|shorts)\/([^/]+)/)||[])[1]); }catch(e){}
  if(!vidId){alert('Link video YouTube tidak valid.');return}
@@ -410,10 +429,8 @@ function playAnyVideo(url, title, desc=''){
  document.getElementById('playerArea').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${vidId}?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
  document.getElementById('videoModal').classList.add('show');
 }
-
 function closeVideo(){ document.getElementById('videoModal').classList.remove('show'); document.getElementById('playerArea').innerHTML=''; }
 
-// LINK & TOMBOL
 function bukaLink(jenis) {
     let link = globalSettings[jenis];
     if(!link) { alert('Link belum diatur Admin.'); return; }
