@@ -193,7 +193,7 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
   </div>
  </section>
 
- <!-- 3. BIMBINGAN PENDAFTARAN (DENGAN 2 TOMBOL GRUP WA) -->
+ <!-- 3. BIMBINGAN PENDAFTARAN -->
  <section class="page" id="bimbingan">
   <div class="hero" style="background:linear-gradient(135deg, #8b5cf6, #6d28d9); padding:30px; box-shadow:0 10px 30px rgba(139,92,246,0.2); margin-bottom:25px;">
       <h1 style="font-size:24px;">Group Bimbingan & Mentahan</h1>
@@ -218,6 +218,8 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
 
  <!-- 4. GROUP RESMI (TERKUNCI) -->
  <section class="page" id="group">
+    
+    <!-- TAMPILAN LOCK SCREEN -->
     <div id="groupLockScreen" style="max-width:400px; margin:50px auto; text-align:center;">
         <div class="item-box" style="padding:40px 30px; border-color:var(--warn); box-shadow: 0 10px 30px rgba(245,158,11,0.15);">
             <div style="font-size:50px; margin-bottom:15px; filter: drop-shadow(0 4px 6px rgba(245,158,11,0.4));">🔒</div>
@@ -228,6 +230,7 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
         </div>
     </div>
 
+    <!-- TAMPILAN ISI GRUP (TERSEMBUNYI SEBELUM KUNCI BENAR) -->
     <div id="groupContent" style="display:none;">
         <div class="hero" style="background:linear-gradient(135deg, #f59e0b, #d97706); padding:30px; box-shadow:0 10px 30px rgba(245,158,11,0.2);">
             <h1 style="font-size:24px;">Group Resmi Vibe Trans</h1>
@@ -306,16 +309,20 @@ function renderSkeleton(elId, count=2) {
     for(let i=0; i<count; i++) html += `<div class="skel-box"><div class="skeleton skel-title"></div><div class="skeleton skel-text"></div><div class="skeleton skel-text short"></div></div>`;
     el.innerHTML = html;
 }
-['guideList','videoList','annList','eventList','tipsList','faqList','showcaseList','mentahanList'].forEach(id => renderSkeleton(id));
+['guideList','mentahanList','videoList','annList','eventList','tipsList','faqList','showcaseList'].forEach(id => renderSkeleton(id));
 
 const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
 firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 let globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '', groupBimbingan: '', groupMentahan: '', regCreatorDesc: '' };
+
+// ⚠️ ARRAY DATA SUDAH DILENGKAPI KEYS & MENTAHAN
 let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
 
 async function loadDataFromFirebase() {
+    // ⚠️ MEMASTIKAN KOLEKSI KEYS DAN MENTAHAN DIAMBIL DARI FIREBASE
     const collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules', 'guides', 'keys', 'mentahans'];
     for (let c of collections) { data[c] = []; try { const snap = await db.collection(c).get(); snap.forEach(doc => { data[c].push({ id: doc.id, ...doc.data() }); }); } catch (e) {} }
+    
     db.collection('settings').doc('global').onSnapshot((doc) => {
         if (doc.exists) {
             globalSettings = doc.data();
@@ -370,7 +377,8 @@ function renderAll(){
  renderList('annList', data.announcements.slice().reverse(), a => `<div class="item-box" style="padding:15px;"><div class="card-top"><span class="tag">${safe(a.category)}</span><span class="date">${dateFormat(a.date)}</span></div><h3>${safe(a.title)}</h3><p>${safe(a.content)}</p></div>`, 'Belum ada pengumuman.');
  const combinedEvents = [...data.events, ...data.agendas].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
  renderList('eventList', combinedEvents, e => `<div class="item-box" style="padding:15px; border-left:4px solid var(--warn);"><div class="card-top"><span class="tag" style="background:rgba(245,158,11,0.1); color:var(--warn);">Event/Agenda</span><span class="date">${dateFormat(e.date)} ${e.time ? safe(e.time)+' WIB' : ''}</span></div><h3>${safe(e.title)}</h3><p>${safe(e.content || e.desc)}</p></div>`, 'Belum ada event.');
- const combinedTips = [...data.tips, ...data.rules]; renderList('tipsList', combinedTips, t => `<div class="item-box"><h3>💡 ${safe(t.title)}</h3><p>${safe(t.content)}</p></div>`, 'Belum ada tips & SOP.');
+ const combinedTips = [...data.tips, ...data.rules];
+ renderList('tipsList', combinedTips, t => `<div class="item-box"><h3>💡 ${safe(t.title)}</h3><p>${safe(t.content)}</p></div>`, 'Belum ada tips & SOP.');
  renderList('faqList', data.faqs, f => `<div class="item-box"><details><summary style="font-weight:bold; cursor:pointer; color:var(--primary);">${safe(f.question)}</summary><p style="margin-top:15px; padding-left:15px; border-left:2px solid var(--border);">${safe(f.answer)}</p></details></div>`, 'Belum ada FAQ.');
  renderList('showcaseList', data.showcases, s => `<div class="showcase-card"><div class="showcase-ava">${safe(s.name).charAt(0).toUpperCase()}</div><h3>${safe(s.name)}</h3><p style="margin:10px 0; color:var(--primary); font-weight:bold;">${safe(s.achievement)}</p><a href="${safe(s.link)}" target="_blank" class="btn btn-light btn-small">Lihat Profil</a></div>`, 'Belum ada Testimoni.');
  
