@@ -100,7 +100,7 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
  <div class="nav">
   <div class="nav-title">MENU UTAMA AGENCY</div>
   <button class="active" onclick="go('home')"><span>⌂</span>Beranda</button>
-  <button onclick="bukaLink('regCreator')"><span>📝</span>Daftar Creator</button>
+  <button onclick="go('pendaftaran')"><span>📝</span>Daftar Creator</button>
   <button onclick="go('bimbingan')"><span>📚</span>Bimbingan Pendaftaran</button>
   <button onclick="bukaLink('capcutPro')" style="color:#10b981;"><span>💎</span>Promo CapCut Pro</button>
   <button onclick="go('group')"><span>👥</span>Group Resmi</button>
@@ -131,20 +131,20 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
 
   <div class="section-head"><h2>Akses Cepat Member</h2></div>
   <div class="grid-5">
-       <div class="item-box" style="cursor:pointer; text-align:center;" onclick="bukaLink('regCreator')">
+       <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('pendaftaran')">
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #3b82f6, #2563eb);">📝</div>
           <h3>Daftar Creator</h3>
-          <p style="font-size:11px;">Isi formulir resmi CapCut</p>
+          <p style="font-size:11px;">Arahan & Link Formulir</p>
        </div>
        <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('bimbingan')">
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #8b5cf6, #6d28d9);">📚</div>
           <h3>Bimbingan</h3>
-          <p style="font-size:11px;">Arahan & Tutorial daftar</p>
+          <p style="font-size:11px;">Grup, Arahan & Tutorial</p>
        </div>
        <div class="item-box" style="cursor:pointer; text-align:center; border-color:var(--success); background:rgba(16,185,129,0.05);" onclick="bukaLink('capcutPro')">
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #10b981, #059669);">💎</div>
           <h3 style="color:var(--success);">Promo CapCut Pro</h3>
-          <p style="font-size:11px;">Akses CapCut Pro eksklusif</p>
+          <p style="font-size:11px;">Akses akun eksklusif</p>
        </div>
        <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('group')">
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #f59e0b, #d97706);">👥</div>
@@ -159,9 +159,31 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
   </div>
  </section>
 
- <!-- 2. BIMBINGAN PENDAFTARAN -->
+ <!-- 2. PENDAFTARAN CREATOR (ALUR BARU: ARAHAN -> LINK) -->
+ <section class="page" id="pendaftaran">
+  <div style="max-width:800px; margin:0 auto;">
+      <h1 style="margin-bottom:5px; text-align:center;">Formulir Pendaftaran Creator</h1>
+      <p class="subtitle" style="text-align:center; margin-bottom:30px;">Silakan baca arahan dari admin di bawah ini dengan teliti sebelum menekan tombol pendaftaran.</p>
+      
+      <div class="item-box" style="padding:30px; border-color:var(--primary2); box-shadow: 0 10px 30px rgba(118,82,232,0.1);">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:15px;">
+              <span style="font-size:24px;">📝</span>
+              <h2 style="color:var(--primary); font-size:18px;">Arahan Pendaftaran</h2>
+          </div>
+          
+          <div id="regCreatorDescArea" style="font-size:14px; color:var(--text); line-height:1.8; white-space:pre-wrap; margin-bottom:30px; padding:10px 0;">
+              Memuat arahan pendaftaran...
+          </div>
+          
+          <button onclick="bukaLink('regCreator')" class="btn" style="width:100%; font-size:14px; padding:15px; border-radius:30px; background:linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4); display:flex; justify-content:center; align-items:center; gap:10px;">
+              Menuju Link Pendaftaran <span style="font-size:18px;">➔</span>
+          </button>
+      </div>
+  </div>
+ </section>
+
+ <!-- 3. BIMBINGAN PENDAFTARAN -->
  <section class="page" id="bimbingan">
-  <!-- BANNER KHUSUS UNTUK JOIN GRUP BIMBINGAN -->
   <div class="hero" style="background:linear-gradient(135deg, #8b5cf6, #6d28d9); padding:30px; box-shadow:0 10px 30px rgba(139,92,246,0.2); margin-bottom:25px;">
       <h1 style="font-size:24px;">Group Bimbingan Pendaftaran</h1>
       <p style="font-size:14px; opacity:1; margin-top:8px;">Silakan masuk ke group WhatsApp khusus bimbingan untuk mendapatkan panduan pendaftaran creator CapCut.</p>
@@ -259,7 +281,7 @@ function renderSkeleton(elId, count=2) {
 
 const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
 firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
-let globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '', groupBimbingan: '' };
+let globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '', groupBimbingan: '', regCreatorDesc: '' };
 let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[] };
 
 async function loadDataFromFirebase() {
@@ -268,6 +290,13 @@ async function loadDataFromFirebase() {
     db.collection('settings').doc('global').onSnapshot((doc) => {
         if (doc.exists) {
             globalSettings = doc.data();
+            
+            // Set Teks Arahan Pendaftaran
+            const descArea = document.getElementById('regCreatorDescArea');
+            if(descArea) {
+                descArea.innerHTML = globalSettings.regCreatorDesc ? safe(globalSettings.regCreatorDesc) : '<i style="color:var(--muted)">Belum ada arahan dari Admin. Silakan langsung klik tombol di bawah.</i>';
+            }
+            
             const logoImg = document.getElementById('brandLogoImg'); const logoText = document.getElementById('brandLogoText'); const logoBox = document.getElementById('brandLogoBox');
             if (globalSettings.logoUrl && globalSettings.logoUrl.trim() !== '') { logoImg.src = globalSettings.logoUrl; logoImg.style.display = 'block'; logoText.style.display = 'none'; logoBox.style.background = 'transparent'; } 
             else { logoImg.style.display = 'none'; logoText.style.display = 'block'; logoBox.style.background = 'linear-gradient(135deg,#7652e8,#ad8bff)'; }
@@ -283,7 +312,7 @@ function go(id){
     document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); 
     const btn = Array.from(document.querySelectorAll('.nav button')).find(b => b.getAttribute('onclick')?.includes(`go('${id}')`));
     if(btn) btn.classList.add('active'); 
-    const titles = { home:'Beranda', bimbingan:'Bimbingan Pendaftaran', group:'Group Resmi', testimoni:'Testimoni Creator' }; 
+    const titles = { home:'Beranda', pendaftaran:'Pendaftaran Creator', bimbingan:'Bimbingan Pendaftaran', group:'Group Resmi', testimoni:'Testimoni Creator' }; 
     const pt = document.getElementById('pageTitle'); if(pt && titles[id]) { pt.textContent = titles[id]; } 
     const s = document.getElementById('sidebar'); if(window.innerWidth <= 650 && s) { s.classList.remove('open'); const ov = document.getElementById('sidebarOverlay'); if(ov) ov.remove(); } 
     window.scrollTo({top:0, behavior:'smooth'}); 
