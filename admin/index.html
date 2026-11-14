@@ -118,24 +118,40 @@ function verifyLogin() { if(document.getElementById('adminPassword').value === A
 function logoutAdmin(){ sessionStorage.removeItem('isAdmin'); window.location.href = '../index.html'; }
 
 let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[] };
-let currentType=''; let editId=null; let globalEditCol = ''; // Sistem pelacak Brankas Data Lama
-
+let currentType=''; let editId=null; let globalEditCol = '';
 const collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases' };
 
 async function loadDataFromFirebase() {
+    // 1. SISTEM PENARIK DATA PENGATURAN YANG LEBIH KUAT (.get)
+    try {
+        const doc = await db.collection('settings').doc('global').get();
+        if(doc.exists) {
+            const s = doc.data();
+            if(document.getElementById('waNumber')) document.getElementById('waNumber').value = s.wa || '';
+            if(document.getElementById('agencyName')) document.getElementById('agencyName').value = s.name || 'Vibe Trans Agency';
+            if(document.getElementById('capcutPro')) document.getElementById('capcutPro').value = s.capcutPro || '';
+            if(document.getElementById('regCreator')) document.getElementById('regCreator').value = s.regCreator || '';
+            if(document.getElementById('regAgency')) document.getElementById('regAgency').value = s.regAgency || '';
+            if(document.getElementById('logoUrl')) document.getElementById('logoUrl').value = s.logoUrl || '';
+
+            const logoImg = document.getElementById('brandLogoImg'); 
+            const logoText = document.getElementById('brandLogoText'); 
+            const logoBox = document.getElementById('brandLogoBox');
+            if (s.logoUrl && s.logoUrl.trim() !== '') { 
+                if(logoImg) { logoImg.src = s.logoUrl; logoImg.style.display = 'block'; } 
+                if(logoText) logoText.style.display = 'none'; 
+                if(logoBox) logoBox.style.background = 'transparent'; 
+            }
+        }
+    } catch(err) {
+        console.error("Gagal load pengaturan:", err);
+    }
+
+    // 2. PENARIK DATA KONTEN LAINNYA
     const collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules'];
-    for (let c of collections) { data[c] = []; try { const snap = await db.collection(c).get(); snap.forEach(doc => { data[c].push({ id: doc.id, ...doc.data() }); }); } catch (e) { console.error("Error", e); } }
-    renderAll();
+    for (let c of collections) { data[c] = []; try { const snap = await db.collection(c).get(); snap.forEach(doc => { data[c].push({ id: doc.id, ...doc.data() }); }); } catch (e) {} }
     
-    db.collection('settings').doc('global').onSnapshot((doc) => {
-        if(doc.exists) { 
-            const s = doc.data(); 
-            const setVal = (id, val) => { if(document.getElementById(id) && val !== undefined) document.getElementById(id).value = val; };
-            setVal('waNumber', s.wa); setVal('agencyName', s.name); setVal('regCreator', s.regCreator); setVal('regAgency', s.regAgency); setVal('logoUrl', s.logoUrl); setVal('capcutPro', s.capcutPro);
-            const logoImg = document.getElementById('brandLogoImg'); const logoText = document.getElementById('brandLogoText'); const logoBox = document.getElementById('brandLogoBox');
-            if (s.logoUrl && s.logoUrl.trim() !== '') { if(logoImg) { logoImg.src = s.logoUrl; logoImg.style.display = 'block'; } if(logoText) logoText.style.display = 'none'; if(logoBox) logoBox.style.background = 'transparent'; }
-        } 
-    });
+    renderAll();
 }
 
 function go(id,btn){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); if(btn)btn.classList.add('active'); document.getElementById('pageTitle').textContent = btn.innerText.substring(btn.innerText.indexOf(' ')+1); const s = document.getElementById('sidebar'); if(window.innerWidth<=650 && s) { s.classList.remove('open'); const ov=document.getElementById('sidebarOverlay'); if(ov)ov.remove(); } }
@@ -157,14 +173,7 @@ function renderAll(){
 function openForm(type,id=null){
  currentType = type; editId = id; globalEditCol = ''; 
  let item = {};
- 
- // Sistem Pencari Brankas Data Super Akurat
- if(id) {
-     for (let c in data) {
-         const found = data[c].find(x => x.id === id);
-         if(found) { item = found; globalEditCol = c; break; }
-     }
- }
+ if(id) { for (let c in data) { const found = data[c].find(x => x.id === id); if(found) { item = found; globalEditCol = c; break; } } }
  
  const fields={
  announcement:[['title','Judul','text'],['category','Kategori Label','text'],['date','Tanggal (YYYY-MM-DD)','date'],['content','Isi Pengumuman','textarea']],
@@ -205,17 +214,16 @@ async function saveSettings(){
  const btn = document.getElementById('btnSaveSettings'); btn.textContent="Menyimpan..."; btn.disabled = true;
  try {
      const val = (id) => document.getElementById(id) ? document.getElementById(id).value.trim() : '';
-     const agencyName = val('agencyName');
-     
-     // SISTEM PENGAMAN ANTI-KEPENCET! Tidak bisa simpan jika form belum diisi
-     if(!agencyName) {
-         alert('Tunggu sebentar! Silakan isi ulang Nama Agency dan link yang kosong sebelum menyimpan.');
-         btn.textContent="Simpan Pengaturan"; btn.disabled = false;
-         return;
-     }
-
-     await db.collection('settings').doc('global').set({ wa: val('waNumber').replace(/\D/g,''), name: agencyName, regCreator: val('regCreator'), regAgency: val('regAgency'), regLink: val('regAgency'), logoUrl: val('logoUrl'), capcutPro: val('capcutPro') }, {merge:true}); 
-     alert('Data Pengaturan Berhasil Diselamatkan & Disimpan!'); 
+     await db.collection('settings').doc('global').set({ 
+         wa: val('waNumber').replace(/\D/g,''), 
+         name: val('agencyName') || 'Vibe Trans Agency', 
+         regCreator: val('regCreator'), 
+         regAgency: val('regAgency'), 
+         regLink: val('regAgency'), // backward comp
+         logoUrl: val('logoUrl'), 
+         capcutPro: val('capcutPro') 
+     }, {merge:true}); 
+     alert('Pengaturan Berhasil Disimpan!'); 
  } catch(e) { alert('Error: ' + e.message); }
  btn.textContent="Simpan Pengaturan"; btn.disabled = false;
 }
