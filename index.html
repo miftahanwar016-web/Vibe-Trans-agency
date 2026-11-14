@@ -29,8 +29,17 @@
 .page{display:none} .page.active{display:block; animation: fadeIn 0.4s ease;}
 @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
 h1{font-size:25px;margin-bottom:9px} .subtitle{font-size:13px;color:var(--muted);line-height:1.6; margin-bottom: 20px;}
-.hero{background:linear-gradient(120deg,#1e1e2d,#3a2c68,#7652e8);color:white;border-radius:20px;padding:30px;margin-bottom:24px;position:relative;overflow:hidden}
+.hero{background:linear-gradient(120deg,#1e1e2d,#3a2c68,#7652e8);color:white;border-radius:20px;padding:35px;margin-bottom:24px;position:relative;overflow:hidden; box-shadow: 0 10px 30px rgba(118,82,232,0.2);}
 .hero h1{font-size:28px;max-width:600px;line-height:1.3; margin-top:10px;} .hero p{font-size:13px;opacity:.85;margin-top:12px;max-width:500px;line-height:1.7}
+
+/* PERBAIKAN DESAIN TOMBOL HERO (BANNER) */
+.hero-actions {display:flex; gap:12px; margin-top:25px; flex-wrap:wrap;}
+.btn-hero {display:flex; align-items:center; gap:8px; padding:12px 20px; border-radius:10px; font-size:13px; font-weight:bold; cursor:pointer; transition:all 0.3s ease; border:none;}
+.btn-hero:hover {transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2);}
+.btn-gabung {background:#ffffff; color:#7652e8;}
+.btn-belajar {background:rgba(255,255,255,0.15); color:#ffffff; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(5px);}
+.btn-pro {background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);}
+
 .section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:30px 0 15px} .section-head h2{font-size:17px}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px} .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
 .stat,.card{background:white;border:1px solid var(--border);border-radius:14px;padding:18px}
@@ -83,23 +92,28 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
   <button onclick="bukaLink('capcutPro')" style="color:#10b981;"><span>💎</span>9. Akses CapCut Pro</button>
  </div>
 </aside>
+
 <main class="main">
  <header class="topbar">
   <div class="top-actions"><button class="menu-btn" onclick="toggleMenu()">☰</button><div><b id="pageTitle">Beranda</b><br><small>Informasi Utama Agency</small></div></div>
   <div class="top-actions"><div class="avatar" style="background:#f1edff; color:#7652e8; cursor:pointer;" onclick="contactAdmin()">💬</div></div>
  </header>
  <div class="content">
+ 
  <section class="page active" id="home">
   <div class="hero">
    <span class="tag" style="background:rgba(255,255,255,0.2);color:white">AGENCY TERBAIK</span>
    <h1>Pusat Informasi & Edukasi Kreator Vibe Trans</h1>
    <p>Selamat datang! Temukan semua materi CapCut, event berhadiah, dan arahan terbaru dari admin di portal ini.</p>
-   <div style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;">
-       <button onclick="goById('pendaftaran')" style="background:#fff; color:#7652e8;">Gabung Sekarang</button>
-       <button onclick="goById('tutorial')" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.5); color:white;">Mulai Belajar</button>
-       <button onclick="bukaLink('capcutPro')" style="background:linear-gradient(135deg,#10b981,#059669); border:none; color:white; padding:12px 18px; border-radius:9px; font-weight:bold; cursor:pointer; font-size:12px;">💎 CapCut Pro</button>
+   
+   <!-- TOMBOL DIPERBAIKI: Desain elegan, berjarak, dan ber-ikon -->
+   <div class="hero-actions">
+       <button class="btn-hero btn-gabung" onclick="goById('pendaftaran')">🚀 Gabung Sekarang</button>
+       <button class="btn-hero btn-belajar" onclick="goById('tutorial')">▶ Mulai Belajar</button>
+       <button class="btn-hero btn-pro" onclick="bukaLink('capcutPro')">💎 Akses CapCut Pro</button>
    </div>
   </div>
+
   <div class="grid">
    <div class="stat"><div class="ico">📢</div><h2 id="countAnn">0</h2><p>Pengumuman</p></div>
    <div class="stat"><div class="ico">▶</div><h2 id="countVideo">0</h2><p>Tutorial</p></div>
@@ -107,6 +121,7 @@ footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
    <div class="stat"><div class="ico">🌟</div><h2 id="countShow">0</h2><p>Karya Terbaik</p></div>
   </div>
  </section>
+
  <section class="page" id="pendaftaran"><h1>Formulir Bergabung Agency</h1><p class="subtitle">Pilih jalur pendaftaran yang sesuai dengan kebutuhan Anda.</p><div class="grid-3" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));"><div class="help-box" style="background:#fff; border-color:#d8ccff;"><h2>🎥 Pendaftaran Creator CapCut</h2><p style="font-size:13px; color:#666; margin-bottom:20px; line-height:1.6;">Daftarkan ID CapCut Anda untuk menjadi kreator resmi agar bisa menghasilkan uang dari template video Anda.</p><button onclick="bukaLink('regCreator')" class="btn" style="width:100%;">Isi Formulir Creator</button></div><div class="help-box" style="background:#f2fdf5; border-color:#bbf7d0;"><h2 style="color:#166534;">📝 Gabung Grup VIP Agency</h2><p style="font-size:13px; color:#666; margin-bottom:20px; line-height:1.6;">Masuk ke grup WhatsApp khusus untuk mendapatkan bimbingan harian, tips FYP, dan info event berhadiah.</p><button onclick="bukaLink('regAgency')" class="btn btn-green" style="width:100%;">Masuk Grup Agency</button></div></div></section>
  <section class="page" id="announcement"><h1>Informasi Terbaru Agency</h1><p class="subtitle">Jangan sampai terlewat arahan dan update kebijakan dari tim admin.</p><div id="annList"><div class="empty">Memuat data...</div></div></section>
  <section class="page" id="tutorial"><h1>Kumpulan Video Tutorial</h1><p class="subtitle">Belajar rahasia editing CapCut dari dasar hingga mahir.</p><input class="searchbar" id="videoSearch" placeholder="Cari tutorial..." oninput="renderVideos()"><div class="filters" id="videoFilters"></div><div class="video-grid" id="videoList"><div class="empty">Memuat data...</div></div></section>
