@@ -4,212 +4,221 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#ffffff">
-<title>Vibe Trans Agency Portal</title>
+<title>Admin Panel - Vibe Trans</title>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
 <style>
-:root{--primary:#7652e8;--primary2:#9b7afa;--bg:#f7f7fb;--card:#ffffff;--text:#202033;--muted:#85859a;--border:#ececf3;--success:#16a36a; --warn:#f59e0b;}
+:root{--primary:#7652e8;--bg:#f7f7fb;--card:#ffffff;--text:#202033;--muted:#85859a;--border:#ececf3;}
 *{box-sizing:border-box;margin:0;padding:0} body{font-family:Arial,sans-serif;background:var(--bg);color:var(--text)} button,input,textarea,select{font:inherit} button{cursor:pointer;border:0}
-.app{display:flex;min-height:100vh}
+.app{display:none;min-height:100vh} .app.show{display:flex}
 .sidebar{width:260px;background:#1e1e2d;border-right:1px solid #2a2a3c;padding:25px 17px;position:fixed;inset:0 auto 0 0;overflow-y:auto;z-index:20; transition: transform 0.3s ease;}
 .brand{display:flex;align-items:center;gap:11px;margin-bottom:25px;padding:0 8px}
-.brand-icon{background:linear-gradient(135deg,#7652e8,#ad8bff);width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:white;font-size:21px;font-weight:bold; overflow:hidden;}
-.brand h2{font-size:17px; color: white;} .brand small{color:#aaa;font-size:10px}
+.brand-icon{background:linear-gradient(135deg,#f59e0b,#ef4444);width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:white;font-size:21px;font-weight:bold; overflow:hidden;}
 .nav-title{font-size:10px;color:#888;margin:20px 10px 8px;font-weight:bold;letter-spacing:1px}
 .nav button{width:100%;display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:transparent;text-align:left;color:#a0a0b2;font-size:13px;margin:2px 0; transition:0.2s;}
-.nav button:hover,.nav button.active{background:rgba(118,82,232,0.15);color:white;font-weight:bold}
-.nav button span{font-size:18px;width:22px; color:var(--primary2)}
+.nav button:hover,.nav button.active{background:rgba(255,255,255,0.1);color:white;}
+.nav button span{font-size:18px;width:22px;}
 .main{margin-left:260px;width:calc(100% - 260px);min-width:0}
 .topbar{background:#fff;border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.topbar small{color:var(--muted)} .top-actions{display:flex;align-items:center;gap:10px}
-.avatar{width:35px;height:35px;background:#eee8ff;color:var(--primary);border-radius:50%;display:grid;place-items:center;font-weight:bold}
-.menu-btn{display:none;background:white;font-size:23px; padding-right:10px;}
-.content{padding:28px;max-width:1250px;margin:auto}
-.page{display:none} .page.active{display:block; animation: fadeIn 0.4s ease;}
-@keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
-h1{font-size:25px;margin-bottom:9px} .subtitle{font-size:13px;color:var(--muted);line-height:1.6; margin-bottom: 20px;}
-.hero{background:linear-gradient(120deg,#1e1e2d,#3a2c68,#7652e8);color:white;border-radius:20px;padding:35px;margin-bottom:24px;position:relative;overflow:hidden; box-shadow: 0 10px 30px rgba(118,82,232,0.2);}
-.hero h1{font-size:28px;max-width:600px;line-height:1.3; margin-top:10px;} .hero p{font-size:13px;opacity:.85;margin-top:12px;max-width:500px;line-height:1.7}
-
-/* PERBAIKAN DESAIN TOMBOL HERO (BANNER) */
-.hero-actions {display:flex; gap:12px; margin-top:25px; flex-wrap:wrap;}
-.btn-hero {display:flex; align-items:center; gap:8px; padding:12px 20px; border-radius:10px; font-size:13px; font-weight:bold; cursor:pointer; transition:all 0.3s ease; border:none;}
-.btn-hero:hover {transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2);}
-.btn-gabung {background:#ffffff; color:#7652e8;}
-.btn-belajar {background:rgba(255,255,255,0.15); color:#ffffff; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(5px);}
-.btn-pro {background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);}
-
-.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:30px 0 15px} .section-head h2{font-size:17px}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px} .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.stat,.card{background:white;border:1px solid var(--border);border-radius:14px;padding:18px}
-.stat .ico{font-size:23px; margin-bottom:10px;} .stat h2{font-size:24px;margin:5px 0} .stat p{font-size:12px;color:var(--muted)}
-.tag{display:inline-block;background:#f1edff;color:#7652e8;padding:6px 9px;border-radius:7px;font-size:10px;font-weight:bold}
-.card-top{display:flex;align-items:center;justify-content:space-between;gap:8px; margin-bottom: 10px;}
-.btn{background:var(--primary);color:white;padding:12px 18px;border-radius:9px;font-size:12px;font-weight:bold; transition: 0.2s;} .btn:hover{opacity: 0.9; transform: translateY(-1px); box-shadow: 0 5px 15px rgba(118,82,232,0.3);}
-.btn-light{background:#f0edff;color:var(--primary)} .btn-green{background:var(--success); color:white;}
-.item-box{background:white;border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:15px; transition: 0.2s;} .item-box:hover {border-color: #d8ccff; box-shadow: 0 5px 15px rgba(0,0,0,0.03);}
-.item-box h3{font-size:15px;margin-bottom:8px} .item-box p{font-size:13px;color:#666;line-height:1.7;white-space:pre-wrap} .date{font-size:11px;color:#aaa}
-.video-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px} .video-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.video-thumb{aspect-ratio:16/9;background:#1e1e2d;display:grid;place-items:center;color:white;font-size:42px;cursor:pointer; position:relative;}
-.video-body{padding:16px} .video-body h3{font-size:14px;margin:10px 0 5px;} .video-body p{font-size:12px;color:var(--muted);line-height:1.6}
-.video-meta{display:flex;justify-content:space-between;margin-top:15px;align-items:center}
-.searchbar{width:100%;padding:14px 16px;border:1px solid var(--border);border-radius:10px;background:white;outline:none;margin-bottom:20px;font-size:13px}
-.empty{text-align:center;padding:40px;color:#999;font-size:13px; background:white; border-radius:12px; border:1px dashed #ccc;}
-.help-box{background:linear-gradient(130deg,#f3f0ff,#ffffff);border-radius:16px;padding:30px; border: 1px solid #e0d4ff;} .help-box h2{font-size:18px;margin-bottom:15px; color:#4c309b;}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;padding:15px} .modal.show{display:flex}
-.modal-box{background:white;border-radius:17px;width:100%;max-width:600px;max-height:90vh;overflow:auto;padding:22px}
-.player{width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;margin:15px 0} .player iframe{width:100%;height:100%;border:0}
-footer{text-align:center;padding:25px;color:#aaa;font-size:11px}
-.showcase-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px} .showcase-card{background:white;border:1px solid var(--border);border-radius:14px;padding:20px; text-align:center;}
-.showcase-ava{width:80px; height:80px; background:#f0edff; border-radius:50%; margin:0 auto 15px; display:grid; place-items:center; font-size:30px; font-weight:bold; color:var(--primary);}
-@media(max-width:900px){.grid,.video-grid,.grid-3{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:650px){
- .sidebar{transform:translateX(-100%);} .sidebar.open{transform:translateX(0);box-shadow: 2px 0 15px rgba(0,0,0,0.5);} .main{margin-left:0;width:100%} .menu-btn{display:block}
- .topbar{padding:12px 15px} .content{padding:15px} .hero{padding:25px} .hero h1{font-size:24px} .grid,.grid-3,.showcase-grid{grid-template-columns:repeat(2,1fr);gap:10px} .video-grid{grid-template-columns:1fr} .stat{padding:15px}
-}
+.page{display:none; padding:28px; max-width:1250px; margin:auto;} .page.active{display:block; animation: fadeIn 0.3s ease;}
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px; margin-bottom:30px;}
+.card{background:white;border:1px solid var(--border);border-radius:14px;padding:20px}
+.btn{background:var(--primary);color:white;padding:12px 15px;border-radius:9px;font-size:12px;font-weight:bold; width:100%; margin-top:10px; transition:0.2s;} .btn:hover{opacity:0.9;}
+.btn-small{width:auto; padding:8px 12px; margin-top:0;} .btn-danger{background:#fff0f0;color:#db4141;}
+.form-group{margin-bottom:15px} .form-group label{display:block;font-size:12px;font-weight:bold;margin-bottom:5px; color:#555;}
+.form-group input,.form-group textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;outline:none;font-size:13px;}
+.form-group textarea{height:100px;resize:vertical;}
+.item-box{background:white;border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; gap:15px;}
+.item-info h3{font-size:15px; margin-bottom:5px;} .item-info p{font-size:12px; color:#888;}
+.admin-actions{display:flex;gap:5px;}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:100;align-items:center;justify-content:center;padding:15px} .modal.show{display:flex}
+.modal-box{background:white;border-radius:15px;width:100%;max-width:500px;padding:25px;}
+.login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#1e1e2d,#3a2c68);display:flex;justify-content:center;align-items:center;z-index:1000;padding:20px;}
+.login-box{background:white;border-radius:20px;padding:40px 30px;width:100%;max-width:350px;text-align:center;}
+@media(max-width:650px){ .sidebar{transform:translateX(-100%);} .sidebar.open{transform:translateX(0);} .main{margin-left:0;width:100%} .topbar button{display:block;} .item-box{flex-direction:column; align-items:flex-start;} }
 </style>
 </head>
 <body>
-<div class="app">
+<div class="login-screen" id="loginScreen">
+    <div class="login-box">
+        <h2 style="margin-bottom:10px;">Login Admin</h2>
+        <input type="password" id="adminPassword" style="width:100%;padding:15px;border:2px solid #ddd;border-radius:10px;text-align:center;margin-bottom:20px;" placeholder="Password">
+        <button class="btn" onclick="verifyLogin()">Masuk</button>
+        <a href="../index.html" style="display:block; margin-top:20px; font-size:13px; color:#85859a; text-decoration:none;">← Kembali ke Halaman Utama</a>
+    </div>
+</div>
+
+<div class="app" id="adminApp">
 <aside class="sidebar" id="sidebar">
  <div class="brand">
-  <div class="brand-icon" id="brandLogoBox"><span id="brandLogoText">V</span><img id="brandLogoImg" src="" style="display:none; width:100%; height:100%; object-fit:cover;"></div>
-  <div><h2>VIBE TRANS</h2><small>AGENCY PORTAL</small></div>
+  <div class="brand-icon" id="brandLogoBox"><span id="brandLogoText">A</span><img id="brandLogoImg" src="" style="display:none; width:100%; height:100%; object-fit:cover;"></div>
+  <div><h2 style="color:white;">ADMIN PANEL</h2><small style="color:#aaa;">Control Center</small></div>
  </div>
  <div class="nav">
-  <div class="nav-title">MENU UTAMA</div>
-  <button class="active" onclick="go('home',this)"><span>⌂</span>1. Beranda</button>
-  <button onclick="go('pendaftaran',this)"><span>📝</span>2. Pendaftaran</button>
-  <button onclick="go('announcement',this)"><span>📢</span>3. Pengumuman</button>
-  <button onclick="go('tutorial',this)"><span>▶</span>4. Video Tutorial</button>
-  <div class="nav-title">AKTIVITAS & EDUKASI</div>
-  <button onclick="go('event',this)"><span>🏆</span>5. Event & Challenge</button>
-  <button onclick="go('tips',this)"><span>💡</span>6. Tips & Trik</button>
-  <button onclick="go('faq',this)"><span>❔</span>7. FAQ</button>
-  <button onclick="go('showcase',this)"><span>🌟</span>8. Creator Showcase</button>
-  <div class="nav-title">SISTEM & TOOLS</div>
-  <button onclick="bukaLink('capcutPro')" style="color:#10b981;"><span>💎</span>9. Akses CapCut Pro</button>
+  <div class="nav-title">KONTEN HALAMAN</div>
+  <button class="active" onclick="go('admin',this)"><span>⚙</span>Pengaturan Umum</button>
+  <button onclick="go('announcement',this)"><span>📢</span>Pengumuman</button>
+  <button onclick="go('tutorial',this)"><span>▶</span>Video Tutorial</button>
+  <button onclick="go('event',this)"><span>🏆</span>Event & Agenda</button>
+  <button onclick="go('tips',this)"><span>💡</span>Tips & SOP</button>
+  <button onclick="go('faq',this)"><span>❔</span>FAQ</button>
+  <button onclick="go('showcase',this)"><span>🌟</span>Creator Showcase</button>
+  <div class="nav-title">AKSES</div>
+  <button onclick="logoutAdmin()" style="color:#ef4444;"><span>🚪</span>Keluar</button>
  </div>
 </aside>
 
 <main class="main">
  <header class="topbar">
-  <div class="top-actions"><button class="menu-btn" onclick="toggleMenu()">☰</button><div><b id="pageTitle">Beranda</b><br><small>Informasi Utama Agency</small></div></div>
-  <div class="top-actions"><div class="avatar" style="background:#f1edff; color:#7652e8; cursor:pointer;" onclick="contactAdmin()">💬</div></div>
+  <div style="display:flex; align-items:center; gap:15px;"><button class="menu-btn" onclick="toggleMenu()" style="display:inline-block; font-size:20px; background:transparent;">☰</button><b id="pageTitle">Pengaturan Umum</b></div>
  </header>
- <div class="content">
- 
- <section class="page active" id="home">
-  <div class="hero">
-   <span class="tag" style="background:rgba(255,255,255,0.2);color:white">AGENCY TERBAIK</span>
-   <h1>Pusat Informasi & Edukasi Kreator Vibe Trans</h1>
-   <p>Selamat datang! Temukan semua materi CapCut, event berhadiah, dan arahan terbaru dari admin di portal ini.</p>
-   
-   <!-- TOMBOL DIPERBAIKI: Desain elegan, berjarak, dan ber-ikon -->
-   <div class="hero-actions">
-       <button class="btn-hero btn-gabung" onclick="goById('pendaftaran')">🚀 Gabung Sekarang</button>
-       <button class="btn-hero btn-belajar" onclick="goById('tutorial')">▶ Mulai Belajar</button>
-       <button class="btn-hero btn-pro" onclick="bukaLink('capcutPro')">💎 Akses CapCut Pro</button>
-   </div>
-  </div>
 
-  <div class="grid">
-   <div class="stat"><div class="ico">📢</div><h2 id="countAnn">0</h2><p>Pengumuman</p></div>
-   <div class="stat"><div class="ico">▶</div><h2 id="countVideo">0</h2><p>Tutorial</p></div>
-   <div class="stat"><div class="ico">🏆</div><h2 id="countEvent">0</h2><p>Event & Agenda</p></div>
-   <div class="stat"><div class="ico">🌟</div><h2 id="countShow">0</h2><p>Karya Terbaik</p></div>
+ <section class="page active" id="admin">
+  <div class="card" style="max-width:600px;">
+   <h2 style="margin-bottom:20px;">Link & Pengaturan Web</h2>
+   <div class="form-group"><label style="color:#7652e8;">Link Logo Web (Upload di GitHub, Paste link raw-nya di sini)</label><input id="logoUrl" placeholder="https://raw.githubusercontent.com/.../logo.png"></div>
+   <hr style="border:0; border-top:1px dashed #ddd; margin:20px 0;">
+   <div class="form-group"><label>Nama Agency</label><input id="agencyName" placeholder="Vibe Trans Agency"></div>
+   <div class="form-group"><label>Nomor WA Admin (Contoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
+   <div class="form-group"><label style="color:#10b981;">💎 Link Akses CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
+   <div class="form-group"><label>Link Form Daftar Creator</label><input id="regCreator" placeholder="https://form..."></div>
+   <div class="form-group"><label>Link Grup Gabung Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
+   <button class="btn" onclick="saveSettings()" id="btnSaveSettings">Simpan Pengaturan</button>
   </div>
  </section>
 
- <section class="page" id="pendaftaran"><h1>Formulir Bergabung Agency</h1><p class="subtitle">Pilih jalur pendaftaran yang sesuai dengan kebutuhan Anda.</p><div class="grid-3" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));"><div class="help-box" style="background:#fff; border-color:#d8ccff;"><h2>🎥 Pendaftaran Creator CapCut</h2><p style="font-size:13px; color:#666; margin-bottom:20px; line-height:1.6;">Daftarkan ID CapCut Anda untuk menjadi kreator resmi agar bisa menghasilkan uang dari template video Anda.</p><button onclick="bukaLink('regCreator')" class="btn" style="width:100%;">Isi Formulir Creator</button></div><div class="help-box" style="background:#f2fdf5; border-color:#bbf7d0;"><h2 style="color:#166534;">📝 Gabung Grup VIP Agency</h2><p style="font-size:13px; color:#666; margin-bottom:20px; line-height:1.6;">Masuk ke grup WhatsApp khusus untuk mendapatkan bimbingan harian, tips FYP, dan info event berhadiah.</p><button onclick="bukaLink('regAgency')" class="btn btn-green" style="width:100%;">Masuk Grup Agency</button></div></div></section>
- <section class="page" id="announcement"><h1>Informasi Terbaru Agency</h1><p class="subtitle">Jangan sampai terlewat arahan dan update kebijakan dari tim admin.</p><div id="annList"><div class="empty">Memuat data...</div></div></section>
- <section class="page" id="tutorial"><h1>Kumpulan Video Tutorial</h1><p class="subtitle">Belajar rahasia editing CapCut dari dasar hingga mahir.</p><input class="searchbar" id="videoSearch" placeholder="Cari tutorial..." oninput="renderVideos()"><div class="filters" id="videoFilters"></div><div class="video-grid" id="videoList"><div class="empty">Memuat data...</div></div></section>
- <section class="page" id="event"><h1>Event & Kompetisi</h1><p class="subtitle">Ikuti challenge terbaru dan menangkan hadiah eksklusif dari Vibe Trans.</p><div id="eventList"><div class="empty">Belum ada event yang aktif saat ini.</div></div></section>
- <section class="page" id="tips"><h1>Tips Meningkatkan Performa & SOP</h1><p class="subtitle">Strategi agar template CapCut kamu banyak digunakan (FYP) beserta SOP Agency.</p><div id="tipsList"><div class="empty">Memuat data...</div></div></section>
- <section class="page" id="faq"><h1>Pertanyaan Umum (FAQ)</h1><p class="subtitle">Jawaban dari pertanyaan yang paling sering diajukan oleh member.</p><div id="faqList"><div class="empty">Memuat data...</div></div></section>
- <section class="page" id="showcase"><h1>Karya Creator Terbaik</h1><p class="subtitle">Inspirasi template dari kreator-kreator unggulan bulan ini.</p><div class="showcase-grid" id="showcaseList"><div class="empty" style="grid-column: 1/-1;">Belum ada karya yang ditampilkan.</div></div></section>
- </div>
- <footer>© <span id="year"></span> Vibe Trans Agency Portal</footer>
+ <section class="page" id="announcement"> <button class="btn" onclick="openForm('announcement')" style="width:auto; margin-bottom:20px;">+ Tambah Pengumuman</button> <div id="announcementList"></div> </section>
+ <section class="page" id="tutorial"> <button class="btn" onclick="openForm('video')" style="width:auto; margin-bottom:20px;">+ Tambah Tutorial</button> <div id="videoList"></div> </section>
+ <section class="page" id="event"> <button class="btn" onclick="openForm('event')" style="width:auto; margin-bottom:20px;">+ Tambah Event / Agenda</button> <div id="eventList"></div> </section>
+ <section class="page" id="tips"> <button class="btn" onclick="openForm('tips')" style="width:auto; margin-bottom:20px;">+ Tambah Tips / SOP</button> <div id="tipsList"></div> </section>
+ <section class="page" id="faq"> <button class="btn" onclick="openForm('faq')" style="width:auto; margin-bottom:20px;">+ Tambah FAQ</button> <div id="faqList"></div> </section>
+ <section class="page" id="showcase"> <button class="btn" onclick="openForm('showcase')" style="width:auto; margin-bottom:20px;">+ Tambah Creator</button> <div id="showcaseList"></div> </section>
 </main>
 </div>
-<div class="modal" id="videoModal">
+
+<div class="modal" id="formModal">
  <div class="modal-box">
-  <div style="display:flex;justify-content:space-between;align-items:center; margin-bottom:15px;"><h2 id="playerTitle" style="margin:0;">Video Tutorial</h2><button class="btn btn-light" onclick="closeVideo()">✕ Tutup</button></div>
-  <div class="player" id="playerArea"></div><p id="playerDesc" class="subtitle" style="margin-top:15px;"></p>
+  <h2 id="formTitle">Tambah Data</h2>
+  <div id="formFields"></div>
+  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+   <button class="btn btn-danger btn-small" onclick="closeModal()">Batal</button>
+   <button class="btn btn-small" onclick="saveContent()" id="saveBtn">Simpan</button>
+  </div>
  </div>
 </div>
+
 <script>
 const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
 firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
-let globalSettings = { wa: '', regAgency: '', regCreator: '', loginLink: '', logoUrl: '', regLink: '', capcutPro: '' };
-let activeFilter = 'Semua'; let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[] };
+const ADMIN_PASSWORD = 'admin123'; 
+
+if (sessionStorage.getItem('isAdmin') === 'true') { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('adminApp').classList.add('show'); loadDataFromFirebase(); }
+function verifyLogin() { if(document.getElementById('adminPassword').value === ADMIN_PASSWORD) { sessionStorage.setItem('isAdmin', 'true'); location.reload(); } else { alert('Password Salah!'); } }
+function logoutAdmin(){ sessionStorage.removeItem('isAdmin'); window.location.href = '../index.html'; }
+
+let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[] };
+let currentType=''; let editId=null; let globalEditCol = ''; // Sistem pelacak Brankas Data Lama
+
+const collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases' };
 
 async function loadDataFromFirebase() {
     const collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules'];
-    for (let c of collections) { data[c] = []; try { const snap = await db.collection(c).get(); snap.forEach(doc => { data[c].push({ id: doc.id, ...doc.data() }); }); } catch (e) {} }
-    db.collection('settings').doc('global').onSnapshot((doc) => {
-        if (doc.exists) {
-            globalSettings = doc.data();
-            const logoImg = document.getElementById('brandLogoImg'); const logoText = document.getElementById('brandLogoText'); const logoBox = document.getElementById('brandLogoBox');
-            if (globalSettings.logoUrl && globalSettings.logoUrl.trim() !== '') { logoImg.src = globalSettings.logoUrl; logoImg.style.display = 'block'; logoText.style.display = 'none'; logoBox.style.background = 'transparent'; } 
-            else { logoImg.style.display = 'none'; logoText.style.display = 'block'; logoBox.style.background = 'linear-gradient(135deg,#7652e8,#ad8bff)'; }
-        }
-    });
+    for (let c of collections) { data[c] = []; try { const snap = await db.collection(c).get(); snap.forEach(doc => { data[c].push({ id: doc.id, ...doc.data() }); }); } catch (e) { console.error("Error", e); } }
     renderAll();
+    
+    db.collection('settings').doc('global').onSnapshot((doc) => {
+        if(doc.exists) { 
+            const s = doc.data(); 
+            const setVal = (id, val) => { if(document.getElementById(id) && val !== undefined) document.getElementById(id).value = val; };
+            setVal('waNumber', s.wa); setVal('agencyName', s.name); setVal('regCreator', s.regCreator); setVal('regAgency', s.regAgency); setVal('logoUrl', s.logoUrl); setVal('capcutPro', s.capcutPro);
+            const logoImg = document.getElementById('brandLogoImg'); const logoText = document.getElementById('brandLogoText'); const logoBox = document.getElementById('brandLogoBox');
+            if (s.logoUrl && s.logoUrl.trim() !== '') { if(logoImg) { logoImg.src = s.logoUrl; logoImg.style.display = 'block'; } if(logoText) logoText.style.display = 'none'; if(logoBox) logoBox.style.background = 'transparent'; }
+        } 
+    });
 }
 
-function toggleMenu(){ const s = document.getElementById('sidebar'); if(s) { s.classList.toggle('open'); let ov = document.getElementById('sidebarOverlay'); if (s.classList.contains('open')) { if (!ov) { ov = document.createElement('div'); ov.id = 'sidebarOverlay'; ov.style.position = 'fixed'; ov.style.inset = '0'; ov.style.background = 'rgba(0,0,0,0.5)'; ov.style.zIndex = '15'; document.body.appendChild(ov); ov.addEventListener('click', function() { s.classList.remove('open'); this.remove(); }); } } else { if (ov) ov.remove(); } } }
-function go(id,btn){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); const target = document.getElementById(id); if(target) target.classList.add('active'); document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); if(btn)btn.classList.add('active'); const titles = { home:'Beranda', pendaftaran:'Pendaftaran', announcement:'Pengumuman', tutorial:'Video Tutorial', event:'Event & Challenge', tips:'Tips & Trik', faq:'FAQ', showcase:'Creator Showcase' }; const pt = document.getElementById('pageTitle'); if(pt && titles[id]) { pt.textContent = titles[id]; pt.nextElementSibling.textContent = btn.innerText.substring(btn.innerText.indexOf('.') + 2); } const s = document.getElementById('sidebar'); if(s) { s.classList.remove('open'); const ov = document.getElementById('sidebarOverlay'); if(ov) ov.remove(); } window.scrollTo(0,0); }
-function goById(id){ const btn = Array.from(document.querySelectorAll('.nav button')).find(b => b.getAttribute('onclick')?.includes("'"+id+"'")); go(id, btn); }
-function dateFormat(date){ if(!date)return '-'; const d=new Date(date+'T00:00:00'); return isNaN(d)?date:d.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});}
-function safe(text){ return String(text??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function go(id,btn){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); if(btn)btn.classList.add('active'); document.getElementById('pageTitle').textContent = btn.innerText.substring(btn.innerText.indexOf(' ')+1); const s = document.getElementById('sidebar'); if(window.innerWidth<=650 && s) { s.classList.remove('open'); const ov=document.getElementById('sidebarOverlay'); if(ov)ov.remove(); } }
+function toggleMenu(){ const s=document.getElementById('sidebar'); if(s){ s.classList.toggle('open'); let ov=document.getElementById('sidebarOverlay'); if(s.classList.contains('open')){ if(!ov){ ov=document.createElement('div'); ov.id='sidebarOverlay'; ov.style.position='fixed'; ov.style.inset='0'; ov.style.background='rgba(0,0,0,0.5)'; ov.style.zIndex='15'; document.body.appendChild(ov); ov.addEventListener('click',function(){s.classList.remove('open');this.remove();}); } }else{ if(ov)ov.remove(); } } }
+
+function safe(text){ return String(text ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function renderList(id, arr, template) { try { const el = document.getElementById(id); if(el) el.innerHTML = (arr && arr.length > 0) ? arr.map(template).join('') : '<p style="color:#888; text-align:center; padding:20px; background:#fff; border-radius:10px;">Belum ada data</p>'; } catch(e) {} }
+function act(type, id) { return `<div class="admin-actions"><button class="btn btn-small" style="background:#4b5563;" onclick="openForm('${type}','${id}')">Edit</button><button class="btn btn-danger btn-small" onclick="deleteContent('${type}','${id}')">Hapus</button></div>`; }
 
 function renderAll(){
- if(document.getElementById('countAnn')) document.getElementById('countAnn').textContent=data.announcements.length;
- if(document.getElementById('countVideo')) document.getElementById('countVideo').textContent=data.videos.length;
- if(document.getElementById('countEvent')) document.getElementById('countEvent').textContent=(data.events.length + data.agendas.length);
- if(document.getElementById('countShow')) document.getElementById('countShow').textContent=data.showcases.length;
-
- const renderList = (elId, array, renderFn, emptyMsg) => { const el = document.getElementById(elId); if(el) el.innerHTML = array.length ? array.map(renderFn).join('') : `<div class="empty">${emptyMsg}</div>`; };
- renderList('annList', data.announcements.slice().reverse(), a => `<div class="item-box"><div class="card-top"><span class="tag">${safe(a.category)}</span><span class="date">${dateFormat(a.date)}</span></div><h3>${safe(a.title)}</h3><p>${safe(a.content)}</p></div>`, 'Belum ada pengumuman.');
- const combinedEvents = [...data.events, ...data.agendas].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
- renderList('eventList', combinedEvents, e => `<div class="item-box" style="border-left:4px solid #f59e0b;"><div class="card-top"><span class="tag" style="background:#fffbeb; color:#f59e0b;">Event & Agenda</span><span class="date">${dateFormat(e.date)} ${e.time ? safe(e.time)+' WIB' : ''}</span></div><h3>${safe(e.title)}</h3><p>${safe(e.content || e.desc)}</p></div>`, 'Belum ada event atau agenda.');
- const combinedTips = [...data.tips, ...data.rules];
- renderList('tipsList', combinedTips, t => `<div class="item-box"><h3>💡 ${safe(t.title)}</h3><p>${safe(t.content)}</p></div>`, 'Belum ada tips & trik.');
- renderList('faqList', data.faqs, f => `<div class="item-box"><details><summary style="font-weight:bold; cursor:pointer; color:#7652e8;">${safe(f.question)}</summary><p style="margin-top:15px; padding-left:15px; border-left:2px solid #ececf3;">${safe(f.answer)}</p></details></div>`, 'Belum ada FAQ.');
- renderList('showcaseList', data.showcases, s => `<div class="showcase-card"><div class="showcase-ava">${safe(s.name).charAt(0).toUpperCase()}</div><h3>${safe(s.name)}</h3><p style="margin:10px 0; color:#7652e8; font-weight:bold;">${safe(s.achievement)}</p><a href="${safe(s.link)}" target="_blank" class="btn btn-light btn-small">Lihat Profil</a></div>`, 'Belum ada Creator Showcase.');
- renderVideos(); document.getElementById('year').textContent=new Date().getFullYear();
+ renderList('announcementList', data.announcements, a => `<div class="item-box"><div class="item-info"><h3>${safe(a.title)}</h3><p>${safe(a.category)}</p></div>${act('announcement',a.id)}</div>`);
+ renderList('videoList', data.videos, v => `<div class="item-box"><div class="item-info"><h3>${safe(v.title)}</h3><p>${safe(v.category)}</p></div>${act('video',v.id)}</div>`);
+ const combinedEvents = [...data.events, ...data.agendas]; renderList('eventList', combinedEvents, e => `<div class="item-box"><div class="item-info"><h3>${safe(e.title)}</h3><p>Waktu: ${safe(e.date)}</p></div>${act('event',e.id)}</div>`);
+ const combinedTips = [...data.tips, ...data.rules]; renderList('tipsList', combinedTips, t => `<div class="item-box"><div class="item-info"><h3>${safe(t.title)}</h3></div>${act('tips',t.id)}</div>`);
+ renderList('faqList', data.faqs, f => `<div class="item-box"><div class="item-info"><h3>${safe(f.question)}</h3></div>${act('faq',f.id)}</div>`);
+ renderList('showcaseList', data.showcases, s => `<div class="item-box"><div class="item-info"><h3>${safe(s.name)}</h3><p>${safe(s.achievement)}</p></div>${act('showcase',s.id)}</div>`);
 }
 
-function videoCard(v){ return `<div class="video-card"><div class="video-thumb" onclick="playVideo('${v.id}')">▶</div><div class="video-body"><span class="tag">${safe(v.category)}</span><h3>${safe(v.title)}</h3><p>${safe(v.desc)}</p><div class="video-meta"><button class="btn btn-small" onclick="playVideo('${v.id}')">Tonton</button></div></div></div>`; }
+function openForm(type,id=null){
+ currentType = type; editId = id; globalEditCol = ''; 
+ let item = {};
+ 
+ // Sistem Pencari Brankas Data Super Akurat
+ if(id) {
+     for (let c in data) {
+         const found = data[c].find(x => x.id === id);
+         if(found) { item = found; globalEditCol = c; break; }
+     }
+ }
+ 
+ const fields={
+ announcement:[['title','Judul','text'],['category','Kategori Label','text'],['date','Tanggal (YYYY-MM-DD)','date'],['content','Isi Pengumuman','textarea']],
+ video:[['title','Judul','text'],['category','Kategori Label','text'],['url','Link YouTube','url'],['desc','Deskripsi Singkat','textarea']],
+ event:[['title','Nama Event / Agenda','text'],['date','Tgl Berakhir (YYYY-MM-DD)','date'],['time','Waktu (Opsional)','time'],['desc','Detail Teks','textarea']],
+ tips:[['title','Judul Tips / SOP','text'],['content','Isi Teks','textarea']], faq:[['question','Pertanyaan','text'],['answer','Jawaban','textarea']],
+ showcase:[['name','Nama Creator','text'],['achievement','Pencapaian (cth: Top 1 Bulan Ini)','text'],['link','Link Profil CapCut','url']] };
+ document.getElementById('formTitle').textContent=(id?'Edit ':'Tambah ')+type.toUpperCase();
+ document.getElementById('formFields').innerHTML=fields[type].map(([k,l,t])=>`<div class="form-group"><label>${l}</label>${t==='textarea'?`<textarea id="f_${k}">${safe(item[k]||'')}</textarea>`:`<input id="f_${k}" type="${t}" placeholder="${t==='url'?'https://...':''}" value="${safe(item[k]||'')}">`}</div>`).join('');
+ document.getElementById('formModal').classList.add('show');
+}
+function closeModal(){ document.getElementById('formModal').classList.remove('show'); }
 
-function renderVideos(){
- const listEl = document.getElementById('videoList'); const filterEl = document.getElementById('videoFilters'); const q=(document.getElementById('videoSearch')?.value||'').toLowerCase();
- if(!listEl) return;
- const cats=['Semua',...new Set(data.videos.map(v=>v.category))];
- if(filterEl) filterEl.innerHTML=cats.map(c=>`<button class="${activeFilter===c?'active':''}" onclick="activeFilter='${safe(c)}'; renderVideos()">${safe(c)}</button>`).join('');
- listEl.innerHTML=data.videos.filter(v=>(activeFilter==='Semua'||v.category===activeFilter)&&(v.title+' '+v.desc+' '+v.category).toLowerCase().includes(q)).map(videoCard).join('')||'<div class="empty">Video tidak ditemukan.</div>';
+async function saveContent(){
+ const btn = document.getElementById('saveBtn'); btn.textContent="Proses..."; btn.disabled=true;
+ const fields = { announcement:['title','category','date','content'], video:['title','category','url','desc'], event:['title','date','time','desc'], tips:['title','content'], faq:['question','answer'], showcase:['name','achievement','link'] }[currentType];
+ const obj={}; let isError = false;
+ for(const k of fields){ const el = document.getElementById('f_'+k); if (el) { obj[k] = el.value.trim(); if(!obj[k] && k !== 'time'){ alert('Isi semua kolom wajib!'); isError = true; break; } } }
+ if (isError) { btn.textContent="Simpan"; btn.disabled=false; return; }
+ try { 
+     const dbName = editId ? globalEditCol : collectionMap[currentType]; 
+     if(editId) { await db.collection(dbName).doc(editId).update(obj); } else { await db.collection(dbName).add(obj); } 
+     closeModal(); loadDataFromFirebase(); 
+ } catch(e) { alert('Gagal simpan ke Firebase: ' + e.message); }
+ btn.textContent="Simpan"; btn.disabled=false;
 }
 
-function playVideo(id){ const v=data.videos.find(x=>x.id===id); if(!v)return; playAnyVideo(v.url, v.title, v.desc); }
-function playAnyVideo(url, title, desc=''){
- let vidId=''; try{ const u=new URL(url); vidId = u.hostname.includes('youtu.be') ? u.pathname.slice(1) : (u.searchParams.get('v') || (u.pathname.match(/\/(?:embed|shorts)\/([^/]+)/)||[])[1]); }catch(e){}
- if(!vidId){alert('Link video YouTube tidak valid.');return}
- document.getElementById('playerTitle').textContent=title; document.getElementById('playerDesc').textContent=desc;
- document.getElementById('playerArea').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${vidId}?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
- document.getElementById('videoModal').classList.add('show');
+async function deleteContent(type,id){
+ if(!confirm('Yakin hapus item ini?')) return;
+ try { 
+     let targetCol = collectionMap[type];
+     for (let c in data) { if(data[c].find(x => x.id === id)){ targetCol = c; break; } }
+     await db.collection(targetCol).doc(id).delete(); loadDataFromFirebase(); 
+ } catch(e) { alert(e.message); }
 }
-function closeVideo(){ document.getElementById('videoModal').classList.remove('show'); document.getElementById('playerArea').innerHTML=''; }
 
-function bukaLink(jenis) {
-    let link = globalSettings[jenis];
-    if (jenis === 'regAgency' && !link) { link = globalSettings.regLink; }
-    if(!link || link.trim() === '') { alert('Mohon maaf, link belum diatur oleh Admin.'); return; }
-    if(!link.startsWith('http')) link = 'https://' + link; window.open(link, '_blank');
+async function saveSettings(){
+ const btn = document.getElementById('btnSaveSettings'); btn.textContent="Menyimpan..."; btn.disabled = true;
+ try {
+     const val = (id) => document.getElementById(id) ? document.getElementById(id).value.trim() : '';
+     const agencyName = val('agencyName');
+     
+     // SISTEM PENGAMAN ANTI-KEPENCET! Tidak bisa simpan jika form belum diisi
+     if(!agencyName) {
+         alert('Tunggu sebentar! Silakan isi ulang Nama Agency dan link yang kosong sebelum menyimpan.');
+         btn.textContent="Simpan Pengaturan"; btn.disabled = false;
+         return;
+     }
+
+     await db.collection('settings').doc('global').set({ wa: val('waNumber').replace(/\D/g,''), name: agencyName, regCreator: val('regCreator'), regAgency: val('regAgency'), regLink: val('regAgency'), logoUrl: val('logoUrl'), capcutPro: val('capcutPro') }, {merge:true}); 
+     alert('Data Pengaturan Berhasil Diselamatkan & Disimpan!'); 
+ } catch(e) { alert('Error: ' + e.message); }
+ btn.textContent="Simpan Pengaturan"; btn.disabled = false;
 }
-function contactAdmin(){ if(!globalSettings.wa){alert('Nomor WA admin belum diatur.');return} window.open('https://wa.me/'+globalSettings.wa,'_blank'); }
-loadDataFromFirebase();
 </script>
 </body>
 </html>
