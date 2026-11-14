@@ -89,7 +89,7 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
   <button class="active" onclick="go('admin',this)"><span>⚙</span>Pengaturan Umum</button>
   <button onclick="go('keys',this)"><span>🔑</span>Kunci Akses Group</button>
   
-  <div class="nav-title">BIMBINGAN PENDAFTARAN</div>
+  <div class="nav-title">BIMBINGAN & MENTAHAN</div>
   <button onclick="go('guide',this)"><span>📚</span>Arahan (Teks)</button>
   <button onclick="go('mentahan',this)"><span>📁</span>Mentahan Gratis</button>
   <button onclick="go('tutorial',this)"><span>▶</span>Tutorial (Video)</button>
@@ -132,12 +132,13 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
    
    <div class="form-group">
        <label style="color:#3b82f6;">📝 Arahan / Petunjuk Pendaftaran Creator</label>
-       <textarea id="regCreatorDesc" placeholder="Ketik syarat, info, atau tata cara pendaftaran creator di sini... (Contoh: 'Pastikan akun TikTok sudah ditautkan...')"></textarea>
+       <textarea id="regCreatorDesc" placeholder="Ketik syarat, info, atau tata cara pendaftaran creator di sini..."></textarea>
    </div>
    <div class="form-group"><label style="color:#3b82f6;">Link Form Daftar Creator (Akhir)</label><input id="regCreator" placeholder="https://form..."></div>
    
    <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
    <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
+   <div class="form-group"><label style="color:#3b82f6;">📁 Link Group Mentahan Tambahan</label><input id="groupMentahan" placeholder="https://chat.whatsapp..."></div>
    <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
    
    <button class="btn" onclick="saveSettings()" id="btnSaveSettings" style="margin-top:20px; font-size:14px; padding:15px;">Simpan Semua Pengaturan</button>
@@ -153,14 +154,13 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
 
  <section class="page" id="guide"> <button class="btn" onclick="openForm('guide')" style="width:auto; margin-bottom:20px;">+ Tambah Arahan</button> <div id="guideList"></div> </section>
  
- <!-- FITUR MENTAHAN GRATIS DI ADMIN -->
  <section class="page" id="mentahan"> 
      <h1 style="margin-bottom:10px;">Mentahan Gratis</h1>
      <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Upload link bahan editan seperti Preset, Overlay, Sound, dll ke Google Drive lalu simpan linknya di sini.</p>
      <button class="btn" onclick="openForm('mentahan')" style="width:auto; margin-bottom:20px;">+ Tambah File Mentahan</button> 
      <div class="grid-3" id="mentahanList"></div> 
  </section>
- 
+
  <section class="page" id="tutorial"> <button class="btn" onclick="openForm('video')" style="width:auto; margin-bottom:20px;">+ Tambah Tutorial</button> <div id="videoList"></div> </section>
  
  <section class="page" id="announcement"> <button class="btn" onclick="openForm('announcement')" style="width:auto; margin-bottom:20px;">+ Tambah Pengumuman</button> <div id="announcementList"></div> </section>
@@ -218,7 +218,7 @@ function renderSkeleton(elId) {
     const el = document.getElementById(elId); if(!el) return;
     el.innerHTML = `<div class="skel-box"><div class="skeleton skel-title"></div><div class="skeleton skel-text"></div></div>`.repeat(2);
 }
-['guideList','videoList','announcementList','eventList','tipsList','faqList','showcaseList','keyList','mentahanList'].forEach(id => renderSkeleton(id));
+['guideList','mentahanList','videoList','announcementList','eventList','tipsList','faqList','showcaseList','keyList'].forEach(id => renderSkeleton(id));
 
 const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
 firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
@@ -247,6 +247,7 @@ async function loadDataFromFirebase() {
             if(document.getElementById('regCreatorDesc')) document.getElementById('regCreatorDesc').value = s.regCreatorDesc || '';
             if(document.getElementById('regAgency')) document.getElementById('regAgency').value = s.regAgency || '';
             if(document.getElementById('groupBimbingan')) document.getElementById('groupBimbingan').value = s.groupBimbingan || '';
+            if(document.getElementById('groupMentahan')) document.getElementById('groupMentahan').value = s.groupMentahan || '';
             if(document.getElementById('logoUrl')) document.getElementById('logoUrl').value = s.logoUrl || '';
 
             const logoImg = document.getElementById('brandLogoImg'); const logoText = document.getElementById('brandLogoText'); const logoBox = document.getElementById('brandLogoBox');
@@ -267,8 +268,8 @@ function renderList(id, arr, template) { try { const el = document.getElementByI
 function act(type, id) { return `<div class="admin-actions"><button class="btn btn-small btn-light" onclick="openForm('${type}','${id}')">Edit</button><button class="btn btn-danger btn-small" onclick="deleteContent('${type}','${id}')">Hapus</button></div>`; }
 
 function renderAll(){
- renderList('mentahanList', data.mentahans, m => `<div class="item-box"><div class="item-info"><h3>📦 ${safe(m.title)}</h3><p>${safe(m.desc)}</p></div>${act('mentahan',m.id)}</div>`);
  renderList('keyList', data.keys, k => `<div class="item-box"><div class="item-info"><h3 style="font-family:monospace; font-size:18px; color:var(--warn);">${safe(k.code)}</h3><p>Keterangan: ${safe(k.owner)}</p></div>${act('key',k.id)}</div>`);
+ renderList('mentahanList', data.mentahans, m => `<div class="item-box"><div class="item-info"><h3>📦 ${safe(m.title)}</h3><p>${safe(m.desc)}</p></div>${act('mentahan',m.id)}</div>`);
  renderList('guideList', data.guides, g => `<div class="item-box"><div class="item-info"><h3>${safe(g.title)}</h3><p>${safe(g.category)}</p></div>${act('guide',g.id)}</div>`);
  renderList('announcementList', data.announcements, a => `<div class="item-box"><div class="item-info"><h3>${safe(a.title)}</h3><p>${safe(a.category)}</p></div>${act('announcement',a.id)}</div>`);
  renderList('videoList', data.videos, v => `<div class="item-box"><div class="item-info"><h3>${safe(v.title)}</h3><p>${safe(v.category)}</p></div>${act('video',v.id)}</div>`);
@@ -284,8 +285,8 @@ function openForm(type,id=null){
  if(id) { for (let c in data) { const found = data[c].find(x => x.id === id); if(found) { item = found; globalEditCol = c; break; } } }
  
  const fields={
- mentahan:[['title','Nama File / Bundle Mentahan','text'],['desc','Deskripsi Singkat (Misal: 100+ Font CapCut)','text'],['url','Link Download (Google Drive, dll)','url']],
  key:[['code','Kode Kunci (Contoh: VIBE2026, MEMBERVIP)','text'],['owner','Keterangan / Nama Pemilik','text']],
+ mentahan:[['title','Nama File / Bundle Mentahan','text'],['desc','Deskripsi Singkat (Misal: 100+ Font CapCut)','text'],['url','Link Download (Google Drive, dll)','url']],
  guide:[['title','Judul Arahan','text'],['category','Kategori Label','text'],['content','Isi Arahan Teks','textarea'],['videoUrl','Link Video YouTube (Opsional)','url']],
  announcement:[['title','Judul','text'],['category','Kategori Label','text'],['date','Tanggal (YYYY-MM-DD)','date'],['content','Isi Pengumuman','textarea']],
  video:[['title','Judul','text'],['category','Kategori Label','text'],['url','Link YouTube','url'],['desc','Deskripsi Singkat','textarea']],
@@ -300,7 +301,7 @@ function closeModal(){ document.getElementById('formModal').classList.remove('sh
 
 async function saveContent(){
  const btn = document.getElementById('saveBtn'); btn.textContent="Menyimpan..."; btn.disabled=true;
- const fields = { mentahan:['title','desc','url'], key:['code','owner'], guide:['title','category','content','videoUrl'], announcement:['title','category','date','content'], video:['title','category','url','desc'], event:['title','date','time','desc'], tips:['title','content'], faq:['question','answer'], showcase:['name','achievement','link'] }[currentType];
+ const fields = { key:['code','owner'], mentahan:['title','desc','url'], guide:['title','category','content','videoUrl'], announcement:['title','category','date','content'], video:['title','category','url','desc'], event:['title','date','time','desc'], tips:['title','content'], faq:['question','answer'], showcase:['name','achievement','link'] }[currentType];
  const obj={}; let isError = false;
  for(const k of fields){ 
      const el = document.getElementById('f_'+k); 
@@ -348,7 +349,8 @@ async function saveSettings(){
          regLink: val('regAgency'), 
          logoUrl: val('logoUrl'), 
          capcutPro: val('capcutPro'),
-         groupBimbingan: val('groupBimbingan')
+         groupBimbingan: val('groupBimbingan'),
+         groupMentahan: val('groupMentahan')
      }, {merge:true}); 
      
      showToast('Pengaturan Berhasil Disimpan!', 'success'); 
