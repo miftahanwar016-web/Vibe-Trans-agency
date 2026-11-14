@@ -91,6 +91,7 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
   
   <div class="nav-title">BIMBINGAN PENDAFTARAN</div>
   <button onclick="go('guide',this)"><span>📚</span>Arahan (Teks)</button>
+  <button onclick="go('mentahan',this)"><span>📁</span>Mentahan Gratis</button>
   <button onclick="go('tutorial',this)"><span>▶</span>Tutorial (Video)</button>
 
   <div class="nav-title">INFO GROUP RESMI</div>
@@ -121,12 +122,20 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
    <h2 style="margin-bottom:20px;">Link & Pengaturan Web</h2>
    <div class="form-group"><label style="color:#7652e8;">Link Logo Web (Upload di GitHub, Paste link raw-nya di sini)</label><input id="logoUrl" placeholder="https://raw.githubusercontent.com/.../logo.png"></div>
    <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
+   
    <div class="form-group"><label>Nama Agency</label><input id="agencyName" placeholder="Vibe Trans Agency"></div>
    <div class="form-group"><label>Nomor WA Admin (Contoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
+   
    <div class="form-group"><label style="color:#10b981;">💎 Link Promo CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
+   
    <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
-   <div class="form-group"><label style="color:#3b82f6;">📝 Arahan / Petunjuk Pendaftaran Creator</label><textarea id="regCreatorDesc" placeholder="Ketik syarat, info, atau tata cara pendaftaran creator di sini..."></textarea></div>
+   
+   <div class="form-group">
+       <label style="color:#3b82f6;">📝 Arahan / Petunjuk Pendaftaran Creator</label>
+       <textarea id="regCreatorDesc" placeholder="Ketik syarat, info, atau tata cara pendaftaran creator di sini... (Contoh: 'Pastikan akun TikTok sudah ditautkan...')"></textarea>
+   </div>
    <div class="form-group"><label style="color:#3b82f6;">Link Form Daftar Creator (Akhir)</label><input id="regCreator" placeholder="https://form..."></div>
+   
    <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
    <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
    <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
@@ -135,7 +144,6 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
   </div>
  </section>
 
- <!-- MENU MANAJEMEN KUNCI AKSES (BARU) -->
  <section class="page" id="keys"> 
      <h1 style="margin-bottom:10px;">Manajemen Kunci Akses Group</h1>
      <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Kunci (Secret Key) yang valid agar member bisa membuka halaman Group Resmi.</p>
@@ -144,11 +152,22 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
  </section>
 
  <section class="page" id="guide"> <button class="btn" onclick="openForm('guide')" style="width:auto; margin-bottom:20px;">+ Tambah Arahan</button> <div id="guideList"></div> </section>
+ 
+ <!-- FITUR MENTAHAN GRATIS DI ADMIN -->
+ <section class="page" id="mentahan"> 
+     <h1 style="margin-bottom:10px;">Mentahan Gratis</h1>
+     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Upload link bahan editan seperti Preset, Overlay, Sound, dll ke Google Drive lalu simpan linknya di sini.</p>
+     <button class="btn" onclick="openForm('mentahan')" style="width:auto; margin-bottom:20px;">+ Tambah File Mentahan</button> 
+     <div class="grid-3" id="mentahanList"></div> 
+ </section>
+ 
  <section class="page" id="tutorial"> <button class="btn" onclick="openForm('video')" style="width:auto; margin-bottom:20px;">+ Tambah Tutorial</button> <div id="videoList"></div> </section>
+ 
  <section class="page" id="announcement"> <button class="btn" onclick="openForm('announcement')" style="width:auto; margin-bottom:20px;">+ Tambah Pengumuman</button> <div id="announcementList"></div> </section>
  <section class="page" id="event"> <button class="btn" onclick="openForm('event')" style="width:auto; margin-bottom:20px;">+ Tambah Event / Agenda</button> <div id="eventList"></div> </section>
  <section class="page" id="tips"> <button class="btn" onclick="openForm('tips')" style="width:auto; margin-bottom:20px;">+ Tambah Tips / SOP</button> <div id="tipsList"></div> </section>
  <section class="page" id="faq"> <button class="btn" onclick="openForm('faq')" style="width:auto; margin-bottom:20px;">+ Tambah FAQ</button> <div id="faqList"></div> </section>
+ 
  <section class="page" id="showcase"> <button class="btn" onclick="openForm('showcase')" style="width:auto; margin-bottom:20px;">+ Tambah Testimoni / Karya</button> <div id="showcaseList"></div> </section>
 </main>
 </div>
@@ -199,7 +218,7 @@ function renderSkeleton(elId) {
     const el = document.getElementById(elId); if(!el) return;
     el.innerHTML = `<div class="skel-box"><div class="skeleton skel-title"></div><div class="skeleton skel-text"></div></div>`.repeat(2);
 }
-['guideList','videoList','announcementList','eventList','tipsList','faqList','showcaseList','keyList'].forEach(id => renderSkeleton(id));
+['guideList','videoList','announcementList','eventList','tipsList','faqList','showcaseList','keyList','mentahanList'].forEach(id => renderSkeleton(id));
 
 const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
 firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
@@ -212,9 +231,9 @@ function verifyLogin() {
 }
 function logoutAdmin(){ sessionStorage.removeItem('isAdmin'); window.location.href = '../index.html'; }
 
-let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[] };
+let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
 let currentType=''; let editId=null; let globalEditCol = '';
-const collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases', guide:'guides', key:'keys' };
+const collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases', guide:'guides', key:'keys', mentahan:'mentahans' };
 
 async function loadDataFromFirebase() {
     try {
@@ -235,7 +254,7 @@ async function loadDataFromFirebase() {
         }
     } catch(err) { showToast("Gagal load pengaturan", "error"); }
 
-    const collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules', 'guides', 'keys'];
+    const collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules', 'guides', 'keys', 'mentahans'];
     for (let c of collections) { data[c] = []; try { const snap = await db.collection(c).get(); snap.forEach(doc => { data[c].push({ id: doc.id, ...doc.data() }); }); } catch (e) {} }
     renderAll();
 }
@@ -248,6 +267,7 @@ function renderList(id, arr, template) { try { const el = document.getElementByI
 function act(type, id) { return `<div class="admin-actions"><button class="btn btn-small btn-light" onclick="openForm('${type}','${id}')">Edit</button><button class="btn btn-danger btn-small" onclick="deleteContent('${type}','${id}')">Hapus</button></div>`; }
 
 function renderAll(){
+ renderList('mentahanList', data.mentahans, m => `<div class="item-box"><div class="item-info"><h3>📦 ${safe(m.title)}</h3><p>${safe(m.desc)}</p></div>${act('mentahan',m.id)}</div>`);
  renderList('keyList', data.keys, k => `<div class="item-box"><div class="item-info"><h3 style="font-family:monospace; font-size:18px; color:var(--warn);">${safe(k.code)}</h3><p>Keterangan: ${safe(k.owner)}</p></div>${act('key',k.id)}</div>`);
  renderList('guideList', data.guides, g => `<div class="item-box"><div class="item-info"><h3>${safe(g.title)}</h3><p>${safe(g.category)}</p></div>${act('guide',g.id)}</div>`);
  renderList('announcementList', data.announcements, a => `<div class="item-box"><div class="item-info"><h3>${safe(a.title)}</h3><p>${safe(a.category)}</p></div>${act('announcement',a.id)}</div>`);
@@ -264,6 +284,7 @@ function openForm(type,id=null){
  if(id) { for (let c in data) { const found = data[c].find(x => x.id === id); if(found) { item = found; globalEditCol = c; break; } } }
  
  const fields={
+ mentahan:[['title','Nama File / Bundle Mentahan','text'],['desc','Deskripsi Singkat (Misal: 100+ Font CapCut)','text'],['url','Link Download (Google Drive, dll)','url']],
  key:[['code','Kode Kunci (Contoh: VIBE2026, MEMBERVIP)','text'],['owner','Keterangan / Nama Pemilik','text']],
  guide:[['title','Judul Arahan','text'],['category','Kategori Label','text'],['content','Isi Arahan Teks','textarea'],['videoUrl','Link Video YouTube (Opsional)','url']],
  announcement:[['title','Judul','text'],['category','Kategori Label','text'],['date','Tanggal (YYYY-MM-DD)','date'],['content','Isi Pengumuman','textarea']],
@@ -279,7 +300,7 @@ function closeModal(){ document.getElementById('formModal').classList.remove('sh
 
 async function saveContent(){
  const btn = document.getElementById('saveBtn'); btn.textContent="Menyimpan..."; btn.disabled=true;
- const fields = { key:['code','owner'], guide:['title','category','content','videoUrl'], announcement:['title','category','date','content'], video:['title','category','url','desc'], event:['title','date','time','desc'], tips:['title','content'], faq:['question','answer'], showcase:['name','achievement','link'] }[currentType];
+ const fields = { mentahan:['title','desc','url'], key:['code','owner'], guide:['title','category','content','videoUrl'], announcement:['title','category','date','content'], video:['title','category','url','desc'], event:['title','date','time','desc'], tips:['title','content'], faq:['question','answer'], showcase:['name','achievement','link'] }[currentType];
  const obj={}; let isError = false;
  for(const k of fields){ 
      const el = document.getElementById('f_'+k); 
