@@ -118,7 +118,8 @@ function verifyLogin() { if(document.getElementById('adminPassword').value === A
 function logoutAdmin(){ sessionStorage.removeItem('isAdmin'); window.location.href = '../index.html'; }
 
 let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[] };
-let currentType=''; let editId=null;
+let currentType=''; let editId=null; let globalEditCol = ''; // Sistem pelacak Brankas Data Lama
+
 const collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases' };
 
 async function loadDataFromFirebase() {
@@ -129,7 +130,7 @@ async function loadDataFromFirebase() {
     db.collection('settings').doc('global').onSnapshot((doc) => {
         if(doc.exists) { 
             const s = doc.data(); 
-            const setVal = (id, val) => { if(document.getElementById(id)) document.getElementById(id).value = val || ''; };
+            const setVal = (id, val) => { if(document.getElementById(id) && val !== undefined) document.getElementById(id).value = val; };
             setVal('waNumber', s.wa); setVal('agencyName', s.name); setVal('regCreator', s.regCreator); setVal('regAgency', s.regAgency); setVal('logoUrl', s.logoUrl); setVal('capcutPro', s.capcutPro);
             const logoImg = document.getElementById('brandLogoImg'); const logoText = document.getElementById('brandLogoText'); const logoBox = document.getElementById('brandLogoBox');
             if (s.logoUrl && s.logoUrl.trim() !== '') { if(logoImg) { logoImg.src = s.logoUrl; logoImg.style.display = 'block'; } if(logoText) logoText.style.display = 'none'; if(logoBox) logoBox.style.background = 'transparent'; }
@@ -154,7 +155,17 @@ function renderAll(){
 }
 
 function openForm(type,id=null){
- currentType = type; editId = id; const mappedCollectionName = collectionMap[type]; const item = id ? data[mappedCollectionName].find(x=>x.id===id) : {};
+ currentType = type; editId = id; globalEditCol = ''; 
+ let item = {};
+ 
+ // Sistem Pencari Brankas Data Super Akurat
+ if(id) {
+     for (let c in data) {
+         const found = data[c].find(x => x.id === id);
+         if(found) { item = found; globalEditCol = c; break; }
+     }
+ }
+ 
  const fields={
  announcement:[['title','Judul','text'],['category','Kategori Label','text'],['date','Tanggal (YYYY-MM-DD)','date'],['content','Isi Pengumuman','textarea']],
  video:[['title','Judul','text'],['category','Kategori Label','text'],['url','Link YouTube','url'],['desc','Deskripsi Singkat','textarea']],
@@ -173,21 +184,38 @@ async function saveContent(){
  const obj={}; let isError = false;
  for(const k of fields){ const el = document.getElementById('f_'+k); if (el) { obj[k] = el.value.trim(); if(!obj[k] && k !== 'time'){ alert('Isi semua kolom wajib!'); isError = true; break; } } }
  if (isError) { btn.textContent="Simpan"; btn.disabled=false; return; }
- try { const dbName = collectionMap[currentType]; if(editId) { await db.collection(dbName).doc(editId).update(obj); } else { await db.collection(dbName).add(obj); } closeModal(); loadDataFromFirebase(); } catch(e) { alert('Gagal simpan ke Firebase: ' + e.message); }
+ try { 
+     const dbName = editId ? globalEditCol : collectionMap[currentType]; 
+     if(editId) { await db.collection(dbName).doc(editId).update(obj); } else { await db.collection(dbName).add(obj); } 
+     closeModal(); loadDataFromFirebase(); 
+ } catch(e) { alert('Gagal simpan ke Firebase: ' + e.message); }
  btn.textContent="Simpan"; btn.disabled=false;
 }
 
 async function deleteContent(type,id){
  if(!confirm('Yakin hapus item ini?')) return;
- try { const dbName = collectionMap[type]; await db.collection(dbName).doc(id).delete(); loadDataFromFirebase(); } catch(e) { alert(e.message); }
+ try { 
+     let targetCol = collectionMap[type];
+     for (let c in data) { if(data[c].find(x => x.id === id)){ targetCol = c; break; } }
+     await db.collection(targetCol).doc(id).delete(); loadDataFromFirebase(); 
+ } catch(e) { alert(e.message); }
 }
 
 async function saveSettings(){
  const btn = document.getElementById('btnSaveSettings'); btn.textContent="Menyimpan..."; btn.disabled = true;
  try {
      const val = (id) => document.getElementById(id) ? document.getElementById(id).value.trim() : '';
-     await db.collection('settings').doc('global').set({ wa: val('waNumber').replace(/\D/g,''), name: val('agencyName')||'Vibe Trans Agency', regCreator: val('regCreator'), regAgency: val('regAgency'), regLink: val('regAgency'), logoUrl: val('logoUrl'), capcutPro: val('capcutPro') }, {merge:true}); 
-     alert('Pengaturan Berhasil Disimpan!'); 
+     const agencyName = val('agencyName');
+     
+     // SISTEM PENGAMAN ANTI-KEPENCET! Tidak bisa simpan jika form belum diisi
+     if(!agencyName) {
+         alert('Tunggu sebentar! Silakan isi ulang Nama Agency dan link yang kosong sebelum menyimpan.');
+         btn.textContent="Simpan Pengaturan"; btn.disabled = false;
+         return;
+     }
+
+     await db.collection('settings').doc('global').set({ wa: val('waNumber').replace(/\D/g,''), name: agencyName, regCreator: val('regCreator'), regAgency: val('regAgency'), regLink: val('regAgency'), logoUrl: val('logoUrl'), capcutPro: val('capcutPro') }, {merge:true}); 
+     alert('Data Pengaturan Berhasil Diselamatkan & Disimpan!'); 
  } catch(e) { alert('Error: ' + e.message); }
  btn.textContent="Simpan Pengaturan"; btn.disabled = false;
 }
