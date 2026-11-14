@@ -61,6 +61,8 @@ body.dark-mode .tag { background: #2a2a3c; color: #a78bfa; }
 .video-thumb{aspect-ratio:16/9;background:#1e1e2d;display:grid;place-items:center;color:white;font-size:42px;cursor:pointer; position:relative;}
 .video-body{padding:16px} .video-body h3{font-size:14px;margin:10px 0 5px;} .video-body p{font-size:12px;color:var(--muted);line-height:1.6}
 .video-meta{display:flex;justify-content:space-between;margin-top:15px;align-items:center}
+.searchbar{width:100%;padding:14px 16px;border:1px solid var(--border);border-radius:10px;background:var(--bg); color:var(--text); outline:none;margin-bottom:20px;font-size:13px; transition:0.3s;}
+.searchbar:focus {border-color:var(--primary); box-shadow:0 0 0 3px rgba(118,82,232,0.1);}
 .empty{text-align:center;padding:40px;color:var(--muted);font-size:13px; background:var(--card); border-radius:12px; border:1px dashed var(--border);}
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;padding:15px; backdrop-filter:blur(3px);} .modal.show{display:flex}
 .modal-box{background:var(--card);border-radius:17px;width:100%;max-width:600px;max-height:90vh;overflow:auto;padding:22px; transition:0.3s;}
@@ -75,19 +77,13 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
 @keyframes loadSkel { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 .skel-title { height: 16px; width: 60%; margin-bottom: 12px; } .skel-text { height: 12px; width: 100%; margin-bottom: 8px; } .skel-text.short { width: 80%; }
 
-/* UBAH POSISI TOAST KE KANAN ATAS */
 #toastBox { position: fixed; top: 30px; right: 30px; display: flex; flex-direction: column; align-items: flex-end; z-index: 9999; pointer-events: none; }
 .toast { background: var(--card); border-left: 4px solid var(--primary); box-shadow: 0 5px 25px rgba(0,0,0,0.15); padding: 15px 20px; margin-bottom: 10px; border-radius: 8px; font-size: 13px; font-weight: bold; color: var(--text); display: flex; align-items: center; gap: 10px; animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; max-width: 320px; }
 .toast.error { border-left-color: #ef4444; } .toast.success { border-left-color: #10b981; }
 @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 @keyframes fadeOut { to { opacity: 0; transform: translateX(100%); } }
 
-/* FLOATING WHATSAPP BUTTON (KONTAK ADMIN) */
-.fab-wa {
-    position: fixed; bottom: 30px; right: 30px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
-    cursor: pointer; z-index: 99; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+.fab-wa { position: fixed; bottom: 30px; right: 30px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4); cursor: pointer; z-index: 99; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 .fab-wa:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 30px rgba(37, 211, 102, 0.6); }
 .fab-wa svg { width: 32px; height: 32px; fill: currentColor; }
 
@@ -118,7 +114,6 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
      </div>
  </div>
  
- <!-- TAMBAHAN TOMBOL KONTAK ADMIN DI BAWAH SIDEBAR -->
  <div style="margin-top:auto; padding-top:20px;">
     <hr style="border:0; border-top:1px solid #2a2a3c; margin-bottom:15px;">
     <button onclick="contactAdmin()" class="btn" style="width:100%; background:transparent; border:1px solid #2a2a3c; color:#a0a0b2; display:flex; justify-content:center; align-items:center; gap:8px;">
@@ -135,7 +130,6 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
       <div><b id="pageTitle">Beranda</b><br><small id="greetingText">Selamat Datang, Kreator!</small></div>
   </div>
   <div class="top-actions">
-      <!-- Icon avatar dihilangkan agar lebih bersih, menyisakan saklar mode gelap -->
       <button class="btn-light" id="themeToggle" onclick="toggleTheme()" style="width:35px; height:35px; border-radius:50%; padding:0; display:grid; place-items:center; font-size:16px; background:var(--border); color:var(--text);" title="Mode Gelap/Terang">🌙</button>
   </div>
  </header>
@@ -190,11 +184,7 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
               <span style="font-size:24px;">📝</span>
               <h2 style="color:var(--primary); font-size:18px;">Arahan Pendaftaran</h2>
           </div>
-          
-          <div id="regCreatorDescArea" style="font-size:14px; color:var(--text); line-height:1.8; white-space:pre-wrap; margin-bottom:30px; padding:10px 0;">
-              Memuat arahan pendaftaran...
-          </div>
-          
+          <div id="regCreatorDescArea" style="font-size:14px; color:var(--text); line-height:1.8; white-space:pre-wrap; margin-bottom:30px; padding:10px 0;">Memuat arahan pendaftaran...</div>
           <button onclick="bukaLink('regCreator')" class="btn" style="width:100%; font-size:14px; padding:15px; border-radius:30px; background:linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4); display:flex; justify-content:center; align-items:center; gap:10px;">
               Menuju Link Pendaftaran <span style="font-size:18px;">➔</span>
           </button>
@@ -209,36 +199,43 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
       <p style="font-size:14px; opacity:1; margin-top:8px;">Silakan masuk ke group WhatsApp khusus bimbingan untuk mendapatkan panduan pendaftaran creator CapCut.</p>
       <button class="btn" style="background:#ffffff; color:#6d28d9; margin-top:20px; border-radius:30px; padding:12px 25px;" onclick="bukaLink('groupBimbingan')">Masuk Group Bimbingan</button>
   </div>
-  
   <h2 style="margin: 0 0 15px; font-size:17px; color:var(--primary);">📝 Arahan Teks Pendaftaran</h2>
   <div id="guideList"></div>
-  
   <h2 style="margin: 30px 0 15px; font-size:17px; color:var(--primary);">▶ Video Tutorial Arahan</h2>
   <div class="video-grid" id="videoList"></div>
  </section>
 
- <!-- 4. GROUP RESMI -->
+ <!-- 4. GROUP RESMI (DENGAN SISTEM KUNCI AKSES / LOGIN) -->
  <section class="page" id="group">
-    <div class="hero" style="background:linear-gradient(135deg, #f59e0b, #d97706); padding:30px; box-shadow:0 10px 30px rgba(245,158,11,0.2);">
-        <h1 style="font-size:24px;">Group Resmi Vibe Trans</h1>
-        <p style="font-size:14px; opacity:1; margin-top:8px;">Alur: <b>Registrasi Keanggotaan ➔ Masuk Group ➔ Informasi, Event & Tutorial</b></p>
-        <button class="btn" style="background:#ffffff; color:#d97706; margin-top:20px; border-radius:30px; padding:12px 25px;" onclick="bukaLink('regAgency')">Masuk Group WhatsApp</button>
-    </div>
     
-    <div class="grid-2" style="margin-top:25px;">
-        <div>
-            <h3 style="margin-bottom:15px; color:var(--primary); font-size:17px;">📢 Pengumuman Group</h3>
-            <div id="annList"></div>
-        </div>
-        <div>
-            <h3 style="margin-bottom:15px; color:var(--warn); font-size:17px;">🏆 Event & Agenda</h3>
-            <div id="eventList"></div>
+    <!-- TAMPILAN TERKUNCI -->
+    <div id="groupLockScreen" style="max-width:400px; margin:50px auto; text-align:center;">
+        <div class="item-box" style="padding:40px 30px; border-color:var(--warn); box-shadow: 0 10px 30px rgba(245,158,11,0.15);">
+            <div style="font-size:50px; margin-bottom:15px; filter: drop-shadow(0 4px 6px rgba(245,158,11,0.4));">🔒</div>
+            <h2 style="margin-bottom:10px; color:var(--text);">Akses Terkunci</h2>
+            <p style="font-size:13px; color:var(--muted); margin-bottom:25px;">Masukkan <b>Kunci Akses (Secret Key)</b> untuk membuka halaman Group Resmi, Event, dan Pengumuman.</p>
+            <input type="text" id="groupKeyInput" placeholder="Masukkan Kunci Akses..." class="searchbar" style="text-align:center; font-weight:bold; letter-spacing:2px; margin-bottom:15px;">
+            <button class="btn" style="width:100%; border-radius:30px; padding:14px; background:linear-gradient(135deg, #f59e0b, #d97706); box-shadow:0 5px 15px rgba(245,158,11,0.4);" onclick="unlockGroup()">Buka Akses Group</button>
         </div>
     </div>
 
-    <h2 style="margin: 30px 0 15px; font-size:17px;">💡 Tips, SOP & FAQ</h2>
-    <div id="tipsList"></div>
-    <div id="faqList"></div>
+    <!-- TAMPILAN KONTEN UTAMA (DISEMBUNYIKAN SEBELUM LOGIN) -->
+    <div id="groupContent" style="display:none;">
+        <div class="hero" style="background:linear-gradient(135deg, #f59e0b, #d97706); padding:30px; box-shadow:0 10px 30px rgba(245,158,11,0.2);">
+            <h1 style="font-size:24px;">Group Resmi Vibe Trans</h1>
+            <p style="font-size:14px; opacity:1; margin-top:8px;">Alur: <b>Registrasi Keanggotaan ➔ Masuk Group ➔ Informasi, Event & Tutorial</b></p>
+            <button class="btn" style="background:#ffffff; color:#d97706; margin-top:20px; border-radius:30px; padding:12px 25px;" onclick="bukaLink('regAgency')">Masuk Group WhatsApp</button>
+        </div>
+        
+        <div class="grid-2" style="margin-top:25px;">
+            <div><h3 style="margin-bottom:15px; color:var(--primary); font-size:17px;">📢 Pengumuman Group</h3><div id="annList"></div></div>
+            <div><h3 style="margin-bottom:15px; color:var(--warn); font-size:17px;">🏆 Event & Agenda</h3><div id="eventList"></div></div>
+        </div>
+
+        <h2 style="margin: 30px 0 15px; font-size:17px;">💡 Tips, SOP & FAQ</h2>
+        <div id="tipsList"></div>
+        <div id="faqList"></div>
+    </div>
  </section>
 
  <!-- 5. TESTIMONI -->
@@ -261,7 +258,6 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
 </div>
 <div id="toastBox"></div>
 
-<!-- TOMBOL MELAYANG WHATSAPP (KONTAK ADMIN) -->
 <div class="fab-wa" onclick="contactAdmin()" title="Hubungi Admin (WhatsApp)">
     <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </div>
@@ -307,24 +303,39 @@ function renderSkeleton(elId, count=2) {
 const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
 firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 let globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '', groupBimbingan: '', regCreatorDesc: '' };
-let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[] };
+let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[] };
 
 async function loadDataFromFirebase() {
-    const collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules', 'guides'];
+    const collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules', 'guides', 'keys'];
     for (let c of collections) { data[c] = []; try { const snap = await db.collection(c).get(); snap.forEach(doc => { data[c].push({ id: doc.id, ...doc.data() }); }); } catch (e) {} }
     db.collection('settings').doc('global').onSnapshot((doc) => {
         if (doc.exists) {
             globalSettings = doc.data();
-            
             const descArea = document.getElementById('regCreatorDescArea');
             if(descArea) { descArea.innerHTML = globalSettings.regCreatorDesc ? safe(globalSettings.regCreatorDesc) : '<i style="color:var(--muted)">Belum ada arahan dari Admin. Silakan langsung klik tombol di bawah.</i>'; }
-            
             const logoImg = document.getElementById('brandLogoImg'); const logoText = document.getElementById('brandLogoText'); const logoBox = document.getElementById('brandLogoBox');
             if (globalSettings.logoUrl && globalSettings.logoUrl.trim() !== '') { logoImg.src = globalSettings.logoUrl; logoImg.style.display = 'block'; logoText.style.display = 'none'; logoBox.style.background = 'transparent'; } 
             else { logoImg.style.display = 'none'; logoText.style.display = 'block'; logoBox.style.background = 'linear-gradient(135deg,#7652e8,#ad8bff)'; }
         }
     });
     renderAll();
+}
+
+// LOGIKA BUKA KUNCI AKSES GROUP RESMI
+function unlockGroup() {
+    const input = document.getElementById('groupKeyInput').value.trim();
+    if(!input) { showToast('Masukkan kunci akses terlebih dahulu!', 'error'); return; }
+    
+    // Cek apakah key cocok dengan data dari Firebase
+    const valid = data.keys.find(k => k.code === input);
+    if(valid) {
+        sessionStorage.setItem('groupUnlocked', 'true');
+        showToast('Akses Berhasil Dibuka!', 'success');
+        document.getElementById('groupLockScreen').style.display = 'none';
+        document.getElementById('groupContent').style.display = 'block';
+    } else {
+        showToast('Kunci Akses Salah atau Tidak Valid!', 'error');
+    }
 }
 
 function toggleMenu(){ const s = document.getElementById('sidebar'); if(s) { s.classList.toggle('open'); let ov = document.getElementById('sidebarOverlay'); if (s.classList.contains('open')) { if (!ov) { ov = document.createElement('div'); ov.id = 'sidebarOverlay'; ov.style.position = 'fixed'; ov.style.inset = '0'; ov.style.background = 'rgba(0,0,0,0.5)'; ov.style.zIndex = '15'; document.body.appendChild(ov); ov.addEventListener('click', function() { s.classList.remove('open'); this.remove(); }); } } else { if (ov) ov.remove(); } } }
@@ -344,6 +355,13 @@ function dateFormat(date){ if(!date)return '-'; const d=new Date(date+'T00:00:00
 function safe(text){ return String(text??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 function renderAll(){
+ // Cek Status Akses Group
+ if(sessionStorage.getItem('groupUnlocked') === 'true') {
+     const lock = document.getElementById('groupLockScreen'); const content = document.getElementById('groupContent');
+     if(lock) lock.style.display = 'none';
+     if(content) content.style.display = 'block';
+ }
+
  const renderList = (elId, array, renderFn, emptyMsg) => { try { const el = document.getElementById(elId); if(el) el.innerHTML = (array && array.length) ? array.map(renderFn).join('') : `<div class="empty">${emptyMsg}</div>`; } catch(e){} };
  
  renderList('guideList', data.guides, g => `<div class="item-box"><span class="tag">${safe(g.category)}</span><h3 style="margin-top:12px">${safe(g.title)}</h3><div style="font-size:13px; color:var(--muted); line-height:1.7; white-space:pre-wrap; margin-top:10px;">${safe(g.content)}</div>${g.videoUrl ? `<button class="btn btn-small" style="margin-top:15px; background:var(--border); color:var(--primary); border:1px solid var(--border);" onclick="playAnyVideo('${safe(g.videoUrl)}', '${safe(g.title).replace(/'/g, "\\'")}')">▶ Tonton Arahan</button>` : ''}</div>`, 'Belum ada panduan.');
