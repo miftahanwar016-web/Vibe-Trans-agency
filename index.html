@@ -62,6 +62,8 @@ body.dark-mode .tag { background: #2a2a3c; color: #a78bfa; }
 .video-thumb{aspect-ratio:16/9;background:#1e1e2d;display:grid;place-items:center;color:white;font-size:42px;cursor:pointer; position:relative;}
 .video-body{padding:16px} .video-body h3{font-size:14px;margin:10px 0 5px;} .video-body p{font-size:12px;color:var(--muted);line-height:1.6}
 .video-meta{display:flex;justify-content:space-between;margin-top:15px;align-items:center}
+.searchbar{width:100%;padding:14px 16px;border:1px solid var(--border);border-radius:10px;background:var(--bg); color:var(--text); outline:none;margin-bottom:20px;font-size:13px; transition:0.3s;}
+.searchbar:focus {border-color:var(--primary); box-shadow:0 0 0 3px rgba(118,82,232,0.1);}
 .empty{text-align:center;padding:40px;color:var(--muted);font-size:13px; background:var(--card); border-radius:12px; border:1px dashed var(--border);}
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;padding:15px; backdrop-filter:blur(3px);} .modal.show{display:flex}
 .modal-box{background:var(--card);border-radius:17px;width:100%;max-width:600px;max-height:90vh;overflow:auto;padding:22px; transition:0.3s;}
@@ -191,25 +193,26 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
   </div>
  </section>
 
- <!-- 3. BIMBINGAN PENDAFTARAN (DITAMBAH FITUR MENTAHAN) -->
+ <!-- 3. BIMBINGAN PENDAFTARAN (DENGAN 2 TOMBOL GRUP WA) -->
  <section class="page" id="bimbingan">
   <div class="hero" style="background:linear-gradient(135deg, #8b5cf6, #6d28d9); padding:30px; box-shadow:0 10px 30px rgba(139,92,246,0.2); margin-bottom:25px;">
-      <h1 style="font-size:24px;">Group Bimbingan Pendaftaran</h1>
-      <p style="font-size:14px; opacity:1; margin-top:8px;">Silakan masuk ke group WhatsApp khusus bimbingan untuk mendapatkan panduan pendaftaran creator CapCut.</p>
-      <button class="btn" style="background:#ffffff; color:#6d28d9; margin-top:20px; border-radius:30px; padding:12px 25px;" onclick="bukaLink('groupBimbingan')">Masuk Group Bimbingan</button>
+      <h1 style="font-size:24px;">Group Bimbingan & Mentahan</h1>
+      <p style="font-size:14px; opacity:1; margin-top:8px;">Silakan masuk ke group WhatsApp khusus bimbingan untuk mendapatkan panduan pendaftaran creator CapCut dan bahan mentahan edit gratis.</p>
+      
+      <div style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;">
+          <button class="btn" style="background:#ffffff; color:#6d28d9; border-radius:30px; padding:12px 25px;" onclick="bukaLink('groupBimbingan')">Masuk Group Bimbingan</button>
+          <button class="btn" style="background:rgba(255,255,255,0.2); color:#ffffff; border:1px solid rgba(255,255,255,0.5); border-radius:30px; padding:12px 25px;" onclick="bukaLink('groupMentahan')">Masuk Group Mentahan</button>
+      </div>
   </div>
   
-  <!-- Arahan Teks -->
   <h2 style="margin: 0 0 15px; font-size:17px; color:var(--primary);">📝 Arahan Teks Pendaftaran</h2>
   <div id="guideList"></div>
-  
-  <!-- Fitur Mentahan Gratis -->
+
   <h2 style="margin: 35px 0 15px; font-size:17px; color:#3b82f6;">📁 Mentahan Gratis (Bahan Edit)</h2>
   <p class="subtitle" style="margin-bottom:20px;">Download bahan mentahan eksklusif dari admin untuk keperluan editing video kamu.</p>
   <div class="grid-3" id="mentahanList"></div>
-
-  <!-- Tutorial Video -->
-  <h2 style="margin: 35px 0 15px; font-size:17px; color:var(--primary);">▶ Video Tutorial Arahan</h2>
+  
+  <h2 style="margin: 30px 0 15px; font-size:17px; color:var(--primary);">▶ Video Tutorial Arahan</h2>
   <div class="video-grid" id="videoList"></div>
  </section>
 
@@ -307,7 +310,7 @@ function renderSkeleton(elId, count=2) {
 
 const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
 firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
-let globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '', groupBimbingan: '', regCreatorDesc: '' };
+let globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '', groupBimbingan: '', groupMentahan: '', regCreatorDesc: '' };
 let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
 
 async function loadDataFromFirebase() {
@@ -361,9 +364,7 @@ function renderAll(){
  }
  const renderList = (elId, array, renderFn, emptyMsg) => { try { const el = document.getElementById(elId); if(el) el.innerHTML = (array && array.length) ? array.map(renderFn).join('') : `<div class="empty">${emptyMsg}</div>`; } catch(e){} };
  
- // Mentahan Tampil Beda
  renderList('mentahanList', data.mentahans, m => `<div class="item-box" style="display:flex; flex-direction:column; justify-content:space-between; text-align:center; border-color:#dbeafe; background:linear-gradient(to bottom, var(--card), rgba(59,130,246,0.05));"><div style="font-size:35px; margin-bottom:15px; filter:drop-shadow(0 4px 6px rgba(59,130,246,0.3));">📦</div><h3 style="color:var(--text);">${safe(m.title)}</h3><p style="font-size:12px; color:var(--muted); margin-bottom:20px;">${safe(m.desc)}</p><a href="${safe(m.url)}" target="_blank" class="btn" style="width:100%; display:block; text-decoration:none; background:linear-gradient(135deg, #3b82f6, #2563eb); border-radius:30px; box-shadow:0 5px 15px rgba(59,130,246,0.3);">⬇ Download</a></div>`, 'Belum ada file mentahan.');
- 
  renderList('guideList', data.guides, g => `<div class="item-box"><span class="tag">${safe(g.category)}</span><h3 style="margin-top:12px">${safe(g.title)}</h3><div style="font-size:13px; color:var(--muted); line-height:1.7; white-space:pre-wrap; margin-top:10px;">${safe(g.content)}</div>${g.videoUrl ? `<button class="btn btn-small" style="margin-top:15px; background:var(--border); color:var(--primary); border:1px solid var(--border);" onclick="playAnyVideo('${safe(g.videoUrl)}', '${safe(g.title).replace(/'/g, "\\'")}')">▶ Tonton Arahan</button>` : ''}</div>`, 'Belum ada panduan.');
  renderList('videoList', data.videos, v => `<div class="video-card"><div class="video-thumb" onclick="playVideo('${v.id}')">▶</div><div class="video-body"><span class="tag">${safe(v.category)}</span><h3>${safe(v.title)}</h3><p>${safe(v.desc)}</p><div class="video-meta"><button class="btn btn-small" onclick="playVideo('${v.id}')">Tonton</button></div></div></div>`, 'Belum ada tutorial.');
  renderList('annList', data.announcements.slice().reverse(), a => `<div class="item-box" style="padding:15px;"><div class="card-top"><span class="tag">${safe(a.category)}</span><span class="date">${dateFormat(a.date)}</span></div><h3>${safe(a.title)}</h3><p>${safe(a.content)}</p></div>`, 'Belum ada pengumuman.');
@@ -372,6 +373,7 @@ function renderAll(){
  const combinedTips = [...data.tips, ...data.rules]; renderList('tipsList', combinedTips, t => `<div class="item-box"><h3>💡 ${safe(t.title)}</h3><p>${safe(t.content)}</p></div>`, 'Belum ada tips & SOP.');
  renderList('faqList', data.faqs, f => `<div class="item-box"><details><summary style="font-weight:bold; cursor:pointer; color:var(--primary);">${safe(f.question)}</summary><p style="margin-top:15px; padding-left:15px; border-left:2px solid var(--border);">${safe(f.answer)}</p></details></div>`, 'Belum ada FAQ.');
  renderList('showcaseList', data.showcases, s => `<div class="showcase-card"><div class="showcase-ava">${safe(s.name).charAt(0).toUpperCase()}</div><h3>${safe(s.name)}</h3><p style="margin:10px 0; color:var(--primary); font-weight:bold;">${safe(s.achievement)}</p><a href="${safe(s.link)}" target="_blank" class="btn btn-light btn-small">Lihat Profil</a></div>`, 'Belum ada Testimoni.');
+ 
  document.getElementById('year').textContent=new Date().getFullYear();
 }
 
