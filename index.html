@@ -99,12 +99,12 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
  </div>
  <div class="nav">
   <div class="nav-title">MENU UTAMA AGENCY</div>
-  <button class="active" onclick="go('home')"><span>⌂</span> Beranda</button>
-  <button onclick="bukaLink('regCreator')"><span>📝</span> Daftar Creator</button>
-  <button onclick="go('bimbingan')"><span>📚</span> Bimbingan Pendaftaran</button>
-  <button onclick="bukaLink('capcutPro')" style="color:#10b981;"><span>💎</span> Promo CapCut Pro</button>
-  <button onclick="go('group')"><span>👥</span> Group Resmi</button>
-  <button onclick="go('testimoni')"><span>🌟</span> Testimoni</button>
+  <button class="active" onclick="go('home')"><span>⌂</span>Beranda</button>
+  <button onclick="bukaLink('regCreator')"><span>📝</span>Daftar Creator</button>
+  <button onclick="go('bimbingan')"><span>📚</span>Bimbingan Pendaftaran</button>
+  <button onclick="bukaLink('capcutPro')" style="color:#10b981;"><span>💎</span>Promo CapCut Pro</button>
+  <button onclick="go('group')"><span>👥</span>Group Resmi</button>
+  <button onclick="go('testimoni')"><span>🌟</span>Testimoni</button>
  </div>
 </aside>
 
@@ -121,7 +121,7 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
  </header>
  <div class="content">
  
- <!--  HALAMAN BERANDA -->
+ <!-- 1. HALAMAN BERANDA -->
  <section class="page active" id="home">
   <div class="hero">
    <span class="tag" style="background:rgba(255,255,255,0.2);color:white">AGENCY TERBAIK</span>
@@ -133,43 +133,49 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
   <div class="grid-5">
        <div class="item-box" style="cursor:pointer; text-align:center;" onclick="bukaLink('regCreator')">
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #3b82f6, #2563eb);">📝</div>
-          <h3> Daftar Creator</h3>
+          <h3>Daftar Creator</h3>
           <p style="font-size:11px;">Isi formulir resmi CapCut</p>
        </div>
        <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('bimbingan')">
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #8b5cf6, #6d28d9);">📚</div>
-          <h3> Bimbingan</h3>
+          <h3>Bimbingan</h3>
           <p style="font-size:11px;">Arahan & Tutorial daftar</p>
        </div>
        <div class="item-box" style="cursor:pointer; text-align:center; border-color:var(--success); background:rgba(16,185,129,0.05);" onclick="bukaLink('capcutPro')">
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #10b981, #059669);">💎</div>
-          <h3 style="color:var(--success);"> Promo capcut pro</h3>
+          <h3 style="color:var(--success);">Promo CapCut Pro</h3>
           <p style="font-size:11px;">Akses CapCut Pro eksklusif</p>
        </div>
        <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('group')">
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #f59e0b, #d97706);">👥</div>
-          <h3> Group Resmi</h3>
+          <h3>Group Resmi</h3>
           <p style="font-size:11px;">Registrasi, info & event</p>
        </div>
        <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('testimoni')">
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #ec4899, #be185d);">🌟</div>
-          <h3> Testimoni</h3>
+          <h3>Testimoni</h3>
           <p style="font-size:11px;">Ulasan & karya terbaik</p>
        </div>
   </div>
  </section>
 
- <!--  BIMBINGAN PENDAFTARAN -->
+ <!-- 2. BIMBINGAN PENDAFTARAN -->
  <section class="page" id="bimbingan">
-  <h1 style="margin-bottom:5px;">Bimbingan Pendaftaran</h1>
-  <p class="subtitle" style="margin-bottom:30px;">Arahan teks & Tutorial Video langkah demi langkah pendaftaran creator CapCut.</p>
+  <!-- BANNER KHUSUS UNTUK JOIN GRUP BIMBINGAN -->
+  <div class="hero" style="background:linear-gradient(135deg, #8b5cf6, #6d28d9); padding:30px; box-shadow:0 10px 30px rgba(139,92,246,0.2); margin-bottom:25px;">
+      <h1 style="font-size:24px;">Group Bimbingan Pendaftaran</h1>
+      <p style="font-size:14px; opacity:1; margin-top:8px;">Silakan masuk ke group WhatsApp khusus bimbingan untuk mendapatkan panduan pendaftaran creator CapCut.</p>
+      <button class="btn" style="background:#ffffff; color:#6d28d9; margin-top:20px; border-radius:30px; padding:12px 25px;" onclick="bukaLink('groupBimbingan')">Masuk Group Bimbingan</button>
+  </div>
   
+  <h2 style="margin: 0 0 15px; font-size:17px; color:var(--primary);">📝 Arahan Teks Pendaftaran</h2>
   <div id="guideList"></div>
+  
   <h2 style="margin: 30px 0 15px; font-size:17px; color:var(--primary);">▶ Video Tutorial Arahan</h2>
   <div class="video-grid" id="videoList"></div>
  </section>
 
- <!--  GROUP RESMI -->
+ <!-- 4. GROUP RESMI -->
  <section class="page" id="group">
     <div class="hero" style="background:linear-gradient(135deg, #f59e0b, #d97706); padding:30px; box-shadow:0 10px 30px rgba(245,158,11,0.2);">
         <h1 style="font-size:24px;">Group Resmi Vibe Trans</h1>
@@ -193,7 +199,7 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
     <div id="faqList"></div>
  </section>
 
- <!--  TESTIMONI -->
+ <!-- 5. TESTIMONI -->
  <section class="page" id="testimoni">
   <h1>Testimoni & Karya Creator</h1>
   <p class="subtitle">Inspirasi dan pencapaian dari kreator-kreator unggulan bulan ini.</p>
@@ -253,7 +259,7 @@ function renderSkeleton(elId, count=2) {
 
 const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
 firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
-let globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '' };
+let globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '', groupBimbingan: '' };
 let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[] };
 
 async function loadDataFromFirebase() {
