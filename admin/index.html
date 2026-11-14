@@ -8,20 +8,15 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <style>
-/* VARIABEL WARNA (TERANG & GELAP) */
 :root{--primary:#7652e8;--bg:#f7f7fb;--card:#ffffff;--text:#202033;--muted:#85859a;--border:#ececf3;}
 body.dark-mode {--bg:#12121c; --card:#1e1e2d; --text:#ffffff; --muted:#a0a0b2; --border:#2a2a3c;}
-
 *{box-sizing:border-box;margin:0;padding:0} 
 body{font-family:Arial,sans-serif;background:var(--bg);color:var(--text); transition: background 0.3s, color 0.3s;} 
 button,input,textarea,select{font:inherit} button{cursor:pointer;border:0}
 .app{display:none;min-height:100vh} .app.show{display:flex}
 
-/* CUSTOM SCROLLBAR ELEGAN */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #c3b5fd; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c3b5fd; border-radius: 10px; } ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 body.dark-mode ::-webkit-scrollbar-thumb { background: #4c309b; }
 
 .sidebar{width:260px;background:#1e1e2d;border-right:1px solid #2a2a3c;padding:25px 17px;position:fixed;inset:0 auto 0 0;overflow-y:auto;z-index:20; transition: transform 0.3s ease;}
@@ -33,30 +28,21 @@ body.dark-mode ::-webkit-scrollbar-thumb { background: #4c309b; }
 .nav button span{font-size:18px;width:22px;}
 .main{margin-left:260px;width:calc(100% - 260px);min-width:0}
 
-/* GLASSMORPHISM TOPBAR */
-.topbar{
-    background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border); padding: 16px 28px; display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 10; transition: background 0.3s;
-}
+.topbar{background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; transition: background 0.3s;}
 body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
-
 .page{display:none; padding:28px; max-width:1250px; margin:auto;} .page.active{display:block; animation: fadeIn 0.3s ease;}
 @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
 .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px; margin-bottom:30px;}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px; transition:0.3s;}
 .btn{background:var(--primary);color:white;padding:12px 15px;border-radius:9px;font-size:12px;font-weight:bold; width:100%; margin-top:10px; transition:all 0.3s ease; border:none;} 
 .btn:hover{opacity:0.9; transform:translateY(-1px); box-shadow:0 5px 15px rgba(118,82,232,0.3);}
-.btn-light {background:var(--border); color:var(--text);}
-.btn-small{width:auto; padding:8px 12px; margin-top:0;} 
-.btn-danger{background:#fff0f0;color:#db4141;}
-body.dark-mode .btn-danger {background:rgba(239, 68, 68, 0.15);}
+.btn-light {background:var(--border); color:var(--text);} .btn-small{width:auto; padding:8px 12px; margin-top:0;} 
+.btn-danger{background:#fff0f0;color:#db4141;} body.dark-mode .btn-danger {background:rgba(239, 68, 68, 0.15);}
 
 .form-group{margin-bottom:15px} .form-group label{display:block;font-size:12px;font-weight:bold;margin-bottom:5px; color:var(--text);}
 .form-group input,.form-group textarea{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;outline:none;font-size:13px; background:var(--bg); color:var(--text); transition:0.3s;}
 .form-group input:focus, .form-group textarea:focus {border-color:var(--primary); box-shadow:0 0 0 3px rgba(118,82,232,0.1);}
 .form-group textarea{height:100px;resize:vertical;}
-
 .item-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; gap:15px; transition:0.3s;}
 .item-box:hover {border-color:var(--primary); box-shadow:0 5px 15px rgba(0,0,0,0.05);}
 .item-info h3{font-size:15px; margin-bottom:5px;} .item-info p{font-size:12px; color:var(--muted);}
@@ -67,24 +53,18 @@ body.dark-mode .btn-danger {background:rgba(239, 68, 68, 0.15);}
 .login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#1e1e2d,#3a2c68);display:flex;justify-content:center;align-items:center;z-index:1000;padding:20px;}
 .login-box{background:#ffffff;border-radius:20px;padding:40px 30px;width:100%;max-width:350px;text-align:center;}
 
-/* SKELETON LOADING */
 .skel-box { padding: 18px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 15px; background: var(--card); }
 .skeleton { background: linear-gradient(90deg, var(--border) 25%, var(--bg) 50%, var(--border) 75%); background-size: 200% 100%; animation: loadSkel 1.5s infinite; border-radius: 6px; }
 @keyframes loadSkel { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 .skel-title { height: 16px; width: 60%; margin-bottom: 12px; } .skel-text { height: 12px; width: 30%; }
 
-/* TOAST NOTIFICATION */
 #toastBox { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; align-items: flex-end; z-index: 9999; pointer-events: none; }
 .toast { background: var(--card); border-left: 4px solid var(--primary); box-shadow: 0 5px 25px rgba(0,0,0,0.2); padding: 15px 20px; margin-top: 10px; border-radius: 8px; font-size: 13px; font-weight: bold; color: var(--text); display: flex; align-items: center; gap: 10px; animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; max-width: 320px; }
 .toast.error { border-left-color: #ef4444; } .toast.success { border-left-color: #10b981; }
 @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 @keyframes fadeOut { to { opacity: 0; transform: translateX(100%); } }
 
-@media(max-width:650px){ 
-    .sidebar{transform:translateX(-100%);} .sidebar.open{transform:translateX(0);} .main{margin-left:0;width:100%} 
-    .topbar button{display:block;} .item-box{flex-direction:column; align-items:flex-start;} 
-    #toastBox { bottom: 20px; left: 50%; right: auto; transform: translateX(-50%); align-items: center; }
-}
+@media(max-width:650px){ .sidebar{transform:translateX(-100%);} .sidebar.open{transform:translateX(0);} .main{margin-left:0;width:100%} .topbar button{display:block;} .item-box{flex-direction:column; align-items:flex-start;} #toastBox { bottom: 20px; left: 50%; right: auto; transform: translateX(-50%); align-items: center; } }
 </style>
 </head>
 <body>
@@ -105,14 +85,23 @@ body.dark-mode .btn-danger {background:rgba(239, 68, 68, 0.15);}
   <div><h2 style="color:white;">ADMIN PANEL</h2><small style="color:#aaa;">Control Center</small></div>
  </div>
  <div class="nav">
-  <div class="nav-title">KONTEN HALAMAN</div>
+  <div class="nav-title">SISTEM & LINK</div>
   <button class="active" onclick="go('admin',this)"><span>⚙</span>Pengaturan Umum</button>
+  
+  <!-- MENU DIKATEGORIKAN AGAR LEBIH RAPI & TERARAH -->
+  <div class="nav-title">BIMBINGAN PENDAFTARAN</div>
+  <button onclick="go('guide',this)"><span>📚</span>Arahan (Teks)</button>
+  <button onclick="go('tutorial',this)"><span>▶</span>Tutorial (Video)</button>
+
+  <div class="nav-title">INFO GROUP RESMI</div>
   <button onclick="go('announcement',this)"><span>📢</span>Pengumuman</button>
-  <button onclick="go('tutorial',this)"><span>▶</span>Video Tutorial</button>
   <button onclick="go('event',this)"><span>🏆</span>Event & Agenda</button>
   <button onclick="go('tips',this)"><span>💡</span>Tips & SOP</button>
   <button onclick="go('faq',this)"><span>❔</span>FAQ</button>
-  <button onclick="go('showcase',this)"><span>🌟</span>Creator Showcase</button>
+
+  <div class="nav-title">TESTIMONI</div>
+  <button onclick="go('showcase',this)"><span>🌟</span>Karya Creator</button>
+
   <div class="nav-title">AKSES</div>
   <button onclick="logoutAdmin()" style="color:#ef4444;"><span>🚪</span>Keluar</button>
  </div>
@@ -122,10 +111,7 @@ body.dark-mode .btn-danger {background:rgba(239, 68, 68, 0.15);}
  <header class="topbar">
   <div style="display:flex; align-items:center; gap:15px;">
       <button class="menu-btn" onclick="toggleMenu()" style="font-size:20px;">☰</button>
-      <div>
-          <b id="pageTitle">Pengaturan Umum</b><br>
-          <small id="greetingText" style="font-size:11px; color:var(--muted); font-weight:normal;">Selamat Datang, Admin!</small>
-      </div>
+      <div><b id="pageTitle">Pengaturan Umum</b><br><small id="greetingText" style="font-size:11px; color:var(--muted); font-weight:normal;">Selamat Datang, Admin!</small></div>
   </div>
   <button class="btn-light" id="themeToggle" onclick="toggleTheme()" style="width:35px; height:35px; border-radius:50%; display:grid; place-items:center; font-size:16px; background:var(--card); border:1px solid var(--border);" title="Mode Gelap/Terang">🌙</button>
  </header>
@@ -144,12 +130,15 @@ body.dark-mode .btn-danger {background:rgba(239, 68, 68, 0.15);}
   </div>
  </section>
 
- <section class="page" id="announcement"> <button class="btn" onclick="openForm('announcement')" style="width:auto; margin-bottom:20px;">+ Tambah Pengumuman</button> <div id="announcementList"></div> </section>
+ <section class="page" id="guide"> <button class="btn" onclick="openForm('guide')" style="width:auto; margin-bottom:20px;">+ Tambah Arahan</button> <div id="guideList"></div> </section>
  <section class="page" id="tutorial"> <button class="btn" onclick="openForm('video')" style="width:auto; margin-bottom:20px;">+ Tambah Tutorial</button> <div id="videoList"></div> </section>
+ 
+ <section class="page" id="announcement"> <button class="btn" onclick="openForm('announcement')" style="width:auto; margin-bottom:20px;">+ Tambah Pengumuman</button> <div id="announcementList"></div> </section>
  <section class="page" id="event"> <button class="btn" onclick="openForm('event')" style="width:auto; margin-bottom:20px;">+ Tambah Event / Agenda</button> <div id="eventList"></div> </section>
  <section class="page" id="tips"> <button class="btn" onclick="openForm('tips')" style="width:auto; margin-bottom:20px;">+ Tambah Tips / SOP</button> <div id="tipsList"></div> </section>
  <section class="page" id="faq"> <button class="btn" onclick="openForm('faq')" style="width:auto; margin-bottom:20px;">+ Tambah FAQ</button> <div id="faqList"></div> </section>
- <section class="page" id="showcase"> <button class="btn" onclick="openForm('showcase')" style="width:auto; margin-bottom:20px;">+ Tambah Creator</button> <div id="showcaseList"></div> </section>
+ 
+ <section class="page" id="showcase"> <button class="btn" onclick="openForm('showcase')" style="width:auto; margin-bottom:20px;">+ Tambah Testimoni / Karya</button> <div id="showcaseList"></div> </section>
 </main>
 </div>
 
@@ -163,14 +152,9 @@ body.dark-mode .btn-danger {background:rgba(239, 68, 68, 0.15);}
   </div>
  </div>
 </div>
-
-<!-- KOTAK TOAST NOTIFIKASI -->
 <div id="toastBox"></div>
 
 <script>
-// =============================
-// UI & THEME LOGIC
-// =============================
 function setGreeting() {
     const hour = new Date().getHours(); let greet = 'Selamat Malam 🌙';
     if (hour >= 5 && hour < 11) greet = 'Selamat Pagi ☀️';
@@ -181,9 +165,7 @@ function setGreeting() {
 setGreeting();
 
 function initTheme() {
-    if (localStorage.getItem('theme-admin') === 'dark') {
-        document.body.classList.add('dark-mode'); document.getElementById('themeToggle').textContent = '☀️';
-    }
+    if (localStorage.getItem('theme-admin') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('themeToggle').textContent = '☀️'; }
 }
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
@@ -206,11 +188,8 @@ function renderSkeleton(elId) {
     const el = document.getElementById(elId); if(!el) return;
     el.innerHTML = `<div class="skel-box"><div class="skeleton skel-title"></div><div class="skeleton skel-text"></div></div>`.repeat(2);
 }
-['announcementList','videoList','eventList','tipsList','faqList','showcaseList'].forEach(id => renderSkeleton(id));
+['guideList','videoList','announcementList','eventList','tipsList','faqList','showcaseList'].forEach(id => renderSkeleton(id));
 
-// =============================
-// FIREBASE LOGIC
-// =============================
 const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
 firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 const ADMIN_PASSWORD = 'admin123'; 
@@ -222,9 +201,9 @@ function verifyLogin() {
 }
 function logoutAdmin(){ sessionStorage.removeItem('isAdmin'); window.location.href = '../index.html'; }
 
-let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[] };
+let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[] };
 let currentType=''; let editId=null; let globalEditCol = '';
-const collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases' };
+const collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases', guide:'guides' };
 
 async function loadDataFromFirebase() {
     try {
@@ -243,7 +222,7 @@ async function loadDataFromFirebase() {
         }
     } catch(err) { showToast("Gagal load pengaturan", "error"); }
 
-    const collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules'];
+    const collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules', 'guides'];
     for (let c of collections) { data[c] = []; try { const snap = await db.collection(c).get(); snap.forEach(doc => { data[c].push({ id: doc.id, ...doc.data() }); }); } catch (e) {} }
     renderAll();
 }
@@ -256,6 +235,7 @@ function renderList(id, arr, template) { try { const el = document.getElementByI
 function act(type, id) { return `<div class="admin-actions"><button class="btn btn-small btn-light" onclick="openForm('${type}','${id}')">Edit</button><button class="btn btn-danger btn-small" onclick="deleteContent('${type}','${id}')">Hapus</button></div>`; }
 
 function renderAll(){
+ renderList('guideList', data.guides, g => `<div class="item-box"><div class="item-info"><h3>${safe(g.title)}</h3><p>${safe(g.category)}</p></div>${act('guide',g.id)}</div>`);
  renderList('announcementList', data.announcements, a => `<div class="item-box"><div class="item-info"><h3>${safe(a.title)}</h3><p>${safe(a.category)}</p></div>${act('announcement',a.id)}</div>`);
  renderList('videoList', data.videos, v => `<div class="item-box"><div class="item-info"><h3>${safe(v.title)}</h3><p>${safe(v.category)}</p></div>${act('video',v.id)}</div>`);
  const combinedEvents = [...data.events, ...data.agendas]; renderList('eventList', combinedEvents, e => `<div class="item-box"><div class="item-info"><h3>${safe(e.title)}</h3><p>Waktu: ${safe(e.date)}</p></div>${act('event',e.id)}</div>`);
@@ -270,6 +250,7 @@ function openForm(type,id=null){
  if(id) { for (let c in data) { const found = data[c].find(x => x.id === id); if(found) { item = found; globalEditCol = c; break; } } }
  
  const fields={
+ guide:[['title','Judul Arahan','text'],['category','Kategori Label','text'],['content','Isi Arahan Teks','textarea'],['videoUrl','Link Video YouTube (Opsional)','url']],
  announcement:[['title','Judul','text'],['category','Kategori Label','text'],['date','Tanggal (YYYY-MM-DD)','date'],['content','Isi Pengumuman','textarea']],
  video:[['title','Judul','text'],['category','Kategori Label','text'],['url','Link YouTube','url'],['desc','Deskripsi Singkat','textarea']],
  event:[['title','Nama Event / Agenda','text'],['date','Tgl Berakhir (YYYY-MM-DD)','date'],['time','Waktu (Opsional)','time'],['desc','Detail Teks','textarea']],
@@ -283,16 +264,16 @@ function closeModal(){ document.getElementById('formModal').classList.remove('sh
 
 async function saveContent(){
  const btn = document.getElementById('saveBtn'); btn.textContent="Menyimpan..."; btn.disabled=true;
- const fields = { announcement:['title','category','date','content'], video:['title','category','url','desc'], event:['title','date','time','desc'], tips:['title','content'], faq:['question','answer'], showcase:['name','achievement','link'] }[currentType];
+ const fields = { guide:['title','category','content','videoUrl'], announcement:['title','category','date','content'], video:['title','category','url','desc'], event:['title','date','time','desc'], tips:['title','content'], faq:['question','answer'], showcase:['name','achievement','link'] }[currentType];
  const obj={}; let isError = false;
- for(const k of fields){ const el = document.getElementById('f_'+k); if (el) { obj[k] = el.value.trim(); if(!obj[k] && k !== 'time'){ showToast('Isi semua kolom wajib!', 'error'); isError = true; break; } } }
+ for(const k of fields){ const el = document.getElementById('f_'+k); if (el) { obj[k] = el.value.trim(); if(!obj[k] && k !== 'time' && k !== 'videoUrl'){ showToast('Isi semua kolom wajib!', 'error'); isError = true; break; } } }
  if (isError) { btn.textContent="Simpan Data"; btn.disabled=false; return; }
  try { 
      const dbName = editId ? globalEditCol : collectionMap[currentType]; 
      if(editId) { await db.collection(dbName).doc(editId).update(obj); showToast('Data berhasil diperbarui!', 'success'); } 
-     else { await db.collection(dbName).add(obj); showToast('Data baru berhasil ditambahkan!', 'success'); } 
+     else { await db.collection(dbName).add(obj); showToast('Data baru ditambahkan!', 'success'); } 
      closeModal(); loadDataFromFirebase(); 
- } catch(e) { showToast('Gagal: ' + e.message, 'error'); }
+ } catch(e) { showToast('Gagal simpan: ' + e.message, 'error'); }
  btn.textContent="Simpan Data"; btn.disabled=false;
 }
 
@@ -312,19 +293,9 @@ async function saveSettings(){
  try {
      const val = (id) => document.getElementById(id) ? document.getElementById(id).value.trim() : '';
      const agencyName = val('agencyName');
-     if(!agencyName) {
-         showToast('Tunggu! Nama Agency tidak boleh kosong.', 'error');
-         btn.textContent="Simpan Pengaturan"; btn.disabled = false;
-         return;
-     }
+     if(!agencyName) { showToast('Tunggu! Nama Agency tidak boleh kosong.', 'error'); btn.textContent="Simpan Pengaturan"; btn.disabled = false; return; }
      await db.collection('settings').doc('global').set({ 
-         wa: val('waNumber').replace(/\D/g,''), 
-         name: agencyName, 
-         regCreator: val('regCreator'), 
-         regAgency: val('regAgency'), 
-         regLink: val('regAgency'), 
-         logoUrl: val('logoUrl'), 
-         capcutPro: val('capcutPro') 
+         wa: val('waNumber').replace(/\D/g,''), name: agencyName, regCreator: val('regCreator'), regAgency: val('regAgency'), regLink: val('regAgency'), logoUrl: val('logoUrl'), capcutPro: val('capcutPro') 
      }, {merge:true}); 
      showToast('Pengaturan Berhasil Disimpan!', 'success'); 
  } catch(e) { showToast('Error: ' + e.message, 'error'); }
