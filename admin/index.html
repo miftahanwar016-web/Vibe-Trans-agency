@@ -132,6 +132,148 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
    
    <div class="form-group">
        <label style="color:#3b82f6;">📝 Arahan / Petunjuk Pendaftaran Creator</label>
+       <textarea id="regCreatorDesc" placeholder="Ketik syarat, info, atau tata cara pendaftaran creator di sini..."></textarea>
+   </div>
+   <div class="form-group"><label style="color:#3b82f6;">Link Form Daftar Creator (Akhir)</label><input id="regCreator" placeholder="https://form..."></div>
+   
+   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
+   <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
+   <div class="form-group"><label style="color:#3b82f6;">📁 Link Group Mentahan Tambahan</label><input id="groupMentahan" placeholder="https://chat.whatsapp..."></div>
+   
+   <!-- PENAMBAHAN LINK PUSAT INFO TAHAPAN (DI ADMIN) -->
+   <div class="form-group"><label style="color:#f59e0b;">ℹ️ Link Pusat Informasi Tahapan Pendaftaran</label><input id="infoTahapanLink" placeholder="https://..."></div>
+   
+   <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
+   
+   <button class="btn" onclick="saveSettings()" id="btnSaveSettings" style="margin-top:20px; font-size:14px; padding:15px;">Simpan Semua Pengaturan</button>
+  </div>
+ </section>
+
+ <section class="page" id="keys"> 
+     <h1 style="margin-bottom:10px;">Manajemen Kunci Akses Group</h1>
+     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Kunci (Secret Key) yang valid agar member bisa membuka halaman Group Resmi.</p>
+     <button class="btn" onclick="openForm('key')" style="width:auto; margin-bottom:20px;">+ Tambah Kunci Baru</button> 
+     <div class="grid-3" id="keyList"></div> 
+ </section>
+
+ <section class="page" id="guide"> <button class="btn" onclick="openForm('guide')" style="width:auto; margin-bottom:20px;">+ Tambah Arahan</button> <div id="guideList"></div> </section>
+ 
+ <section class="page" id="mentahan"> 
+     <h1 style="margin-bottom:10px;">Mentahan Gratis</h1>
+     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Upload link bahan editan seperti Preset, Overlay, Sound, dll ke Google Drive lalu simpan linknya di sini.</p>
+     <button class="btn" onclick="openForm('mentahan')" style="width:auto; margin-bottom:20px;">+ Tambah File Mentahan</button> 
+     <div class="grid-3" id="mentahanList"></div> 
+ </section>
+
+ <section class="page" id="tutorial"> 
+     <h1 style="margin-bottom:10px;">Manajemen Video Tutorial</h1>
+     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Link Video YouTube untuk ditampilkan di halaman Bimbingan dan halaman Kumpulan Tutorial.</p>
+     <button class="btn" onclick="openForm('video')" style="width:auto; margin-bottom:20px;">+ Tambah Tutorial</button> 
+     <div id="videoList"></div> 
+</section>
+ 
+ <section class="page" id="announcement"> <button class="btn" onclick="openForm('announcement')" style="width:auto; margin-bottom:20px;">+ Tambah Pengumuman</button> <div id="announcementList"></div> </section>
+ <section class="page" id="event"> <button class="btn" onclick="openForm('event')" style="width:auto; margin-bottom:20px;">+ Tambah Event / Agenda</button> <div id="eventList"></div> </section>
+ <section class="page" id="tips"> <button class="btn" onclick="openForm('tips')" style="width:auto; margin-bottom:20px;">+ Tambah Tips / SOP</button> <div id="tipsList"></div> </section>
+ <section class="page" id="faq"> <button class="btn" onclick="openForm('faq')" style="width:auto; margin-bottom:20px;">+ Tambah FAQ</button> <div id="faqList"></div> </section>
+ 
+ <section class="page" id="showcase"> <button class="btn" onclick="openForm('showcase')" style="width:auto; margin-bottom:20px;">+ Tambah Testimoni / Karya</button> <div id="showcaseList"></div> </section>
+</main>
+</div>
+
+<div class="modal" id="formModal">
+ <div class="modal-box">
+  <h2 id="formTitle" style="margin-bottom:15px;">Tambah Data</h2>
+  <div id="formFields"></div>
+  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+   <button class="btn btn-light btn-small" onclick="closeModal()">Batal</button>
+   <button class="btn btn-small" onclick="saveContent()" id="saveBtn">Simpan Data</button>
+  </div>
+ </div>
+</div>
+<div id="toastBox"></div>
+
+<script>
+function setGreeting() {
+    const hour = new Date().getHours(); let greet = 'Selamat Malam 🌙';
+    if (hour >= 5 && hour < 11) greet = 'Selamat Pagi ☀️';
+    else if (hour >= 11 && hour < 15) greet = 'Selamat Siang ☀️';
+    else if (hour >= 15 && hour < 18) greet = 'Selamat Sore ⛅';
+    if(document.getElementById('greetingText')) document.getElementById('greetingText').textContent = greet + ', Admin!';
+}
+setGreeting();
+
+function initTheme() {
+    if (localStorage.getItem('theme-admin') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('themeToggle').textContent = '☀️'; }
+}
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('theme-admin', isDark ? 'dark' : 'light');
+    document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
+}
+initTheme();
+
+function showToast(msg, type = 'info') {
+    const box = document.getElementById('toastBox');
+    const toast = document.createElement('div');
+    toast.classList.add('toast', type);
+    toast.innerHTML = (type === 'error' ? '❌ ' : (type === 'success' ? '✅ ' : '✨ ')) + msg;
+    box.appendChild(toast);
+    setTimeout(() => { toast.style.animation = 'fadeOut 0.5s ease forwards'; setTimeout(() => toast.remove(), 500); }, 3500);
+}
+
+function renderSkeleton(elId) {
+    const el = document.getElementById(elId); if(!el) return;
+    el.innerHTML = `<div class="skel-box"><div class="skeleton skel-title"></div><div class="skeleton skel-text"></div></div>`.repeat(2);
+}
+['guideList','mentahanList','videoList','announcementList','eventList','tipsList','faqList','showcaseList','keyList'].forEach(id => renderSkeleton(id));
+
+const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
+firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
+const ADMIN_PASSWORD = 'admin123'; 
+
+if (sessionStorage.getItem('isAdmin') === 'true') { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('adminApp').classList.add('show'); loadDataFromFirebase(); }
+function verifyLogin() { 
+    if(document.getElementById('adminPassword').value === ADMIN_PASSWORD) { sessionStorage.setItem('isAdmin', 'true'); location.reload(); } 
+    else { showToast('Password Salah!', 'error'); } 
+}
+function logoutAdmin(){ sessionStorage.removeItem('isAdmin'); window.location.href = '../index.html'; }
+
+let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
+let currentType=''; let editId=null; let globalEditCol = '';
+const collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases', guide:'guides', key:'keys', mentahan:'mentahans' };
+
+async function loadDataFromFirebase() {
+    try {
+        const doc = await db.collection('settings').doc('global').get();
+        if(doc.exists) {
+            const s = doc.data();
+            if(document.getElementById('waNumber')) document.getElementById('waNumber').value = s.wa || '';
+            if(document.getElementById('agencyName')) document.getElementById('agencyName').value = s.name || 'Vibe Trans Agency';
+            if(document.getElementById('capcutPro')) document.getElementById('capcutPro').value = s.capcutPro || '';
+            if(document.getElementById('regCreator')) document.getElementById('regCreator').value = s.regCreator || '';
+            if(document.getElementById('regCreatorDesc')) document.getElementById('regCreatorDesc').value = s.regCreatorDesc || '';
+            if(document.getElementById('regAgency')) document.getElementById('regAgency').value = s.regAgency || '';
+            if(document.getElementById('groupBimbingan')) document.getElementById('groupBimbingan').value = s.groupBimbingan || '';
+            if(document.getElementById('groupMentahan')) document.getElementById('groupMentahan').value = s.groupMentahan || '';
+            if(document.getElementById('infoTahapanLink')) document.getElementById('infoTahapanLink').value = s.infoTahapanLink || '';
+            if(document.getElementById('logoUrl')) document.getElementById('logoUrl').value = s.logoUrl || '';
+
+            const logoImg = document.getElementById('brandLogoImg'); const logoText = document.getElementById('brandLogoText'); const logoBox = document.getElementById('brandLogoBox');
+            if (s.logoUrl && s.logoUrl.trim() !== '') { if(logoImg) { logoImg.src = s.logoUrl; logoImg.style.display = 'block'; } if(logoText) logoText.style.display = 'none'; if(logoBox) logoBox.style.background = 'transparent'; }
+        }
+    } catch(err) { showToast("Gagal load pengaturan", "error"); }
+
+    const collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules', 'guides', 'keys', 'mentahans'];
+    for (let c of collections) { data[c] = []; try { const snap = await db.collection(c).get(); snap.forEach(doc => { data[c].push({ id: doc.id, ...doContoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
+   
+   <div class="form-group"><label style="color:#10b981;">💎 Link Promo CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
+   
+   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
+   
+   <div class="form-group">
+       <label style="color:#3b82f6;">📝 Arahan / Petunjuk Pendaftaran Creator</label>
        <textarea id="regCreatorDesc" placeholder="Ketik syarat, info, atau tata cara pendaftaran creator di sini... (Contoh: 'Pastikan akun TikTok sudah ditautkan...')"></textarea>
    </div>
    <div class="form-group"><label style="color:#3b82f6;">Link Form Daftar Creator (Akhir)</label><input id="regCreator" placeholder="https://form..."></div>
