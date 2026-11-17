@@ -13,7 +13,10 @@ body.dark-mode {--bg:#12121c; --card:#1e1e2d; --text:#ffffff; --muted:#a0a0b2; -
 *{box-sizing:border-box;margin:0;padding:0} 
 body{font-family:Arial,sans-serif;background:var(--bg);color:var(--text); transition: background 0.3s, color 0.3s;} 
 button,input,textarea,select{font:inherit} button{cursor:pointer;border:0}
-.app{display:none;min-height:100vh} .app.show{display:flex !important;}
+
+/* Pastikan app tertutup di awal, lalu dipaksa tampil saat login */
+.app{display:none; min-height:100vh;} 
+.app.show{display:flex !important;}
 
 ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #c3b5fd; border-radius: 10px; } ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
@@ -72,8 +75,9 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
 <div class="login-screen" id="loginScreen">
     <div class="login-box">
         <h2 style="margin-bottom:10px; color:#202033;">Login Admin</h2>
+        <!-- Input dengan tombol enter aktif -->
         <input type="password" id="adminPassword" style="width:100%;padding:15px;border:2px solid #ececf3;border-radius:10px;text-align:center;margin-bottom:20px; color:#202033;" placeholder="Password: admin123" onkeypress="if(event.key === 'Enter') verifyLogin()">
-        <button type="button" class="btn" id="loginBtn" onclick="verifyLogin()">Masuk</button>
+        <button class="btn" id="loginBtn" onclick="verifyLogin()">Masuk</button>
         <a href="../index.html" style="display:block; margin-top:20px; font-size:13px; color:#85859a; text-decoration:none;">← Kembali ke Web Member</a>
     </div>
 </div>
@@ -140,7 +144,9 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
    <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
    <div class="form-group"><label style="color:#3b82f6;">📁 Link Group Mentahan Tambahan</label><input id="groupMentahan" placeholder="https://chat.whatsapp..."></div>
    
+   <!-- UBAH LABEL INPUT DI ADMIN PANEL SESUAI REQUEST -->
    <div class="form-group"><label style="color:#f59e0b;">ℹ️ Link Informasi Tahapan Daftar Creator</label><input id="infoTahapanLink" placeholder="https://..."></div>
+   
    <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
    
    <button class="btn" onclick="saveSettings()" id="btnSaveSettings" style="margin-top:20px; font-size:14px; padding:15px;">Simpan Semua Pengaturan</button>
@@ -295,960 +301,54 @@ async function loadDataFromFirebase() {
             if(document.getElementById('capcutPro')) document.getElementById('capcutPro').value = s.capcutPro || '';
             if(document.getElementById('regCreator')) document.getElementById('regCreator').value = s.regCreator || '';
             if(document.getElementById('regCreatorDesc')) document.getElementById('regCreatorDesc').value = s.regCreatorDesc || '';
-  <input id="agencyName" placeholder="Vibe Trans Agency"></div>
-   <div class="form-group"><label>Nomor WA Admin (Contoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
-   
-   <div class="form-group"><label style="color:#10b981;">💎 Link Promo CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
-   
-   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
-   
-   <div class="form-group">
-       <label style="color:#3b82f6;">📝 Arahan / Petunjuk Pendaftaran Creator</label>
-       <textarea id="regCreatorDesc" placeholder="Ketik syarat, info, atau tata cara pendaftaran creator di sini..."></textarea>
-   </div>
-   <div class="form-group"><label style="color:#3b82f6;">Link Form Daftar Creator (Akhir)</label><input id="regCreator" placeholder="https://form..."></div>
-   
-   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
-   <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
-   <div class="form-group"><label style="color:#3b82f6;">📁 Link Group Mentahan Tambahan</label><input id="groupMentahan" placeholder="https://chat.whatsapp..."></div>
-   <div class="form-group"><label style="color:#f59e0b;">ℹ️ Link Informasi Tahapan Daftar Creator</label><input id="infoTahapanLink" placeholder="https://..."></div>
-   <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
-   
-   <button class="btn" onclick="saveSettings()" id="btnSaveSettings" style="margin-top:20px; font-size:14px; padding:15px;">Simpan Semua Pengaturan</button>
-  </div>
- </section>
+            if(document.getElementById('regAgency')) document.getElementById('regAgency').value = s.regAgency || '';
+            if(document.getElementById('groupBimbingan')) document.getElementById('groupBimbingan').value = s.groupBimbingan || '';
+            if(document.getElementById('groupMentahan')) document.getElementById('groupMentahan').value = s.groupMentahan || '';
+            if(document.getElementById('infoTahapanLink')) document.getElementById('infoTahapanLink').value = s.infoTahapanLink || '';
+            if(document.getElementById('logoUrl')) document.getElementById('logoUrl').value = s.logoUrl || '';
 
- <section class="page" id="keys"> 
-     <h1 style="margin-bottom:10px;">Manajemen Kunci Akses Group</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Kunci (Secret Key) yang valid agar member bisa membuka halaman Group Resmi.</p>
-     <button class="btn" onclick="openForm('key')" style="width:auto; margin-bottom:20px;">+ Tambah Kunci Baru</button> 
-     <div class="grid-3" id="keyList"></div> 
- </section>
+            var logoImg = document.getElementById('brandLogoImg'); var logoText = document.getElementById('brandLogoText'); var logoBox = document.getElementById('brandLogoBox');
+            if (s.logoUrl && s.logoUrl.trim() !== '') { if(logoImg) { logoImg.src = s.logoUrl; logoImg.style.display = 'block'; } if(logoText) logoText.style.display = 'none'; if(logoBox) logoBox.style.background = 'transparent'; }
+        }
+    } catch(err) { console.log(err); }
 
- <section class="page" id="guide"> <button class="btn" onclick="openForm('guide')" style="width:auto; margin-bottom:20px;">+ Tambah Arahan</button> <div id="guideList"></div> </section>
- 
- <section class="page" id="mentahan"> 
-     <h1 style="margin-bottom:10px;">Mentahan Gratis</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Upload link bahan editan seperti Preset, Overlay, Sound, dll ke Google Drive lalu simpan linknya di sini.</p>
-     <button class="btn" onclick="openForm('mentahan')" style="width:auto; margin-bottom:20px;">+ Tambah File Mentahan</button> 
-     <div class="grid-3" id="mentahanList"></div> 
- </section>
-
- <section class="page" id="tutorial"> 
-     <h1 style="margin-bottom:10px;">Manajemen Video Tutorial</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Link Video YouTube untuk ditampilkan di halaman Bimbingan dan halaman Kumpulan Tutorial.</p>
-     <button class="btn" onclick="openForm('video')" style="width:auto; margin-bottom:20px;">+ Tambah Tutorial</button> 
-     <div id="videoList"></div> 
-</section>
- 
- <section class="page" id="announcement"> <button class="btn" onclick="openForm('announcement')" style="width:auto; margin-bottom:20px;">+ Tambah Pengumuman</button> <div id="announcementList"></div> </section>
- <section class="page" id="event"> <button class="btn" onclick="openForm('event')" style="width:auto; margin-bottom:20px;">+ Tambah Event / Agenda</button> <div id="eventList"></div> </section>
- <section class="page" id="tips"> <button class="btn" onclick="openForm('tips')" style="width:auto; margin-bottom:20px;">+ Tambah Tips / SOP</button> <div id="tipsList"></div> </section>
- <section class="page" id="faq"> <button class="btn" onclick="openForm('faq')" style="width:auto; margin-bottom:20px;">+ Tambah FAQ</button> <div id="faqList"></div> </section>
- 
- <section class="page" id="showcase"> <button class="btn" onclick="openForm('showcase')" style="width:auto; margin-bottom:20px;">+ Tambah Testimoni / Karya</button> <div id="showcaseList"></div> </section>
-</main>
-</div>
-
-<div class="modal" id="formModal">
- <div class="modal-box">
-  <h2 id="formTitle" style="margin-bottom:15px;">Tambah Data</h2>
-  <div id="formFields"></div>
-  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
-   <button class="btn btn-light btn-small" onclick="closeModal()">Batal</button>
-   <button class="btn btn-small" onclick="saveContent()" id="saveBtn">Simpan Data</button>
-  </div>
- </div>
-</div>
-<div id="toastBox"></div>
-
-<script>
-// 1. DEKLARASI GLOBAL (ANTI-CRASH)
-const ADMIN_PASSWORD = 'admin123';
-let globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '', groupBimbingan: '', groupMentahan: '', regCreatorDesc: '', infoTahapanLink: '' };
-let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
-let currentType=''; let editId=null; let globalEditCol = '';
-const collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases', guide:'guides', key:'keys', mentahan:'mentahans' };
-
-// 2. INISIALISASI FIREBASE
-const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// 3. FUNGSI LOGIN UTAMA (FIX)
-function verifyLogin() {
-    var input = document.getElementById('adminPassword');
-    var btn = document.getElementById('loginBtn');
-    if(!input || !btn) return;
-
-    var val = input.value.trim().toLowerCase(); // .toLowerCase() agar tidak error jika ngetik 'Admin123'
-    btn.textContent = "Mengecek...";
-
-    if(val === ADMIN_PASSWORD) {
-        try { sessionStorage.setItem('isAdmin', 'true'); } catch(e) {}
-        
-        document.getElementById('loginScreen').style.display = 'none';
-        var app = document.getElementById('adminApp');
-        app.style.display = 'flex';
-        app.classList.add('show');
-        
-        showToast('Login Berhasil!', 'success');
-        loadDataFromFirebase();
-    } else {
-        showToast('Password Salah!', 'error');
-        btn.textContent = "Masuk";
+    var collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules', 'guides', 'keys', 'mentahans'];
+    for (var i = 0; i < collections.length; i++) {
+        var c = collections[i];
+        data[c] = []; 
+        try { 
+            var snap = await db.collection(c).get(); 
+            snap.forEach(function(docSnap) { data[c].push(Object.assign({ id: docSnap.id }, docSnap.data())); }); 
+        } catch (e) {} 
     }
-}
-
-function logoutAdmin(){
-    try { sessionStorage.removeItem('isAdmin'); } catch(e) {}
-    window.location.href = '../index.html';
-}
-
-// 4. PENGECEKAN SESI OTOMATIS (SAAT HALAMAN DIMUAT)
-try {
-    if (sessionStorage.getItem('isAdmin') === 'true') {
-        document.getElementById('loginScreen').style.display = 'none';
-        var app = document.getElementById('adminApp');
-        app.style.display = 'flex';
-        app.classList.add('show');
-        loadDataFromFirebase();
-    }
-} catch(e) {}
-
-
-// SISA KODE FUNGSI UI & FIREBASE SEPERTI BIASA
-function setGreeting() {
-    const hour = new Date().getHours(); let greet = 'Selamat Malam 🌙';
-    if (hour >= 5 && hour < 11) greet = 'Selamat Pagi ☀️';
-    else if (hour >= 11 && hour < 15) greet = 'Selamat Siang ☀️';
-    else if (hour >= 15 && hour < 18) greet = 'Selamat Sore ⛅';
-    if(document.getElementById('greetingText')) document.getElementById('greetingText').textContent = greet + ', Admin!';
-}
-setGreeting();
-
-function initTheme() {
-    if (localStorage.getItem('theme-admin') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('themeToggle').textContent = '☀️'; }
-}
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('theme-admin', isDark ? 'dark' : 'light');
-    document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
-}
-initTheme();
-
-function showToast(msg, type = 'info') {
-    const box = document.getElementById('toastBox');
-    const toast = document.createElement('div');
-    toast.classList.add('toast', type);
-    toast.innerHTML = (type === 'error' ? '❌ ' : (type === 'success' ? '✅ ' : '✨ ')) + msg;
-    box.appendChild(toast);
-    setTimeout(() => { toast.style.animation = 'fadeOut 0.5s ease forwards'; setTimeout(() => toast.remove(), 500); }, 3500);
-}
-
-function renderSkeleton(elId) {
-    const el = document.getElementById(elId); if(!el) return;
-    el.innerHTML = `<div class="skel-box"><div class="skeleton skel-title"></div><div class="skeleton skel-text"></div></div>`.repeat(2);
-}
-['guideList','mentahanList','videoList','announcementList','eventList','tipsList','faqList','showcaseList','keyList'].forEach(id => renderSkeleton(id));
-
-async function loadDataFromFirebase() {
-    try {
-        const doc = await db.collection('settings').doc('global').get();
-        if(doc.exists) {
-            const s = doc.data();
-            if(document.getElementById('waNumber')) document.getElementById('waNumber').value = s.wa || '';
-            if(document.getElementById('agencyName')) document.getElementById('agencyName').value = s.name || 'Vibe Trans Agency';
-            if(document.getElementById('capcutPro')) document.getElementById('capcutPro').value = s.capcutPro || '';
-            if(document.getElementById('regCreator')) document.getElementById('regCreator').value = s.regCreator || '';
-            if(document.getElementById('regCreatorDesc')) document.getElementById('regCreatorDesc').value = s.regCreatorDesc || '';
-            if(document.getElementById('regAgency')) document.getElementById('regAgency').value = s.regAgency || '';
-            if(document.getElementById('groupBimbingan')) document.getElementById('groupBimbingan').value = s.groupBimbingan || '';
-            if(documvar(--border); margin:20px 0;">
-   
-   <div class="form-group"><label>Nama Agency</label><input id="agencyName" placeholder="Vibe Trans Agency"></div>
-   <div class="form-group"><label>Nomor WA Admin (Contoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
-   
-   <div class="form-group"><label style="color:#10b981;">💎 Link Promo CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
-   
-   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
-   
-   <div class="form-group">
-       <label style="color:#3b82f6;">📝 Arahan / Petunjuk Pendaftaran Creator</label>
-       <textarea id="regCreatorDesc" placeholder="Ketik syarat, info, atau tata cara pendaftaran creator di sini..."></textarea>
-   </div>
-   <div class="form-group"><label style="color:#3b82f6;">Link Form Daftar Creator (Akhir)</label><input id="regCreator" placeholder="https://form..."></div>
-   
-   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
-   <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
-   <div class="form-group"><label style="color:#3b82f6;">📁 Link Group Mentahan Tambahan</label><input id="groupMentahan" placeholder="https://chat.whatsapp..."></div>
-   
-   <div class="form-group"><label style="color:#f59e0b;">ℹ️ Link Informasi Tahapan Daftar Creator</label><input id="infoTahapanLink" placeholder="https://..."></div>
-   
-   <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
-   
-   <button class="btn" onclick="saveSettings()" id="btnSaveSettings" style="margin-top:20px; font-size:14px; padding:15px;">Simpan Semua Pengaturan</button>
-  </div>
- </section>
-
- <section class="page" id="keys"> 
-     <h1 style="margin-bottom:10px;">Manajemen Kunci Akses Group</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Kunci (Secret Key) yang valid agar member bisa membuka halaman Group Resmi.</p>
-     <button class="btn" onclick="openForm('key')" style="width:auto; margin-bottom:20px;">+ Tambah Kunci Baru</button> 
-     <div class="grid-3" id="keyList"></div> 
- </section>
-
- <section class="page" id="guide"> <button class="btn" onclick="openForm('guide')" style="width:auto; margin-bottom:20px;">+ Tambah Arahan</button> <div id="guideList"></div> </section>
- 
- <section class="page" id="mentahan"> 
-     <h1 style="margin-bottom:10px;">Mentahan Gratis</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Upload link bahan editan seperti Preset, Overlay, Sound, dll ke Google Drive lalu simpan linknya di sini.</p>
-     <button class="btn" onclick="openForm('mentahan')" style="width:auto; margin-bottom:20px;">+ Tambah File Mentahan</button> 
-     <div class="grid-3" id="mentahanList"></div> 
- </section>
-
- <section class="page" id="tutorial"> 
-     <h1 style="margin-bottom:10px;">Manajemen Video Tutorial</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Link Video YouTube untuk ditampilkan di halaman Bimbingan dan halaman Kumpulan Tutorial.</p>
-     <button class="btn" onclick="openForm('video')" style="width:auto; margin-bottom:20px;">+ Tambah Tutorial</button> 
-     <div id="videoList"></div> 
-</section>
- 
- <section class="page" id="announcement"> <button class="btn" onclick="openForm('announcement')" style="width:auto; margin-bottom:20px;">+ Tambah Pengumuman</button> <div id="announcementList"></div> </section>
- <section class="page" id="event"> <button class="btn" onclick="openForm('event')" style="width:auto; margin-bottom:20px;">+ Tambah Event / Agenda</button> <div id="eventList"></div> </section>
- <section class="page" id="tips"> <button class="btn" onclick="openForm('tips')" style="width:auto; margin-bottom:20px;">+ Tambah Tips / SOP</button> <div id="tipsList"></div> </section>
- <section class="page" id="faq"> <button class="btn" onclick="openForm('faq')" style="width:auto; margin-bottom:20px;">+ Tambah FAQ</button> <div id="faqList"></div> </section>
- 
- <section class="page" id="showcase"> <button class="btn" onclick="openForm('showcase')" style="width:auto; margin-bottom:20px;">+ Tambah Testimoni / Karya</button> <div id="showcaseList"></div> </section>
-</main>
-</div>
-
-<div class="modal" id="formModal">
- <div class="modal-box">
-  <h2 id="formTitle" style="margin-bottom:15px;">Tambah Data</h2>
-  <div id="formFields"></div>
-  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
-   <button class="btn btn-light btn-small" onclick="closeModal()">Batal</button>
-   <button class="btn btn-small" onclick="saveContent()" id="saveBtn">Simpan Data</button>
-  </div>
- </div>
-</div>
-<div id="toastBox"></div>
-
-<script>
-// ============================================
-// FIX LOGIKA LOGIN ANTI-GAGAL
-// ============================================
-const ADMIN_PASSWORD = 'admin123'; 
-
-// Coba cek session secara aman (hindari error DOMException dari browser in-app)
-let isLoggedIn = false;
-try { isLoggedIn = sessionStorage.getItem('isAdmin') === 'true'; } catch(e) {}
-
-if (isLoggedIn) { 
-    document.getElementById('loginScreen').style.display = 'none'; 
-    document.getElementById('adminApp').style.display = 'flex'; 
-    loadDataFromFirebase(); 
-}
-
-function verifyLogin() { 
-    const btn = document.getElementById('loginBtn');
-    // .trim().toLowerCase() agar jika user tidak sengaja mengetik "Admin123" tetap bisa masuk
-    const inputPass = document.getElementById('adminPassword').value.trim().toLowerCase(); 
-    
-    btn.textContent = "Mengecek...";
-    
-    setTimeout(() => {
-        if(inputPass === ADMIN_PASSWORD) { 
-            try { sessionStorage.setItem('isAdmin', 'true'); } catch(e) {} 
-            
-            document.getElementById('loginScreen').style.display = 'none'; 
-            
-            // PAKSA tampilkan panel
-            const app = document.getElementById('adminApp');
-            app.classList.add('show');
-            app.style.display = 'flex'; 
-            
-            loadDataFromFirebase();
-            showToast('Login Berhasil!', 'success');
-        } 
-        else { 
-            showToast('Password Salah!', 'error'); 
-            btn.textContent = "Masuk";
-        }
-    }, 400); // Sedikit delay agar terlihat sistem bekerja
-}
-
-function logoutAdmin(){ 
-    try { sessionStorage.removeItem('isAdmin'); } catch(e) {}
-    window.location.href = '../index.html'; 
-}
-
-function setGreeting() {
-    const hour = new Date().getHours(); let greet = 'Selamat Malam 🌙';
-    if (hour >= 5 && hour < 11) greet = 'Selamat Pagi ☀️';
-    else if (hour >= 11 && hour < 15) greet = 'Selamat Siang ☀️';
-    else if (hour >= 15 && hour < 18) greet = 'Selamat Sore ⛅';
-    if(document.getElementById('greetingText')) document.getElementById('greetingText').textContent = greet + ', Admin!';
-}
-setGreeting();
-
-function initTheme() {
-    if (localStorage.getItem('theme-admin') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('themeToggle').textContent = '☀️'; }
-}
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('theme-admin', isDark ? 'dark' : 'light');
-    document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
-}
-initTheme();
-
-function showToast(msg, type = 'info') {
-    const box = document.getElementById('toastBox');
-    const toast = document.createElement('div');
-    toast.classList.add('toast', type);
-    toast.innerHTML = (type === 'error' ? '❌ ' : (type === 'success' ? '✅ ' : '✨ ')) + msg;
-    box.appendChild(toast);
-    setTimeout(() => { toast.style.animation = 'fadeOut 0.5s ease forwards'; setTimeout(() => toast.remove(), 500); }, 3500);
-}
-
-function renderSkeleton(elId) {
-    const el = document.getElementById(elId); if(!el) return;
-    el.innerHTML = `<div class="skel-box"><div class="skeleton skel-title"></div><div class="skeleton skel-text"></div></div>`.repeat(2);
-}
-['guideList','mentahanList','videoList','announcementList','eventList','tipsList','faqList','showcaseList','keyList'].forEach(id => renderSkeleton(id));
-
-const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
-firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
-
-let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
-let currentType=''; let editId=null; let globalEditCol = '';
-const collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases', guide:'guides', key:'keys', mentahan:'mentahans' };
-
-async function loadDataFromFirebase() {
-    try {
-        const doc = await db.collection('settings').doc('global').get();
-        if(doc.exists) {
-            const s = doc.data();
-            if(document.getElementById('waNumber')) document.getElementById('waNumber').value = s.wa || '';
-            if(document.getElementById('agencyName')) document.getElementById('agencyName').value = s.name || 'Vibe Trans Agency';
-            if(document.getElementById('capcutPro')) document.getElementById('capcutPro').value = s.capcutPro || '';
-            if(document.getElementById('regCreator')) document.getElementById('regCreator').value = s.regCreator || '';
-            if(document.getElementById('regCreatorDesc')) document.getElementById('regCreatorDesc').value = s.regCreatorDesc || '';
-            if(document.getElementById('regAgency')) document.getElementById('regAgency').value = s.regAgency || '';
-            if(documeninput id="agencyName" placeholder="Vibe Trans Agency"></div>
-   <div class="form-group"><label>Nomor WA Admin (Contoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
-   
-   <div class="form-group"><label style="color:#10b981;">💎 Link Promo CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
-   
-   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
-   
-   <div class="form-group">
-       <label style="color:#3b82f6;">📝 Arahan / Petunjuk Pendaftaran Creator</label>
-       <textarea id="regCreatorDesc" placeholder="Ketik syarat, info, atau tata cara pendaftaran creator di sini..."></textarea>
-   </div>
-   <div class="form-group"><label style="color:#3b82f6;">Link Form Daftar Creator (Akhir)</label><input id="regCreator" placeholder="https://form..."></div>
-   
-   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
-   <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
-   <div class="form-group"><label style="color:#3b82f6;">📁 Link Group Mentahan Tambahan</label><input id="groupMentahan" placeholder="https://chat.whatsapp..."></div>
-   
-   <div class="form-group"><label style="color:#f59e0b;">ℹ️ Link Informasi Tahapan Daftar Creator</label><input id="infoTahapanLink" placeholder="https://..."></div>
-   <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
-   
-   <button class="btn" onclick="saveSettings()" id="btnSaveSettings" style="margin-top:20px; font-size:14px; padding:15px;">Simpan Semua Pengaturan</button>
-  </div>
- </section>
-
- <section class="page" id="keys"> 
-     <h1 style="margin-bottom:10px;">Manajemen Kunci Akses Group</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Kunci (Secret Key) yang valid agar member bisa membuka halaman Group Resmi.</p>
-     <button class="btn" onclick="openForm('key')" style="width:auto; margin-bottom:20px;">+ Tambah Kunci Baru</button> 
-     <div class="grid-3" id="keyList"></div> 
- </section>
-
- <section class="page" id="guide"> <button class="btn" onclick="openForm('guide')" style="width:auto; margin-bottom:20px;">+ Tambah Arahan</button> <div id="guideList"></div> </section>
- 
- <section class="page" id="mentahan"> 
-     <h1 style="margin-bottom:10px;">Mentahan Gratis</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Upload link bahan editan seperti Preset, Overlay, Sound, dll ke Google Drive lalu simpan linknya di sini.</p>
-     <button class="btn" onclick="openForm('mentahan')" style="width:auto; margin-bottom:20px;">+ Tambah File Mentahan</button> 
-     <div class="grid-3" id="mentahanList"></div> 
- </section>
-
- <section class="page" id="tutorial"> 
-     <h1 style="margin-bottom:10px;">Manajemen Video Tutorial</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Link Video YouTube untuk ditampilkan di halaman Bimbingan dan halaman Kumpulan Tutorial.</p>
-     <button class="btn" onclick="openForm('video')" style="width:auto; margin-bottom:20px;">+ Tambah Tutorial</button> 
-     <div id="videoList"></div> 
-</section>
- 
- <section class="page" id="announcement"> <button class="btn" onclick="openForm('announcement')" style="width:auto; margin-bottom:20px;">+ Tambah Pengumuman</button> <div id="announcementList"></div> </section>
- <section class="page" id="event"> <button class="btn" onclick="openForm('event')" style="width:auto; margin-bottom:20px;">+ Tambah Event / Agenda</button> <div id="eventList"></div> </section>
- <section class="page" id="tips"> <button class="btn" onclick="openForm('tips')" style="width:auto; margin-bottom:20px;">+ Tambah Tips / SOP</button> <div id="tipsList"></div> </section>
- <section class="page" id="faq"> <button class="btn" onclick="openForm('faq')" style="width:auto; margin-bottom:20px;">+ Tambah FAQ</button> <div id="faqList"></div> </section>
- 
- <section class="page" id="showcase"> <button class="btn" onclick="openForm('showcase')" style="width:auto; margin-bottom:20px;">+ Tambah Testimoni / Karya</button> <div id="showcaseList"></div> </section>
-</main>
-</div>
-
-<div class="modal" id="formModal">
- <div class="modal-box">
-  <h2 id="formTitle" style="margin-bottom:15px;">Tambah Data</h2>
-  <div id="formFields"></div>
-  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
-   <button class="btn btn-light btn-small" onclick="closeModal()">Batal</button>
-   <button class="btn btn-small" onclick="saveContent()" id="saveBtn">Simpan Data</button>
-  </div>
- </div>
-</div>
-<div id="toastBox"></div>
-
-<script>
-// ============================================
-// LOGIKA LOGIN TANPA RELOAD (ANTI GAGAL)
-// ============================================
-const ADMIN_PASSWORD = 'admin123'; 
-
-if (sessionStorage.getItem('isAdmin') === 'true') { 
-    document.getElementById('loginScreen').style.display = 'none'; 
-    document.getElementById('adminApp').classList.add('show'); 
-    loadDataFromFirebase(); 
-}
-
-function verifyLogin() { 
-    const inputPass = document.getElementById('adminPassword').value;
-    if(inputPass === ADMIN_PASSWORD) { 
-        sessionStorage.setItem('isAdmin', 'true'); 
-        
-        // Langsung tampilkan dashboard tanpa refresh halaman!
-        document.getElementById('loginScreen').style.display = 'none'; 
-        document.getElementById('adminApp').classList.add('show'); 
-        
-        loadDataFromFirebase();
-        showToast('Login Berhasil!', 'success');
-    } 
-    else { 
-        showToast('Password Salah!', 'error'); 
-    } 
-}
-
-function logoutAdmin(){ 
-    sessionStorage.removeItem('isAdmin'); 
-    window.location.href = '../index.html'; 
-}
-
-function setGreeting() {
-    const hour = new Date().getHours(); let greet = 'Selamat Malam 🌙';
-    if (hour >= 5 && hour < 11) greet = 'Selamat Pagi ☀️';
-    else if (hour >= 11 && hour < 15) greet = 'Selamat Siang ☀️';
-    else if (hour >= 15 && hour < 18) greet = 'Selamat Sore ⛅';
-    if(document.getElementById('greetingText')) document.getElementById('greetingText').textContent = greet + ', Admin!';
-}
-setGreeting();
-
-function initTheme() {
-    if (localStorage.getItem('theme-admin') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('themeToggle').textContent = '☀️'; }
-}
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('theme-admin', isDark ? 'dark' : 'light');
-    document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
-}
-initTheme();
-
-function showToast(msg, type = 'info') {
-    const box = document.getElementById('toastBox');
-    const toast = document.createElement('div');
-    toast.classList.add('toast', type);
-    toast.innerHTML = (type === 'error' ? '❌ ' : (type === 'success' ? '✅ ' : '✨ ')) + msg;
-    box.appendChild(toast);
-    setTimeout(() => { toast.style.animation = 'fadeOut 0.5s ease forwards'; setTimeout(() => toast.remove(), 500); }, 3500);
-}
-
-function renderSkeleton(elId) {
-    const el = document.getElementById(elId); if(!el) return;
-    el.innerHTML = `<div class="skel-box"><div class="skeleton skel-title"></div><div class="skeleton skel-text"></div></div>`.repeat(2);
-}
-['guideList','mentahanList','videoList','announcementList','eventList','tipsList','faqList','showcaseList','keyList'].forEach(id => renderSkeleton(id));
-
-const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
-firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
-
-let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
-let currentType=''; let editId=null; let globalEditCol = '';
-const collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases', guide:'guides', key:'keys', mentahan:'mentahans' };
-
-async function loadDataFromFirebase() {
-    try {
-        const doc = await db.collection('settings').doc('global').get();
-        if(doc.exists) {
-            const s = doc.data();
-            if(document.getElementById('waNumber')) document.getElementById('waNumber').value = s.wa || '';
-            if(document.getElementById('agencyName')) document.getElementById('agencyName').value = s.name || 'Vibe Trans Agency';
-            if(document.getElementById('capcutPro')) document.getElementById('capcutPro').value = s.capcutPro || '';
-            if(document.getElementById('regCreator')) document.getElementById('regCreator').value = s.regCreator || '';
-            if(document.getElementById('regCreatorDesc')) document.getElementById('regCreatorDesc').value = s.regCreatorDesc || '';
-            if(document.getElementById('regAgency')) document.getElementById('regAgency').value = s.regAgency || '';
-            if(document.getElementById('groupBimbingan')) document.getElementById('groupBimbingan').value = s.groupBimbingan || '';
-            if(document.getElementById('groupMentahan')) document.getElementById('groupMentahan').value = s.groupMentahan || '';
-            if(document.getElementById('infoTahapanLink')) document.getElementById('infoTahapanLink').value = s.infoTahapanLink || '';
-            if(document.getElementById('logoUrl')) document.getElementById('logoUrl').value = s.logoUrl || '';
-
-            const logoImg = document.getElementById('brandLogoImg'); const logoText = document.getElementById('brandLogoText'); const logoBox = document.getElementById('brandLogoBox');
-            if (s.logoUrl && s.logoUrl.trim(Contoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
-   
-   <div class="form-group"><label style="color:#10b981;">💎 Link Promo CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
-   
-   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
-   
-   <div class="form-group">
-       <label style="color:#3b82f6;">📝 Arahan / Petunjuk Pendaftaran Creator</label>
-       <textarea id="regCreatorDesc" placeholder="Ketik syarat, info, atau tata cara pendaftaran creator di sini..."></textarea>
-   </div>
-   <div class="form-group"><label style="color:#3b82f6;">Link Form Daftar Creator (Akhir)</label><input id="regCreator" placeholder="https://form..."></div>
-   
-   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
-   <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
-   <div class="form-group"><label style="color:#3b82f6;">📁 Link Group Mentahan Tambahan</label><input id="groupMentahan" placeholder="https://chat.whatsapp..."></div>
-   
-   <!-- UBAH LABEL INPUT DI ADMIN PANEL -->
-   <div class="form-group"><label style="color:#f59e0b;">ℹ️ Link Informasi Tahapan Daftar Creator</label><input id="infoTahapanLink" placeholder="https://..."></div>
-   
-   <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
-   
-   <button class="btn" onclick="saveSettings()" id="btnSaveSettings" style="margin-top:20px; font-size:14px; padding:15px;">Simpan Semua Pengaturan</button>
-  </div>
- </section>
-
- <section class="page" id="keys"> 
-     <h1 style="margin-bottom:10px;">Manajemen Kunci Akses Group</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Kunci (Secret Key) yang valid agar member bisa membuka halaman Group Resmi.</p>
-     <button class="btn" onclick="openForm('key')" style="width:auto; margin-bottom:20px;">+ Tambah Kunci Baru</button> 
-     <div class="grid-3" id="keyList"></div> 
- </section>
-
- <section class="page" id="guide"> <button class="btn" onclick="openForm('guide')" style="width:auto; margin-bottom:20px;">+ Tambah Arahan</button> <div id="guideList"></div> </section>
- 
- <section class="page" id="mentahan"> 
-     <h1 style="margin-bottom:10px;">Mentahan Gratis</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Upload link bahan editan seperti Preset, Overlay, Sound, dll ke Google Drive lalu simpan linknya di sini.</p>
-     <button class="btn" onclick="openForm('mentahan')" style="width:auto; margin-bottom:20px;">+ Tambah File Mentahan</button> 
-     <div class="grid-3" id="mentahanList"></div> 
- </section>
-
- <section class="page" id="tutorial"> 
-     <h1 style="margin-bottom:10px;">Manajemen Video Tutorial</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Link Video YouTube untuk ditampilkan di halaman Bimbingan dan halaman Kumpulan Tutorial.</p>
-     <button class="btn" onclick="openForm('video')" style="width:auto; margin-bottom:20px;">+ Tambah Tutorial</button> 
-     <div id="videoList"></div> 
-</section>
- 
- <section class="page" id="announcement"> <button class="btn" onclick="openForm('announcement')" style="width:auto; margin-bottom:20px;">+ Tambah Pengumuman</button> <div id="announcementList"></div> </section>
- <section class="page" id="event"> <button class="btn" onclick="openForm('event')" style="width:auto; margin-bottom:20px;">+ Tambah Event / Agenda</button> <div id="eventList"></div> </section>
- <section class="page" id="tips"> <button class="btn" onclick="openForm('tips')" style="width:auto; margin-bottom:20px;">+ Tambah Tips / SOP</button> <div id="tipsList"></div> </section>
- <section class="page" id="faq"> <button class="btn" onclick="openForm('faq')" style="width:auto; margin-bottom:20px;">+ Tambah FAQ</button> <div id="faqList"></div> </section>
- 
- <section class="page" id="showcase"> <button class="btn" onclick="openForm('showcase')" style="width:auto; margin-bottom:20px;">+ Tambah Testimoni / Karya</button> <div id="showcaseList"></div> </section>
-</main>
-</div>
-
-<div class="modal" id="formModal">
- <div class="modal-box">
-  <h2 id="formTitle" style="margin-bottom:15px;">Tambah Data</h2>
-  <div id="formFields"></div>
-  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
-   <button class="btn btn-light btn-small" onclick="closeModal()">Batal</button>
-   <button class="btn btn-small" onclick="saveContent()" id="saveBtn">Simpan Data</button>
-  </div>
- </div>
-</div>
-<div id="toastBox"></div>
-
-<script>
-function setGreeting() {
-    const hour = new Date().getHours(); let greet = 'Selamat Malam 🌙';
-    if (hour >= 5 && hour < 11) greet = 'Selamat Pagi ☀️';
-    else if (hour >= 11 && hour < 15) greet = 'Selamat Siang ☀️';
-    else if (hour >= 15 && hour < 18) greet = 'Selamat Sore ⛅';
-    if(document.getElementById('greetingText')) document.getElementById('greetingText').textContent = greet + ', Admin!';
-}
-setGreeting();
-
-function initTheme() {
-    if (localStorage.getItem('theme-admin') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('themeToggle').textContent = '☀️'; }
-}
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('theme-admin', isDark ? 'dark' : 'light');
-    document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
-}
-initTheme();
-
-function showToast(msg, type = 'info') {
-    const box = document.getElementById('toastBox');
-    const toast = document.createElement('div');
-    toast.classList.add('toast', type);
-    toast.innerHTML = (type === 'error' ? '❌ ' : (type === 'success' ? '✅ ' : '✨ ')) + msg;
-    box.appendChild(toast);
-    setTimeout(() => { toast.style.animation = 'fadeOut 0.5s ease forwards'; setTimeout(() => toast.remove(), 500); }, 3500);
-}
-
-function renderSkeleton(elId) {
-    const el = document.getElementById(elId); if(!el) return;
-    el.innerHTML = `<div class="skel-box"><div class="skeleton skel-title"></div><div class="skeleton skel-text"></div></div>`.repeat(2);
-}
-['guideList','mentahanList','videoList','announcementList','eventList','tipsList','faqList','showcaseList','keyList'].forEach(id => renderSkeleton(id));
-
-const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
-firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
-const ADMIN_PASSWORD = 'admin123'; 
-
-if (sessionStorage.getItem('isAdmin') === 'true') { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('adminApp').classList.add('show'); loadDataFromFirebase(); }
-function verifyLogin() { 
-    if(document.getElementById('adminPassword').value === ADMIN_PASSWORD) { sessionStorage.setItem('isAdmin', 'true'); location.reload(); } 
-    else { showToast('Password Salah!', 'error'); } 
-}
-function logoutAdmin(){ sessionStorage.removeItem('isAdmin'); window.location.href = '../index.html'; }
-
-let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
-let currentType=''; let editId=null; let globalEditCol = '';
-const collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases', guide:'guides', key:'keys', mentahan:'mentahans' };
-
-async function loadDataFromFirebase() {
-    try {
-        const doc = await db.collection('settings').doc('global').get();
-        if(doc.exists) {
-            const s = doc.data();
-            if(document.getElementById('waNumber')) document.getElementById('waNumber').value = s.wa || '';
-            if(document.getElementById('agencyName')) document.getElementById('agencyName').value = s.name || 'Vibe Trans Agency';
-            if(document.getElementById('capcutPro')) document.getElementById('capcutPro').value = s.capcutPro || '';
-            if(document.getElementById('regCreator')) document.getElementById('regCreator').value = s.regCreator || '';
-            if(document.getElementById('regCreatorDesc')) document.getElementById('regCreatorDesc').value = s.regCreatorDesc || '';
-            if(document.getElementById('regAgency')) document.getElementById('regAgency').value = s.regAgency || '';
-            if(document.getElementById('groupBimbingan')) document.getElementById('groupBimbingan').value = s.groupBimbingan || '';
-            if(document.getElementById('groupMentahan')) document.getElementById('groupMentahan').value = s.groupMentahan || '';
-            if(document.getElementById('infoTahapanLink')) document.getElementById('infoTahapanLink').value = s.infoTahapanLink || '';
-            if(document.getElementById('logoUrl')) document.getElementById('logoUrl').value = s.logoUrl || '';
-
-            const logoImg = document.getElementById('brandLogoImg'); const logoText = document.getElementById('brandLogoText'); const logoBox = document.getElementById('brandLogoBox');
-            if (s.logoUrl && s.logoUrl.trim() !== '') { if(logoImg) { logoImg.src = s.logoUrl; logoImg.style.display = 'block'; } if(logoText) logoText.style.display = 'none'; if(logoBox) logoBox.style.background = 'transparent'; }
-        }
-    } catch(err) { showToast("Gagal load pengaturan", "error"); }
-
-    const collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules', 'guides', 'keys', 'mentahans'];
-    for (let c of collections) { data[c] = []; try { const snap = await db.collection(c).get(); snap.forEach(doc => { data[c].push({ id: doc.id, ...doc.data() }); }); Contoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
-   
-   <div class="form-group"><label style="color:#10b981;">💎 Link Promo CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
-   
-   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
-   
-   <div class="form-group">
-       <label style="color:#3b82f6;">📝 Arahan / Petunjuk Pendaftaran Creator</label>
-       <textarea id="regCreatorDesc" placeholder="Ketik syarat, info, atau tata cara pendaftaran creator di sini..."></textarea>
-   </div>
-   <div class="form-group"><label style="color:#3b82f6;">Link Form Daftar Creator (Akhir)</label><input id="regCreator" placeholder="https://form..."></div>
-   
-   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
-   <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
-   <div class="form-group"><label style="color:#3b82f6;">📁 Link Group Mentahan Tambahan</label><input id="groupMentahan" placeholder="https://chat.whatsapp..."></div>
-   
-   <!-- PENAMBAHAN LINK PUSAT INFO TAHAPAN (DI ADMIN) -->
-   <div class="form-group"><label style="color:#f59e0b;">ℹ️ Link Pusat Informasi Tahapan Pendaftaran</label><input id="infoTahapanLink" placeholder="https://..."></div>
-   
-   <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
-   
-   <button class="btn" onclick="saveSettings()" id="btnSaveSettings" style="margin-top:20px; font-size:14px; padding:15px;">Simpan Semua Pengaturan</button>
-  </div>
- </section>
-
- <section class="page" id="keys"> 
-     <h1 style="margin-bottom:10px;">Manajemen Kunci Akses Group</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Kunci (Secret Key) yang valid agar member bisa membuka halaman Group Resmi.</p>
-     <button class="btn" onclick="openForm('key')" style="width:auto; margin-bottom:20px;">+ Tambah Kunci Baru</button> 
-     <div class="grid-3" id="keyList"></div> 
- </section>
-
- <section class="page" id="guide"> <button class="btn" onclick="openForm('guide')" style="width:auto; margin-bottom:20px;">+ Tambah Arahan</button> <div id="guideList"></div> </section>
- 
- <section class="page" id="mentahan"> 
-     <h1 style="margin-bottom:10px;">Mentahan Gratis</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Upload link bahan editan seperti Preset, Overlay, Sound, dll ke Google Drive lalu simpan linknya di sini.</p>
-     <button class="btn" onclick="openForm('mentahan')" style="width:auto; margin-bottom:20px;">+ Tambah File Mentahan</button> 
-     <div class="grid-3" id="mentahanList"></div> 
- </section>
-
- <section class="page" id="tutorial"> 
-     <h1 style="margin-bottom:10px;">Manajemen Video Tutorial</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Link Video YouTube untuk ditampilkan di halaman Bimbingan dan halaman Kumpulan Tutorial.</p>
-     <button class="btn" onclick="openForm('video')" style="width:auto; margin-bottom:20px;">+ Tambah Tutorial</button> 
-     <div id="videoList"></div> 
-</section>
- 
- <section class="page" id="announcement"> <button class="btn" onclick="openForm('announcement')" style="width:auto; margin-bottom:20px;">+ Tambah Pengumuman</button> <div id="announcementList"></div> </section>
- <section class="page" id="event"> <button class="btn" onclick="openForm('event')" style="width:auto; margin-bottom:20px;">+ Tambah Event / Agenda</button> <div id="eventList"></div> </section>
- <section class="page" id="tips"> <button class="btn" onclick="openForm('tips')" style="width:auto; margin-bottom:20px;">+ Tambah Tips / SOP</button> <div id="tipsList"></div> </section>
- <section class="page" id="faq"> <button class="btn" onclick="openForm('faq')" style="width:auto; margin-bottom:20px;">+ Tambah FAQ</button> <div id="faqList"></div> </section>
- 
- <section class="page" id="showcase"> <button class="btn" onclick="openForm('showcase')" style="width:auto; margin-bottom:20px;">+ Tambah Testimoni / Karya</button> <div id="showcaseList"></div> </section>
-</main>
-</div>
-
-<div class="modal" id="formModal">
- <div class="modal-box">
-  <h2 id="formTitle" style="margin-bottom:15px;">Tambah Data</h2>
-  <div id="formFields"></div>
-  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
-   <button class="btn btn-light btn-small" onclick="closeModal()">Batal</button>
-   <button class="btn btn-small" onclick="saveContent()" id="saveBtn">Simpan Data</button>
-  </div>
- </div>
-</div>
-<div id="toastBox"></div>
-
-<script>
-function setGreeting() {
-    const hour = new Date().getHours(); let greet = 'Selamat Malam 🌙';
-    if (hour >= 5 && hour < 11) greet = 'Selamat Pagi ☀️';
-    else if (hour >= 11 && hour < 15) greet = 'Selamat Siang ☀️';
-    else if (hour >= 15 && hour < 18) greet = 'Selamat Sore ⛅';
-    if(document.getElementById('greetingText')) document.getElementById('greetingText').textContent = greet + ', Admin!';
-}
-setGreeting();
-
-function initTheme() {
-    if (localStorage.getItem('theme-admin') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('themeToggle').textContent = '☀️'; }
-}
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('theme-admin', isDark ? 'dark' : 'light');
-    document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
-}
-initTheme();
-
-function showToast(msg, type = 'info') {
-    const box = document.getElementById('toastBox');
-    const toast = document.createElement('div');
-    toast.classList.add('toast', type);
-    toast.innerHTML = (type === 'error' ? '❌ ' : (type === 'success' ? '✅ ' : '✨ ')) + msg;
-    box.appendChild(toast);
-    setTimeout(() => { toast.style.animation = 'fadeOut 0.5s ease forwards'; setTimeout(() => toast.remove(), 500); }, 3500);
-}
-
-function renderSkeleton(elId) {
-    const el = document.getElementById(elId); if(!el) return;
-    el.innerHTML = `<div class="skel-box"><div class="skeleton skel-title"></div><div class="skeleton skel-text"></div></div>`.repeat(2);
-}
-['guideList','mentahanList','videoList','announcementList','eventList','tipsList','faqList','showcaseList','keyList'].forEach(id => renderSkeleton(id));
-
-const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
-firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
-const ADMIN_PASSWORD = 'admin123'; 
-
-if (sessionStorage.getItem('isAdmin') === 'true') { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('adminApp').classList.add('show'); loadDataFromFirebase(); }
-function verifyLogin() { 
-    if(document.getElementById('adminPassword').value === ADMIN_PASSWORD) { sessionStorage.setItem('isAdmin', 'true'); location.reload(); } 
-    else { showToast('Password Salah!', 'error'); } 
-}
-function logoutAdmin(){ sessionStorage.removeItem('isAdmin'); window.location.href = '../index.html'; }
-
-let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
-let currentType=''; let editId=null; let globalEditCol = '';
-const collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases', guide:'guides', key:'keys', mentahan:'mentahans' };
-
-async function loadDataFromFirebase() {
-    try {
-        const doc = await db.collection('settings').doc('global').get();
-        if(doc.exists) {
-            const s = doc.data();
-            if(document.getElementById('waNumber')) document.getElementById('waNumber').value = s.wa || '';
-            if(document.getElementById('agencyName')) document.getElementById('agencyName').value = s.name || 'Vibe Trans Agency';
-            if(document.getElementById('capcutPro')) document.getElementById('capcutPro').value = s.capcutPro || '';
-            if(document.getElementById('regCreator')) document.getElementById('regCreator').value = s.regCreator || '';
-            if(document.getElementById('regCreatorDesc')) document.getElementById('regCreatorDesc').value = s.regCreatorDesc || '';
-            if(document.getElementById('regAgency')) document.getElementById('regAgency').value = s.regAgency || '';
-            if(document.getElementById('groupBimbingan')) document.getElementById('groupBimbingan').value = s.groupBimbingan || '';
-            if(document.getElementById('groupMentahan')) document.getElementById('groupMentahan').value = s.groupMentahan || '';
-            if(document.getElementById('infoTahapanLink')) document.getElementById('infoTahapanLink').value = s.infoTahapanLink || '';
-            if(document.getElementById('logoUrl')) document.getElementById('logoUrl').value = s.logoUrl || '';
-
-            const logoImg = document.getElementById('brandLogoImg'); const logoText = document.getElementById('brandLogoText'); const logoBox = document.getElementById('brandLogoBox');
-            if (s.logoUrl && s.logoUrl.trim() !== '') { if(logoImg) { logoImg.src = s.logoUrl; logoImg.style.display = 'block'; } if(logoText) logoText.style.display = 'none'; if(logoBox) logoBox.style.background = 'transparent'; }
-        }
-    } catch(err) { showToast("Gagal load pengaturan", "error"); }
-
-    const collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules', 'guides', 'keys', 'mentahans'];
-    for (let c of collections) { data[c] = []; try { const snap = await db.collection(c).get(); snap.forEach(doc => { data[c].push({ id: doc.id, ...doContoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
-   
-   <div class="form-group"><label style="color:#10b981;">💎 Link Promo CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
-   
-   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
-   
-   <div class="form-group">
-       <label style="color:#3b82f6;">📝 Arahan / Petunjuk Pendaftaran Creator</label>
-       <textarea id="regCreatorDesc" placeholder="Ketik syarat, info, atau tata cara pendaftaran creator di sini... (Contoh: 'Pastikan akun TikTok sudah ditautkan...')"></textarea>
-   </div>
-   <div class="form-group"><label style="color:#3b82f6;">Link Form Daftar Creator (Akhir)</label><input id="regCreator" placeholder="https://form..."></div>
-   
-   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
-   <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
-   <div class="form-group"><label style="color:#3b82f6;">📁 Link Group Mentahan Tambahan</label><input id="groupMentahan" placeholder="https://chat.whatsapp..."></div>
-   <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
-   
-   <button class="btn" onclick="saveSettings()" id="btnSaveSettings" style="margin-top:20px; font-size:14px; padding:15px;">Simpan Semua Pengaturan</button>
-  </div>
- </section>
-
- <section class="page" id="keys"> 
-     <h1 style="margin-bottom:10px;">Manajemen Kunci Akses Group</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Kunci (Secret Key) yang valid agar member bisa membuka halaman Group Resmi.</p>
-     <button class="btn" onclick="openForm('key')" style="width:auto; margin-bottom:20px;">+ Tambah Kunci Baru</button> 
-     <div class="grid-3" id="keyList"></div> 
- </section>
-
- <section class="page" id="guide"> <button class="btn" onclick="openForm('guide')" style="width:auto; margin-bottom:20px;">+ Tambah Arahan</button> <div id="guideList"></div> </section>
- 
- <section class="page" id="mentahan"> 
-     <h1 style="margin-bottom:10px;">Mentahan Gratis</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Upload link bahan editan seperti Preset, Overlay, Sound, dll ke Google Drive lalu simpan linknya di sini.</p>
-     <button class="btn" onclick="openForm('mentahan')" style="width:auto; margin-bottom:20px;">+ Tambah File Mentahan</button> 
-     <div class="grid-3" id="mentahanList"></div> 
- </section>
-
- <section class="page" id="tutorial"> 
-     <h1 style="margin-bottom:10px;">Manajemen Video Tutorial</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Link Video YouTube untuk ditampilkan di halaman Bimbingan dan halaman Kumpulan Tutorial.</p>
-     <button class="btn" onclick="openForm('video')" style="width:auto; margin-bottom:20px;">+ Tambah Tutorial</button> 
-     <div id="videoList"></div> 
-</section>
- 
- <section class="page" id="announcement"> <button class="btn" onclick="openForm('announcement')" style="width:auto; margin-bottom:20px;">+ Tambah Pengumuman</button> <div id="announcementList"></div> </section>
- <section class="page" id="event"> <button class="btn" onclick="openForm('event')" style="width:auto; margin-bottom:20px;">+ Tambah Event / Agenda</button> <div id="eventList"></div> </section>
- <section class="page" id="tips"> <button class="btn" onclick="openForm('tips')" style="width:auto; margin-bottom:20px;">+ Tambah Tips / SOP</button> <div id="tipsList"></div> </section>
- <section class="page" id="faq"> <button class="btn" onclick="openForm('faq')" style="width:auto; margin-bottom:20px;">+ Tambah FAQ</button> <div id="faqList"></div> </section>
- 
- <section class="page" id="showcase"> <button class="btn" onclick="openForm('showcase')" style="width:auto; margin-bottom:20px;">+ Tambah Testimoni / Karya</button> <div id="showcaseList"></div> </section>
-</main>
-</div>
-
-<div class="modal" id="formModal">
- <div class="modal-box">
-  <h2 id="formTitle" style="margin-bottom:15px;">Tambah Data</h2>
-  <div id="formFields"></div>
-  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
-   <button class="btn btn-light btn-small" onclick="closeModal()">Batal</button>
-   <button class="btn btn-small" onclick="saveContent()" id="saveBtn">Simpan Data</button>
-  </div>
- </div>
-</div>
-<div id="toastBox"></div>
-
-<script>
-function setGreeting() {
-    const hour = new Date().getHours(); let greet = 'Selamat Malam 🌙';
-    if (hour >= 5 && hour < 11) greet = 'Selamat Pagi ☀️';
-    else if (hour >= 11 && hour < 15) greet = 'Selamat Siang ☀️';
-    else if (hour >= 15 && hour < 18) greet = 'Selamat Sore ⛅';
-    if(document.getElementById('greetingText')) document.getElementById('greetingText').textContent = greet + ', Admin!';
-}
-setGreeting();
-
-function initTheme() {
-    if (localStorage.getItem('theme-admin') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('themeToggle').textContent = '☀️'; }
-}
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('theme-admin', isDark ? 'dark' : 'light');
-    document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
-}
-initTheme();
-
-function showToast(msg, type = 'info') {
-    const box = document.getElementById('toastBox');
-    const toast = document.createElement('div');
-    toast.classList.add('toast', type);
-    toast.innerHTML = (type === 'error' ? '❌ ' : (type === 'success' ? '✅ ' : '✨ ')) + msg;
-    box.appendChild(toast);
-    setTimeout(() => { toast.style.animation = 'fadeOut 0.5s ease forwards'; setTimeout(() => toast.remove(), 500); }, 3500);
-}
-
-function renderSkeleton(elId) {
-    const el = document.getElementById(elId); if(!el) return;
-    el.innerHTML = `<div class="skel-box"><div class="skeleton skel-title"></div><div class="skeleton skel-text"></div></div>`.repeat(2);
-}
-['guideList','mentahanList','videoList','announcementList','eventList','tipsList','faqList','showcaseList','keyList'].forEach(id => renderSkeleton(id));
-
-const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
-firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
-const ADMIN_PASSWORD = 'admin123'; 
-
-if (sessionStorage.getItem('isAdmin') === 'true') { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('adminApp').classList.add('show'); loadDataFromFirebase(); }
-function verifyLogin() { 
-    if(document.getElementById('adminPassword').value === ADMIN_PASSWORD) { sessionStorage.setItem('isAdmin', 'true'); location.reload(); } 
-    else { showToast('Password Salah!', 'error'); } 
-}
-function logoutAdmin(){ sessionStorage.removeItem('isAdmin'); window.location.href = '../index.html'; }
-
-let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
-let currentType=''; let editId=null; let globalEditCol = '';
-const collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases', guide:'guides', key:'keys', mentahan:'mentahans' };
-
-async function loadDataFromFirebase() {
-    try {
-        const doc = await db.collection('settings').doc('global').get();
-        if(doc.exists) {
-            const s = doc.data();
-            if(document.getElementById('waNumber')) document.getElementById('waNumber').value = s.wa || '';
-            if(document.getElementById('agencyName')) document.getElementById('agencyName').value = s.name || 'Vibe Trans Agency';
-            if(document.getElementById('capcutPro')) document.getElementById('capcutPro').value = s.capcutPro || '';
-            if(document.getElementById('regCreator')) document.getElementById('regCreator').value = s.regCreator || '';
-            if(document.getElementById('regCreatorDesc')) document.getElementById('regCreatorDesc').value = s.regCreatorDesc || '';
-            if(document.getElementById('regAgency')) document.getElementById('regAgency').value = s.regAgency || '';
-            if(document.getElementById('groupBimbingan')) document.getElementById('groupBimbingan').value = s.groupBimbingan || '';
-            if(document.getElementById('groupMentahan')) document.getElementById('groupMentahan').value = s.groupMentahan || '';
-            if(document.getElementById('logoUrl')) document.getElementById('logoUrl').value = s.logoUrl || '';
-
-            const logoImg = document.getElementById('brandLogoImg'); const logoText = document.getElementById('brandLogoText'); const logoBox = document.getElementById('brandLogoBox');
-            if (s.logoUrl && s.logoUrl.trim() !== '') { if(logoImg) { logoImg.src = s.logoUrl; logoImg.style.display = 'block'; } if(logoText) logoText.style.display = 'none'; if(logoBox) logoBox.style.background = 'transparent'; }
-        }
-    } catch(err) { showToast("Gagal load pengaturan", "error"); }
-
-    const collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules', 'guides', 'keys', 'mentahans'];
-    for (let c of collections) { data[c] = []; try { const snap = await db.collection(c).get(); snap.forEach(doc => { data[c].push({ id: doc.id, ...doc.data() }); }); } catch (e) {} }
     renderAll();
 }
 
-function go(id,btn){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); if(btn)btn.classList.add('active'); document.getElementById('pageTitle').textContent = btn.innerText.substring(btn.innerText.indexOf(' ')+1); const s = document.getElementById('sidebar'); if(window.innerWidth<=650 && s) { s.classList.remove('open'); const ov=document.getElementById('sidebarOverlay'); if(ov)ov.remove(); } }
-function toggleMenu(){ const s=document.getElementById('sidebar'); if(s){ s.classList.toggle('open'); let ov=document.getElementById('sidebarOverlay'); if(s.classList.contains('open')){ if(!ov){ ov=document.createElement('div'); ov.id='sidebarOverlay'; ov.style.position='fixed'; ov.style.inset='0'; ov.style.background='rgba(0,0,0,0.5)'; ov.style.zIndex='15'; document.body.appendChild(ov); ov.addEventListener('click',function(){s.classList.remove('open');this.remove();}); } }else{ if(ov)ov.remove(); } } }
+function go(id,btn){ document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')}); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav button').forEach(function(b){b.classList.remove('active')}); if(btn)btn.classList.add('active'); document.getElementById('pageTitle').textContent = btn.innerText.substring(btn.innerText.indexOf(' ')+1); var s = document.getElementById('sidebar'); if(window.innerWidth<=650 && s) { s.classList.remove('open'); var ov=document.getElementById('sidebarOverlay'); if(ov)ov.remove(); } }
+function toggleMenu(){ var s=document.getElementById('sidebar'); if(s){ s.classList.toggle('open'); var ov=document.getElementById('sidebarOverlay'); if(s.classList.contains('open')){ if(!ov){ ov=document.createElement('div'); ov.id='sidebarOverlay'; ov.style.position='fixed'; ov.style.inset='0'; ov.style.background='rgba(0,0,0,0.5)'; ov.style.zIndex='15'; document.body.appendChild(ov); ov.addEventListener('click',function(){s.classList.remove('open');this.remove();}); } }else{ if(ov)ov.remove(); } } }
 
-function safe(text){ return String(text ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function renderList(id, arr, template) { try { const el = document.getElementById(id); if(el) el.innerHTML = (arr && arr.length > 0) ? arr.map(template).join('') : '<div class="empty">Belum ada data tersimpan.</div>'; } catch(e) {} }
+function safe(text){ return String(text ?? '').replace(/[&<>"']/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function renderList(id, arr, template) { try { var el = document.getElementById(id); if(el) el.innerHTML = (arr && arr.length > 0) ? arr.map(template).join('') : '<div class="empty">Belum ada data tersimpan.</div>'; } catch(e) {} }
 function act(type, id) { return `<div class="admin-actions"><button class="btn btn-small btn-light" onclick="openForm('${type}','${id}')">Edit</button><button class="btn btn-danger btn-small" onclick="deleteContent('${type}','${id}')">Hapus</button></div>`; }
 
 function renderAll(){
- renderList('keyList', data.keys, k => `<div class="item-box"><div class="item-info"><h3 style="font-family:monospace; font-size:18px; color:var(--warn);">${safe(k.code)}</h3><p>Keterangan: ${safe(k.owner)}</p></div>${act('key',k.id)}</div>`);
- renderList('mentahanList', data.mentahans, m => `<div class="item-box"><div class="item-info"><h3>📦 ${safe(m.title)}</h3><p>${safe(m.desc)}</p></div>${act('mentahan',m.id)}</div>`);
- renderList('guideList', data.guides, g => `<div class="item-box"><div class="item-info"><h3>${safe(g.title)}</h3><p>${safe(g.category)}</p></div>${act('guide',g.id)}</div>`);
- renderList('announcementList', data.announcements, a => `<div class="item-box"><div class="item-info"><h3>${safe(a.title)}</h3><p>${safe(a.category)}</p></div>${act('announcement',a.id)}</div>`);
- renderList('videoList', data.videos, v => `<div class="item-box"><div class="item-info"><h3>${safe(v.title)}</h3><p>${safe(v.category)}</p></div>${act('video',v.id)}</div>`);
- const combinedEvents = [...data.events, ...data.agendas]; renderList('eventList', combinedEvents, e => `<div class="item-box"><div class="item-info"><h3>${safe(e.title)}</h3><p>Waktu: ${safe(e.date)}</p></div>${act('event',e.id)}</div>`);
- const combinedTips = [...data.tips, ...data.rules]; renderList('tipsList', combinedTips, t => `<div class="item-box"><div class="item-info"><h3>${safe(t.title)}</h3></div>${act('tips',t.id)}</div>`);
- renderList('faqList', data.faqs, f => `<div class="item-box"><div class="item-info"><h3>${safe(f.question)}</h3></div>${act('faq',f.id)}</div>`);
- renderList('showcaseList', data.showcases, s => `<div class="item-box"><div class="item-info"><h3>${safe(s.name)}</h3><p>${safe(s.achievement)}</p></div>${act('showcase',s.id)}</div>`);
+ renderList('keyList', data.keys, function(k) { return `<div class="item-box"><div class="item-info"><h3 style="font-family:monospace; font-size:18px; color:var(--warn);">${safe(k.code)}</h3><p>Keterangan: ${safe(k.owner)}</p></div>${act('key',k.id)}</div>`; });
+ renderList('mentahanList', data.mentahans, function(m) { return `<div class="item-box"><div class="item-info"><h3>📦 ${safe(m.title)}</h3><p>${safe(m.desc)}</p></div>${act('mentahan',m.id)}</div>`; });
+ renderList('guideList', data.guides, function(g) { return `<div class="item-box"><div class="item-info"><h3>${safe(g.title)}</h3><p>${safe(g.category)}</p></div>${act('guide',g.id)}</div>`; });
+ renderList('announcementList', data.announcements, function(a) { return `<div class="item-box"><div class="item-info"><h3>${safe(a.title)}</h3><p>${safe(a.category)}</p></div>${act('announcement',a.id)}</div>`; });
+ renderList('videoList', data.videos, function(v) { return `<div class="item-box"><div class="item-info"><h3>${safe(v.title)}</h3><p>${safe(v.category)}</p></div>${act('video',v.id)}</div>`; });
+ var combinedEvents = [].concat(data.events, data.agendas); renderList('eventList', combinedEvents, function(e) { return `<div class="item-box"><div class="item-info"><h3>${safe(e.title)}</h3><p>Waktu: ${safe(e.date)}</p></div>${act('event',e.id)}</div>`; });
+ var combinedTips = [].concat(data.tips, data.rules); renderList('tipsList', combinedTips, function(t) { return `<div class="item-box"><div class="item-info"><h3>${safe(t.title)}</h3></div>${act('tips',t.id)}</div>`; });
+ renderList('faqList', data.faqs, function(f) { return `<div class="item-box"><div class="item-info"><h3>${safe(f.question)}</h3></div>${act('faq',f.id)}</div>`; });
+ renderList('showcaseList', data.showcases, function(s) { return `<div class="item-box"><div class="item-info"><h3>${safe(s.name)}</h3><p>${safe(s.achievement)}</p></div>${act('showcase',s.id)}</div>`; });
 }
 
-function openForm(type,id=null){
- currentType = type; editId = id; globalEditCol = ''; 
- let item = {};
- if(id) { for (let c in data) { const found = data[c].find(x => x.id === id); if(found) { item = found; globalEditCol = c; break; } } }
+function openForm(type,id){
+ id = id || null; currentType = type; editId = id; globalEditCol = ''; 
+ var item = {};
+ if(id) { for (var c in data) { var found = data[c].find(function(x) { return x.id === id; }); if(found) { item = found; globalEditCol = c; break; } } }
  
- const fields={
+ var fields={
  key:[['code','Kode Kunci (Contoh: VIBE2026, MEMBERVIP)','text'],['owner','Keterangan / Nama Pemilik','text']],
  mentahan:[['title','Nama File / Bundle Mentahan','text'],['desc','Deskripsi Singkat (Misal: 100+ Font CapCut)','text'],['url','Link Download (Google Drive, dll)','url']],
  guide:[['title','Judul Arahan','text'],['category','Kategori Label','text'],['content','Isi Arahan Teks','textarea'],['videoUrl','Link Video YouTube (Opsional)','url']],
@@ -1258,27 +358,28 @@ function openForm(type,id=null){
  tips:[['title','Judul Tips / SOP','text'],['content','Isi Teks','textarea']], faq:[['question','Pertanyaan','text'],['answer','Jawaban','textarea']],
  showcase:[['name','Nama Creator','text'],['achievement','Pencapaian (cth: Top 1 Bulan Ini)','text'],['link','Link Profil CapCut','url']] };
  document.getElementById('formTitle').textContent=(id?'Edit ':'Tambah ')+type.toUpperCase();
- document.getElementById('formFields').innerHTML=fields[type].map(([k,l,t])=>`<div class="form-group"><label>${l}</label>${t==='textarea'?`<textarea id="f_${k}">${safe(item[k]||'')}</textarea>`:`<input id="f_${k}" type="${t}" placeholder="${t==='url'?'https://...':''}" value="${safe(item[k]||'')}">`}</div>`).join('');
+ document.getElementById('formFields').innerHTML=fields[type].map(function(arr){ var k=arr[0]; var l=arr[1]; var t=arr[2]; return `<div class="form-group"><label>${l}</label>${t==='textarea'?`<textarea id="f_${k}">${safe(item[k]||'')}</textarea>`:`<input id="f_${k}" type="${t}" placeholder="${t==='url'?'https://...':''}" value="${safe(item[k]||'')}">`}</div>`; }).join('');
  document.getElementById('formModal').classList.add('show');
 }
 function closeModal(){ document.getElementById('formModal').classList.remove('show'); }
 
 async function saveContent(){
- const btn = document.getElementById('saveBtn'); btn.textContent="Menyimpan..."; btn.disabled=true;
- const fields = { key:['code','owner'], mentahan:['title','desc','url'], guide:['title','category','content','videoUrl'], announcement:['title','category','date','content'], video:['title','category','url','desc'], event:['title','date','time','desc'], tips:['title','content'], faq:['question','answer'], showcase:['name','achievement','link'] }[currentType];
- const obj={}; let isError = false;
- for(const k of fields){ 
-     const el = document.getElementById('f_'+k); 
+ var btn = document.getElementById('saveBtn'); btn.textContent="Menyimpan..."; btn.disabled=true;
+ var fields = { key:['code','owner'], mentahan:['title','desc','url'], guide:['title','category','content','videoUrl'], announcement:['title','category','date','content'], video:['title','category','url','desc'], event:['title','date','time','desc'], tips:['title','content'], faq:['question','answer'], showcase:['name','achievement','link'] }[currentType];
+ var obj={}; var isError = false;
+ for(var i = 0; i < fields.length; i++){ 
+     var k = fields[i];
+     var el = document.getElementById('f_'+k); 
      if (el) { 
          obj[k] = el.value.trim(); 
-         if(!obj[k] && !['time','videoUrl','owner'].includes(k)){ 
+         if(!obj[k] && k !== 'time' && k !== 'videoUrl' && k !== 'owner'){ 
              showToast('Isi semua kolom wajib!', 'error'); isError = true; break; 
          } 
      } 
  }
  if (isError) { btn.textContent="Simpan Data"; btn.disabled=false; return; }
  try { 
-     const dbName = editId ? globalEditCol : collectionMap[currentType]; 
+     var dbName = editId ? globalEditCol : collectionMap[currentType]; 
      if(editId) { await db.collection(dbName).doc(editId).update(obj); showToast('Data berhasil diperbarui!', 'success'); } 
      else { await db.collection(dbName).add(obj); showToast('Data baru ditambahkan!', 'success'); } 
      closeModal(); loadDataFromFirebase(); 
@@ -1289,8 +390,8 @@ async function saveContent(){
 async function deleteContent(type,id){
  if(!confirm('Yakin hapus item ini?')) return;
  try { 
-     let targetCol = collectionMap[type];
-     for (let c in data) { if(data[c].find(x => x.id === id)){ targetCol = c; break; } }
+     var targetCol = collectionMap[type];
+     for (var c in data) { if(data[c].find(function(x) { return x.id === id; })){ targetCol = c; break; } }
      await db.collection(targetCol).doc(id).delete(); 
      showToast('Data berhasil dihapus', 'success');
      loadDataFromFirebase(); 
@@ -1298,10 +399,10 @@ async function deleteContent(type,id){
 }
 
 async function saveSettings(){
- const btn = document.getElementById('btnSaveSettings'); btn.textContent="Menyimpan..."; btn.disabled = true;
+ var btn = document.getElementById('btnSaveSettings'); btn.textContent="Menyimpan..."; btn.disabled = true;
  try {
-     const val = (id) => document.getElementById(id) ? document.getElementById(id).value.trim() : '';
-     const agencyName = val('agencyName');
+     var val = function(id) { return document.getElementById(id) ? document.getElementById(id).value.trim() : ''; };
+     var agencyName = val('agencyName');
      if(!agencyName) { showToast('Tunggu! Nama Agency tidak boleh kosong.', 'error'); btn.textContent="Simpan Pengaturan"; btn.disabled = false; return; }
      
      await db.collection('settings').doc('global').set({ 
@@ -1314,7 +415,8 @@ async function saveSettings(){
          logoUrl: val('logoUrl'), 
          capcutPro: val('capcutPro'),
          groupBimbingan: val('groupBimbingan'),
-         groupMentahan: val('groupMentahan')
+         groupMentahan: val('groupMentahan'),
+         infoTahapanLink: val('infoTahapanLink')
      }, {merge:true}); 
      
      showToast('Pengaturan Berhasil Disimpan!', 'success'); 
