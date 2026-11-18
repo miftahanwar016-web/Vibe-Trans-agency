@@ -191,16 +191,17 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
               <h2 style="color:var(--primary); font-size:18px;">Arahan Pendaftaran</h2>
           </div>
           
-          <div id="regCreatorDescArea" style="font-size:14px; color:var(--text); line-height:1.8; white-space:pre-wrap; margin-bottom:15px; padding:10px 0;">Memuat arahan pendaftaran...</div>
+          <div id="regCreatorDescArea" style="font-size:14px; color:var(--text); line-height:1.8; white-space:pre-wrap; margin-bottom:25px; padding:10px 0;">Memuat arahan pendaftaran...</div>
           
-          <!-- GAMBAR PANDUAN PENDAFTARAN (MUNCUL JIKA ADA LINK DARI ADMIN) -->
-          <div class="panduan-img-box" id="regGuideImgBox1">
-              <img id="regGuideImg1" src="" alt="Panduan Daftar">
-          </div>
-          
-          <button onclick="bukaLink('regCreator')" class="btn" style="width:100%; font-size:14px; padding:15px; border-radius:30px; background:linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4); display:flex; justify-content:center; align-items:center; gap:10px;">
+          <!-- TOMBOL DAFTAR (DIPINDAH KE ATAS GAMBAR) -->
+          <button onclick="bukaLink('regCreator')" class="btn" style="width:100%; font-size:14px; padding:15px; border-radius:30px; background:linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4); display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:20px;">
               Daftar menjadi Creator <span style="font-size:18px;">➔</span>
           </button>
+          
+          <!-- GAMBAR PANDUAN PENDAFTARAN (DIPINDAH KE BAWAH TOMBOL) -->
+          <div class="panduan-img-box" id="regGuideImgBox1" style="margin-top:0; margin-bottom:0;">
+              <img id="regGuideImg1" src="" alt="Panduan Daftar">
+          </div>
       </div>
   </div>
  </section>
@@ -346,7 +347,6 @@ async function loadDataFromFirebase() {
             const descArea = document.getElementById('regCreatorDescArea');
             if(descArea) { descArea.innerHTML = globalSettings.regCreatorDesc ? safe(globalSettings.regCreatorDesc) : '<i style="color:var(--muted)">Belum ada arahan dari Admin. Silakan langsung klik tombol di bawah.</i>'; }
             
-            // Logika menampilkan gambar panduan pendaftaran
             const imgBox1 = document.getElementById('regGuideImgBox1');
             const imgBox2 = document.getElementById('regGuideImgBox2');
             const img1 = document.getElementById('regGuideImg1');
