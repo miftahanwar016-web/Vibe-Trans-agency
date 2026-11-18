@@ -74,6 +74,10 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:11px}
 .showcase-ava{width:80px; height:80px; background:#f0edff; border-radius:50%; margin:0 auto 15px; display:grid; place-items:center; font-size:30px; font-weight:bold; color:var(--primary);}
 body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
 
+/* STYLE GAMBAR PANDUAN */
+.panduan-img-box { width: 100%; border-radius: 12px; overflow: hidden; margin-top: 15px; margin-bottom: 25px; border: 1px solid var(--border); background: var(--bg); display: none; }
+.panduan-img-box img { width: 100%; height: auto; display: block; }
+
 .skel-box { padding: 20px; border: 1px solid var(--border); border-radius: 14px; margin-bottom: 15px; background: var(--card); }
 .skeleton { background: linear-gradient(90deg, var(--border) 25%, var(--bg) 50%, var(--border) 75%); background-size: 200% 100%; animation: loadSkel 1.5s infinite; border-radius: 6px; }
 @keyframes loadSkel { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
@@ -186,9 +190,14 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
               <span style="font-size:24px;">📝</span>
               <h2 style="color:var(--primary); font-size:18px;">Arahan Pendaftaran</h2>
           </div>
-          <div id="regCreatorDescArea" style="font-size:14px; color:var(--text); line-height:1.8; white-space:pre-wrap; margin-bottom:30px; padding:10px 0;">Memuat arahan pendaftaran...</div>
           
-          <!-- TOMBOL DIUBAH MENJADI DAFTAR MENJADI CREATOR -->
+          <div id="regCreatorDescArea" style="font-size:14px; color:var(--text); line-height:1.8; white-space:pre-wrap; margin-bottom:15px; padding:10px 0;">Memuat arahan pendaftaran...</div>
+          
+          <!-- GAMBAR PANDUAN PENDAFTARAN (MUNCUL JIKA ADA LINK DARI ADMIN) -->
+          <div class="panduan-img-box" id="regGuideImgBox1">
+              <img id="regGuideImg1" src="" alt="Panduan Daftar">
+          </div>
+          
           <button onclick="bukaLink('regCreator')" class="btn" style="width:100%; font-size:14px; padding:15px; border-radius:30px; background:linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4); display:flex; justify-content:center; align-items:center; gap:10px;">
               Daftar menjadi Creator <span style="font-size:18px;">➔</span>
           </button>
@@ -210,6 +219,12 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
   </div>
   
   <h2 style="margin: 0 0 15px; font-size:17px; color:var(--primary);">📝 Arahan Teks Pendaftaran</h2>
+  
+  <!-- GAMBAR PANDUAN PENDAFTARAN DI HALAMAN BIMBINGAN -->
+  <div class="panduan-img-box" id="regGuideImgBox2">
+      <img id="regGuideImg2" src="" alt="Panduan Daftar">
+  </div>
+  
   <div id="guideList"></div>
 
   <h2 style="margin: 35px 0 15px; font-size:17px; color:#3b82f6;">📁 Mentahan Gratis (Bahan Edit)</h2>
@@ -317,7 +332,7 @@ const firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", auth
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.firestore();
 
-let globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '', groupBimbingan: '', groupMentahan: '', regCreatorDesc: '', infoTahapanLink: '' };
+let globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '', groupBimbingan: '', groupMentahan: '', regCreatorDesc: '', infoTahapanLink: '', guideImgUrl: '' };
 let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
 
 async function loadDataFromFirebase() {
@@ -327,8 +342,24 @@ async function loadDataFromFirebase() {
     db.collection('settings').doc('global').onSnapshot((doc) => {
         if (doc.exists) {
             globalSettings = doc.data();
+            
             const descArea = document.getElementById('regCreatorDescArea');
             if(descArea) { descArea.innerHTML = globalSettings.regCreatorDesc ? safe(globalSettings.regCreatorDesc) : '<i style="color:var(--muted)">Belum ada arahan dari Admin. Silakan langsung klik tombol di bawah.</i>'; }
+            
+            // Logika menampilkan gambar panduan pendaftaran
+            const imgBox1 = document.getElementById('regGuideImgBox1');
+            const imgBox2 = document.getElementById('regGuideImgBox2');
+            const img1 = document.getElementById('regGuideImg1');
+            const img2 = document.getElementById('regGuideImg2');
+            
+            if (globalSettings.guideImgUrl && globalSettings.guideImgUrl.trim() !== '') {
+                if(imgBox1 && img1) { img1.src = globalSettings.guideImgUrl; imgBox1.style.display = 'block'; }
+                if(imgBox2 && img2) { img2.src = globalSettings.guideImgUrl; imgBox2.style.display = 'block'; }
+            } else {
+                if(imgBox1) imgBox1.style.display = 'none';
+                if(imgBox2) imgBox2.style.display = 'none';
+            }
+            
             const logoImg = document.getElementById('brandLogoImg'); const logoText = document.getElementById('brandLogoText'); const logoBox = document.getElementById('brandLogoBox');
             if (globalSettings.logoUrl && globalSettings.logoUrl.trim() !== '') { logoImg.src = globalSettings.logoUrl; logoImg.style.display = 'block'; logoText.style.display = 'none'; logoBox.style.background = 'transparent'; } 
             else { logoImg.style.display = 'none'; logoText.style.display = 'block'; logoBox.style.background = 'linear-gradient(135deg,#7652e8,#ad8bff)'; }
