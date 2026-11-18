@@ -124,18 +124,41 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
    <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
    
    <div class="form-group"><label>Nama Agency</label><input id="agencyName" placeholder="Vibe Trans Agency"></div>
-   <div class="form-group"><label>Nomor WA Admin (Contoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
+   
+   <!-- UBAH: FORM KONTAK ADMIN 1 SAMPAI 5 -->
+   <div class="form-group">
+       <label style="color:#25D366; font-size:13px; margin-bottom:12px; display:block;">💬 Daftar Kontak Admin WA (Maksimal 5)</label>
+       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+           <input id="wa1Name" placeholder="Nama Admin 1 (Cth: Admin Support)">
+           <input id="wa1Number" placeholder="No WA (Cth: 62812...)">
+       </div>
+       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+           <input id="wa2Name" placeholder="Nama Admin 2">
+           <input id="wa2Number" placeholder="No WA Admin 2">
+       </div>
+       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+           <input id="wa3Name" placeholder="Nama Admin 3">
+           <input id="wa3Number" placeholder="No WA Admin 3">
+       </div>
+       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+           <input id="wa4Name" placeholder="Nama Admin 4">
+           <input id="wa4Number" placeholder="No WA Admin 4">
+       </div>
+       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+           <input id="wa5Name" placeholder="Nama Admin 5">
+           <input id="wa5Number" placeholder="No WA Admin 5">
+       </div>
+       <small style="color:var(--muted); font-size:11px;">*Kosongkan baris yang tidak digunakan.</small>
+   </div>
    
    <div class="form-group"><label style="color:#10b981;">💎 Link Promo CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
    
    <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
    
-   <!-- PENAMBAHAN INPUT GAMBAR PANDUAN PENDAFTARAN -->
    <div class="form-group">
        <label style="color:#3b82f6;">📸 Link Gambar Panduan Pendaftaran</label>
        <input id="guideImgUrl" placeholder="https://raw.githubusercontent.com/.../panduan.jpg">
    </div>
-   
    <div class="form-group">
        <label style="color:#3b82f6;">📝 Arahan / Petunjuk Pendaftaran Creator</label>
        <textarea id="regCreatorDesc" placeholder="Ketik syarat, info, atau tata cara pendaftaran creator di sini..."></textarea>
@@ -214,15 +237,10 @@ function verifyLogin() {
             showToast('Password Salah!', 'error');
             input.value = '';
         }
-    } catch(e) {
-        alert('Terjadi kesalahan pada sistem perangkat Anda.');
-    }
+    } catch(e) { alert('Terjadi kesalahan pada sistem perangkat Anda.'); }
 }
 
-function logoutAdmin(){ 
-    sessionStorage.removeItem('isAdmin'); 
-    window.location.href = '../index.html'; 
-}
+function logoutAdmin(){ sessionStorage.removeItem('isAdmin'); window.location.href = '../index.html'; }
 
 if (sessionStorage.getItem('isAdmin') === 'true') {
     document.getElementById('loginScreen').style.display = 'none';
@@ -273,7 +291,7 @@ var db = firebase.firestore();
 
 var data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
 var currentType = ''; var editId = null; var globalEditCol = '';
-var globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '', groupBimbingan: '', groupMentahan: '', regCreatorDesc: '', infoTahapanLink: '', guideImgUrl: '' };
+var globalSettings = {};
 var collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases', guide:'guides', key:'keys', mentahan:'mentahans' };
 
 if (sessionStorage.getItem('isAdmin') === 'true') { loadDataFromFirebase(); }
@@ -283,8 +301,20 @@ async function loadDataFromFirebase() {
         var doc = await db.collection('settings').doc('global').get();
         if(doc.exists) {
             var s = doc.data();
-            if(document.getElementById('waNumber')) document.getElementById('waNumber').value = s.wa || '';
             if(document.getElementById('agencyName')) document.getElementById('agencyName').value = s.name || 'Vibe Trans Agency';
+            
+            // LOAD 5 NOMOR WA
+            if(document.getElementById('wa1Name')) document.getElementById('wa1Name').value = s.wa1Name || '';
+            if(document.getElementById('wa1Number')) document.getElementById('wa1Number').value = s.wa1Number || '';
+            if(document.getElementById('wa2Name')) document.getElementById('wa2Name').value = s.wa2Name || '';
+            if(document.getElementById('wa2Number')) document.getElementById('wa2Number').value = s.wa2Number || '';
+            if(document.getElementById('wa3Name')) document.getElementById('wa3Name').value = s.wa3Name || '';
+            if(document.getElementById('wa3Number')) document.getElementById('wa3Number').value = s.wa3Number || '';
+            if(document.getElementById('wa4Name')) document.getElementById('wa4Name').value = s.wa4Name || '';
+            if(document.getElementById('wa4Number')) document.getElementById('wa4Number').value = s.wa4Number || '';
+            if(document.getElementById('wa5Name')) document.getElementById('wa5Name').value = s.wa5Name || '';
+            if(document.getElementById('wa5Number')) document.getElementById('wa5Number').value = s.wa5Number || '';
+
             if(document.getElementById('capcutPro')) document.getElementById('capcutPro').value = s.capcutPro || '';
             if(document.getElementById('regCreator')) document.getElementById('regCreator').value = s.regCreator || '';
             if(document.getElementById('regCreatorDesc')) document.getElementById('regCreatorDesc').value = s.regCreatorDesc || '';
@@ -394,7 +424,11 @@ async function saveSettings(){
      if(!agencyName) { showToast('Tunggu! Nama Agency tidak boleh kosong.', 'error'); btn.textContent="Simpan Pengaturan"; btn.disabled = false; return; }
      
      await db.collection('settings').doc('global').set({ 
-         wa: val('waNumber').replace(/\D/g,''), 
+         wa1Name: val('wa1Name'), wa1Number: val('wa1Number'),
+         wa2Name: val('wa2Name'), wa2Number: val('wa2Number'),
+         wa3Name: val('wa3Name'), wa3Number: val('wa3Number'),
+         wa4Name: val('wa4Name'), wa4Number: val('wa4Number'),
+         wa5Name: val('wa5Name'), wa5Number: val('wa5Number'),
          name: agencyName, 
          regCreator: val('regCreator'),
          regCreatorDesc: val('regCreatorDesc'),
