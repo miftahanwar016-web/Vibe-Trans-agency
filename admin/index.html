@@ -58,7 +58,7 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
 @keyframes loadSkel { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 .skel-title { height: 16px; width: 60%; margin-bottom: 12px; } .skel-text { height: 12px; width: 30%; }
 
-#toastBox { fixed; top: 30px; right: 30px; display: flex; flex-direction: column; align-items: flex-end; z-index: 9999; pointer-events: none; }
+#toastBox { position: fixed; top: 30px; right: 30px; display: flex; flex-direction: column; align-items: flex-end; z-index: 9999; pointer-events: none; }
 .toast { background: var(--card); border-left: 4px solid var(--primary); box-shadow: 0 5px 25px rgba(0,0,0,0.2); padding: 15px 20px; margin-bottom: 10px; border-radius: 8px; font-size: 13px; font-weight: bold; color: var(--text); display: flex; align-items: center; gap: 10px; animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; max-width: 320px; }
 .toast.error { border-left-color: #ef4444; } .toast.success { border-left-color: #10b981; }
 @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -125,9 +125,16 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
    
    <div class="form-group"><label>Nama Agency</label><input id="agencyName" placeholder="Vibe Trans Agency"></div>
    <div class="form-group"><label>Nomor WA Admin (Contoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
+   
    <div class="form-group"><label style="color:#10b981;">💎 Link Promo CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
    
    <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
+   
+   <!-- PENAMBAHAN INPUT GAMBAR PANDUAN PENDAFTARAN -->
+   <div class="form-group">
+       <label style="color:#3b82f6;">📸 Link Gambar Panduan Pendaftaran</label>
+       <input id="guideImgUrl" placeholder="https://raw.githubusercontent.com/.../panduan.jpg">
+   </div>
    
    <div class="form-group">
        <label style="color:#3b82f6;">📝 Arahan / Petunjuk Pendaftaran Creator</label>
@@ -207,10 +214,15 @@ function verifyLogin() {
             showToast('Password Salah!', 'error');
             input.value = '';
         }
-    } catch(e) { alert('Terjadi kesalahan pada sistem perangkat Anda.'); }
+    } catch(e) {
+        alert('Terjadi kesalahan pada sistem perangkat Anda.');
+    }
 }
 
-function logoutAdmin(){ sessionStorage.removeItem('isAdmin'); window.location.href = '../index.html'; }
+function logoutAdmin(){ 
+    sessionStorage.removeItem('isAdmin'); 
+    window.location.href = '../index.html'; 
+}
 
 if (sessionStorage.getItem('isAdmin') === 'true') {
     document.getElementById('loginScreen').style.display = 'none';
@@ -255,12 +267,13 @@ function renderSkeleton(elId) {
 ['guideList','mentahanList','videoList','announcementList','eventList','tipsList','faqList','showcaseList','keyList'].forEach(function(id) { renderSkeleton(id); });
 
 var firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
+
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 var db = firebase.firestore();
 
 var data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
 var currentType = ''; var editId = null; var globalEditCol = '';
-var globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '', groupBimbingan: '', groupMentahan: '', regCreatorDesc: '', infoTahapanLink: '' };
+var globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '', groupBimbingan: '', groupMentahan: '', regCreatorDesc: '', infoTahapanLink: '', guideImgUrl: '' };
 var collectionMap = { announcement:'announcements', video:'videos', event:'agendas', tips:'rules', faq:'faqs', showcase:'showcases', guide:'guides', key:'keys', mentahan:'mentahans' };
 
 if (sessionStorage.getItem('isAdmin') === 'true') { loadDataFromFirebase(); }
@@ -279,6 +292,7 @@ async function loadDataFromFirebase() {
             if(document.getElementById('groupBimbingan')) document.getElementById('groupBimbingan').value = s.groupBimbingan || '';
             if(document.getElementById('groupMentahan')) document.getElementById('groupMentahan').value = s.groupMentahan || '';
             if(document.getElementById('infoTahapanLink')) document.getElementById('infoTahapanLink').value = s.infoTahapanLink || '';
+            if(document.getElementById('guideImgUrl')) document.getElementById('guideImgUrl').value = s.guideImgUrl || '';
             if(document.getElementById('logoUrl')) document.getElementById('logoUrl').value = s.logoUrl || '';
 
             var logoImg = document.getElementById('brandLogoImg'); var logoText = document.getElementById('brandLogoText'); var logoBox = document.getElementById('brandLogoBox');
@@ -390,7 +404,8 @@ async function saveSettings(){
          capcutPro: val('capcutPro'),
          groupBimbingan: val('groupBimbingan'),
          groupMentahan: val('groupMentahan'),
-         infoTahapanLink: val('infoTahapanLink')
+         infoTahapanLink: val('infoTahapanLink'),
+         guideImgUrl: val('guideImgUrl')
      }, {merge:true}); 
      
      showToast('Pengaturan Berhasil Disimpan!', 'success'); 
