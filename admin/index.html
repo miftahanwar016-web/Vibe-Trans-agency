@@ -58,7 +58,7 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
 @keyframes loadSkel { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 .skel-title { height: 16px; width: 60%; margin-bottom: 12px; } .skel-text { height: 12px; width: 30%; }
 
-#toastBox { position: fixed; top: 30px; right: 30px; display: flex; flex-direction: column; align-items: flex-end; z-index: 9999; pointer-events: none; }
+#toastBox { fixed; top: 30px; right: 30px; display: flex; flex-direction: column; align-items: flex-end; z-index: 9999; pointer-events: none; }
 .toast { background: var(--card); border-left: 4px solid var(--primary); box-shadow: 0 5px 25px rgba(0,0,0,0.2); padding: 15px 20px; margin-bottom: 10px; border-radius: 8px; font-size: 13px; font-weight: bold; color: var(--text); display: flex; align-items: center; gap: 10px; animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; max-width: 320px; }
 .toast.error { border-left-color: #ef4444; } .toast.success { border-left-color: #10b981; }
 @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -125,7 +125,6 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
    
    <div class="form-group"><label>Nama Agency</label><input id="agencyName" placeholder="Vibe Trans Agency"></div>
    <div class="form-group"><label>Nomor WA Admin (Contoh: 628123...)</label><input id="waNumber" placeholder="628..."></div>
-   
    <div class="form-group"><label style="color:#10b981;">💎 Link Promo CapCut Pro</label><input id="capcutPro" placeholder="https://..."></div>
    
    <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
@@ -139,7 +138,6 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
    <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
    <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
    <div class="form-group"><label style="color:#3b82f6;">📁 Link Group Mentahan Tambahan</label><input id="groupMentahan" placeholder="https://chat.whatsapp..."></div>
-   
    <div class="form-group"><label style="color:#f59e0b;">ℹ️ Link Informasi Tahapan Daftar Creator</label><input id="infoTahapanLink" placeholder="https://..."></div>
    <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
    
@@ -209,15 +207,10 @@ function verifyLogin() {
             showToast('Password Salah!', 'error');
             input.value = '';
         }
-    } catch(e) {
-        alert('Terjadi kesalahan pada sistem perangkat Anda.');
-    }
+    } catch(e) { alert('Terjadi kesalahan pada sistem perangkat Anda.'); }
 }
 
-function logoutAdmin(){ 
-    sessionStorage.removeItem('isAdmin'); 
-    window.location.href = '../index.html'; 
-}
+function logoutAdmin(){ sessionStorage.removeItem('isAdmin'); window.location.href = '../index.html'; }
 
 if (sessionStorage.getItem('isAdmin') === 'true') {
     document.getElementById('loginScreen').style.display = 'none';
@@ -262,7 +255,6 @@ function renderSkeleton(elId) {
 ['guideList','mentahanList','videoList','announcementList','eventList','tipsList','faqList','showcaseList','keyList'].forEach(function(id) { renderSkeleton(id); });
 
 var firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
-
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 var db = firebase.firestore();
 
@@ -335,7 +327,6 @@ function openForm(type,id){
  mentahan:[['title','Nama File / Bundle Mentahan','text'],['desc','Deskripsi Singkat (Misal: 100+ Font CapCut)','text'],['url','Link Download (Google Drive, dll)','url']],
  guide:[['title','Judul Arahan','text'],['category','Kategori Label','text'],['content','Isi Arahan Teks','textarea'],['videoUrl','Link Video (Opsional)','url']],
  announcement:[['title','Judul','text'],['category','Kategori Label','text'],['date','Tanggal (YYYY-MM-DD)','date'],['content','Isi Pengumuman','textarea']],
- // ⚠️ MENGUBAH LABEL LINK VIDEO DI FORM INPUT ADMIN
  video:[['title','Judul','text'],['category','Kategori Label','text'],['url','Link Video (YouTube, TikTok, Drive, mp4)','url'],['desc','Deskripsi Singkat','textarea']],
  event:[['title','Nama Event / Agenda','text'],['date','Tgl Berakhir (YYYY-MM-DD)','date'],['time','Waktu (Opsional)','time'],['desc','Detail Teks','textarea']],
  tips:[['title','Judul Tips / SOP','text'],['content','Isi Teks','textarea']], faq:[['question','Pertanyaan','text'],['answer','Jawaban','textarea']],
