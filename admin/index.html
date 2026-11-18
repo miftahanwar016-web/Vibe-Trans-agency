@@ -13,10 +13,7 @@ body.dark-mode {--bg:#12121c; --card:#1e1e2d; --text:#ffffff; --muted:#a0a0b2; -
 *{box-sizing:border-box;margin:0;padding:0} 
 body{font-family:Arial,sans-serif;background:var(--bg);color:var(--text); transition: background 0.3s, color 0.3s;} 
 button,input,textarea,select{font:inherit} button{cursor:pointer;border:0}
-
-/* Pastikan app tertutup di awal, lalu dipaksa tampil saat login */
-.app{display:none; min-height:100vh;} 
-.app.show{display:flex !important;}
+.app{display:none;min-height:100vh} .app.show{display:flex !important;}
 
 ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #c3b5fd; border-radius: 10px; } ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
@@ -75,9 +72,8 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
 <div class="login-screen" id="loginScreen">
     <div class="login-box">
         <h2 style="margin-bottom:10px; color:#202033;">Login Admin</h2>
-        <!-- Input dengan tombol enter aktif -->
         <input type="password" id="adminPassword" style="width:100%;padding:15px;border:2px solid #ececf3;border-radius:10px;text-align:center;margin-bottom:20px; color:#202033;" placeholder="Password: admin123" onkeypress="if(event.key === 'Enter') verifyLogin()">
-        <button class="btn" id="loginBtn" onclick="verifyLogin()">Masuk</button>
+        <button type="button" class="btn" id="loginBtn" onclick="verifyLogin()">Masuk</button>
         <a href="../index.html" style="display:block; margin-top:20px; font-size:13px; color:#85859a; text-decoration:none;">← Kembali ke Web Member</a>
     </div>
 </div>
@@ -144,9 +140,7 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
    <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
    <div class="form-group"><label style="color:#3b82f6;">📁 Link Group Mentahan Tambahan</label><input id="groupMentahan" placeholder="https://chat.whatsapp..."></div>
    
-   <!-- UBAH LABEL INPUT DI ADMIN PANEL SESUAI REQUEST -->
    <div class="form-group"><label style="color:#f59e0b;">ℹ️ Link Informasi Tahapan Daftar Creator</label><input id="infoTahapanLink" placeholder="https://..."></div>
-   
    <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
    
    <button class="btn" onclick="saveSettings()" id="btnSaveSettings" style="margin-top:20px; font-size:14px; padding:15px;">Simpan Semua Pengaturan</button>
@@ -171,7 +165,7 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
 
  <section class="page" id="tutorial"> 
      <h1 style="margin-bottom:10px;">Manajemen Video Tutorial</h1>
-     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Link Video YouTube untuk ditampilkan di halaman Bimbingan dan halaman Kumpulan Tutorial.</p>
+     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Tambahkan Link Video (YouTube, TikTok, Drive, dll) untuk ditampilkan di halaman Bimbingan.</p>
      <button class="btn" onclick="openForm('video')" style="width:auto; margin-bottom:20px;">+ Tambah Tutorial</button> 
      <div id="videoList"></div> 
 </section>
@@ -198,9 +192,6 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
 <div id="toastBox"></div>
 
 <script>
-// ==========================================
-// 1. FUNGSI LOGIN (ANTI-CRASH SPARTAN)
-// ==========================================
 function verifyLogin() {
     try {
         var input = document.getElementById('adminPassword');
@@ -228,7 +219,6 @@ function logoutAdmin(){
     window.location.href = '../index.html'; 
 }
 
-// Cek status otomatis saat buka halaman
 if (sessionStorage.getItem('isAdmin') === 'true') {
     document.getElementById('loginScreen').style.display = 'none';
     var app = document.getElementById('adminApp');
@@ -236,9 +226,6 @@ if (sessionStorage.getItem('isAdmin') === 'true') {
     app.classList.add('show');
 }
 
-// ==========================================
-// 2. FUNGSI UI / TAMPILAN
-// ==========================================
 function setGreeting() {
     var hour = new Date().getHours(); var greet = 'Selamat Malam 🌙';
     if (hour >= 5 && hour < 11) greet = 'Selamat Pagi ☀️';
@@ -274,16 +261,11 @@ function renderSkeleton(elId) {
 }
 ['guideList','mentahanList','videoList','announcementList','eventList','tipsList','faqList','showcaseList','keyList'].forEach(function(id) { renderSkeleton(id); });
 
-// ==========================================
-// 3. FIREBASE & DATA ENGINE (KEBAL DOUBLE-LOAD)
-// ==========================================
 var firebaseConfig = { apiKey: "AIzaSyDvbwPdubl4DjFxjcjI3NmMLCH6ZhqTi8s", authDomain: "vibetransagency.firebaseapp.com", projectId: "vibetransagency", storageBucket: "vibetransagency.firebasestorage.app", messagingSenderId: "588292416360", appId: "1:588292416360:web:9caf952b41f16525cb2cdd" };
 
-// Anti-crash jika dipanggil dua kali oleh Vercel
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 var db = firebase.firestore();
 
-// Ubah const/let menjadi var agar kebal dari redeclaration error
 var data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
 var currentType = ''; var editId = null; var globalEditCol = '';
 var globalSettings = { wa: '', regAgency: '', regCreator: '', logoUrl: '', capcutPro: '', groupBimbingan: '', groupMentahan: '', regCreatorDesc: '', infoTahapanLink: '' };
@@ -351,9 +333,10 @@ function openForm(type,id){
  var fields={
  key:[['code','Kode Kunci (Contoh: VIBE2026, MEMBERVIP)','text'],['owner','Keterangan / Nama Pemilik','text']],
  mentahan:[['title','Nama File / Bundle Mentahan','text'],['desc','Deskripsi Singkat (Misal: 100+ Font CapCut)','text'],['url','Link Download (Google Drive, dll)','url']],
- guide:[['title','Judul Arahan','text'],['category','Kategori Label','text'],['content','Isi Arahan Teks','textarea'],['videoUrl','Link Video YouTube (Opsional)','url']],
+ guide:[['title','Judul Arahan','text'],['category','Kategori Label','text'],['content','Isi Arahan Teks','textarea'],['videoUrl','Link Video (Opsional)','url']],
  announcement:[['title','Judul','text'],['category','Kategori Label','text'],['date','Tanggal (YYYY-MM-DD)','date'],['content','Isi Pengumuman','textarea']],
- video:[['title','Judul','text'],['category','Kategori Label','text'],['url','Link YouTube','url'],['desc','Deskripsi Singkat','textarea']],
+ // ⚠️ MENGUBAH LABEL LINK VIDEO DI FORM INPUT ADMIN
+ video:[['title','Judul','text'],['category','Kategori Label','text'],['url','Link Video (YouTube, TikTok, Drive, mp4)','url'],['desc','Deskripsi Singkat','textarea']],
  event:[['title','Nama Event / Agenda','text'],['date','Tgl Berakhir (YYYY-MM-DD)','date'],['time','Waktu (Opsional)','time'],['desc','Detail Teks','textarea']],
  tips:[['title','Judul Tips / SOP','text'],['content','Isi Teks','textarea']], faq:[['question','Pertanyaan','text'],['answer','Jawaban','textarea']],
  showcase:[['name','Nama Creator','text'],['achievement','Pencapaian (cth: Top 1 Bulan Ini)','text'],['link','Link Profil CapCut','url']] };
