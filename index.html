@@ -187,8 +187,10 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
               <h2 style="color:var(--primary); font-size:18px;">Arahan Pendaftaran</h2>
           </div>
           <div id="regCreatorDescArea" style="font-size:14px; color:var(--text); line-height:1.8; white-space:pre-wrap; margin-bottom:30px; padding:10px 0;">Memuat arahan pendaftaran...</div>
+          
+          <!-- TOMBOL DIUBAH MENJADI DAFTAR MENJADI CREATOR -->
           <button onclick="bukaLink('regCreator')" class="btn" style="width:100%; font-size:14px; padding:15px; border-radius:30px; background:linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4); display:flex; justify-content:center; align-items:center; gap:10px;">
-              Menuju Link Pendaftaran <span style="font-size:18px;">➔</span>
+              Daftar menjadi Creator <span style="font-size:18px;">➔</span>
           </button>
       </div>
   </div>
@@ -220,6 +222,7 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
 
  <!-- 4. GROUP RESMI (TERKUNCI) -->
  <section class="page" id="group">
+    
     <div id="groupLockScreen" style="max-width:400px; margin:50px auto; text-align:center;">
         <div class="item-box" style="padding:40px 30px; border-color:var(--warn); box-shadow: 0 10px 30px rgba(245,158,11,0.15);">
             <div style="font-size:50px; margin-bottom:15px; filter: drop-shadow(0 4px 6px rgba(245,158,11,0.4));">🔒</div>
@@ -382,7 +385,6 @@ function renderAll(){
  document.getElementById('year').textContent=new Date().getFullYear();
 }
 
-// ⚠️ SISTEM SMART PLAYER (AUTO PORTRAIT/LANDSCAPE)
 function playVideoByUrl(url, title, desc='') {
     if(!url) return;
     document.getElementById('playerTitle').textContent = title;
@@ -390,16 +392,13 @@ function playVideoByUrl(url, title, desc='') {
     var pa = document.getElementById('playerArea');
     var modalBox = document.querySelector('#videoModal .modal-box');
     
-    // Deteksi otomatis jika video adalah Shorts atau TikTok (Portrait)
     var isPortrait = false;
     var urlLower = url.toLowerCase();
     if(urlLower.includes('/shorts/') || urlLower.includes('tiktok.com')) {
         isPortrait = true;
     }
 
-    // Setel ukuran rasio layar dinamis
     pa.style.aspectRatio = isPortrait ? "9/16" : "16/9";
-    // Setel lebar kotak modal agar rapi di HP
     modalBox.style.maxWidth = isPortrait ? "360px" : "600px";
 
     try {
