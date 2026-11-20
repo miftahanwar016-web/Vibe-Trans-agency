@@ -49,7 +49,7 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
 .admin-actions{display:flex;gap:5px;}
 
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:100;align-items:center;justify-content:center;padding:15px; backdrop-filter:blur(3px);} .modal.show{display:flex}
-.modal-box{background:var(--card);border-radius:15px;width:100%;max-width:500px;padding:25px; transition:0.3s;}
+.modal-box{background:var(--card);border-radius:15px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;padding:25px; transition:0.3s;}
 .login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#1e1e2d,#3a2c68);display:flex;justify-content:center;align-items:center;z-index:1000;padding:20px;}
 .login-box{background:#ffffff;border-radius:20px;padding:40px 30px;width:100%;max-width:350px;text-align:center;}
 
@@ -125,7 +125,6 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
    
    <div class="form-group"><label>Nama Agency</label><input id="agencyName" placeholder="Vibe Trans Agency"></div>
    
-   <!-- UBAH: FORM KONTAK ADMIN 1 SAMPAI 5 -->
    <div class="form-group">
        <label style="color:#25D366; font-size:13px; margin-bottom:12px; display:block;">💬 Daftar Kontak Admin WA (Maksimal 5)</label>
        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
@@ -303,7 +302,6 @@ async function loadDataFromFirebase() {
             var s = doc.data();
             if(document.getElementById('agencyName')) document.getElementById('agencyName').value = s.name || 'Vibe Trans Agency';
             
-            // LOAD 5 NOMOR WA
             if(document.getElementById('wa1Name')) document.getElementById('wa1Name').value = s.wa1Name || '';
             if(document.getElementById('wa1Number')) document.getElementById('wa1Number').value = s.wa1Number || '';
             if(document.getElementById('wa2Name')) document.getElementById('wa2Name').value = s.wa2Name || '';
@@ -355,7 +353,16 @@ function renderAll(){
  renderList('guideList', data.guides, function(g) { return `<div class="item-box"><div class="item-info"><h3>${safe(g.title)}</h3><p>${safe(g.category)}</p></div>${act('guide',g.id)}</div>`; });
  renderList('announcementList', data.announcements, function(a) { return `<div class="item-box"><div class="item-info"><h3>${safe(a.title)}</h3><p>${safe(a.category)}</p></div>${act('announcement',a.id)}</div>`; });
  renderList('videoList', data.videos, function(v) { return `<div class="item-box"><div class="item-info"><h3>${safe(v.title)}</h3><p>${safe(v.category)}</p></div>${act('video',v.id)}</div>`; });
- var combinedEvents = [].concat(data.events, data.agendas); renderList('eventList', combinedEvents, function(e) { return `<div class="item-box"><div class="item-info"><h3>${safe(e.title)}</h3><p>Waktu: ${safe(e.date)}</p></div>${act('event',e.id)}</div>`; });
+ 
+ // TAMPILAN LIST EVENT DI ADMIN (INDIKATOR GAMBAR & LINK)
+ var combinedEvents = [].concat(data.events, data.agendas); 
+ renderList('eventList', combinedEvents, function(e) { 
+     var badges = [];
+     if(e.imgUrl) badges.push('📸 Gambar');
+     if(e.link) badges.push('🔗 Link');
+     return `<div class="item-box"><div class="item-info"><h3>${safe(e.title)}</h3><p>Waktu: ${safe(e.date)} ${badges.length ? ' • ' + badges.join(' ') : ''}</p></div>${act('event',e.id)}</div>`; 
+ });
+ 
  var combinedTips = [].concat(data.tips, data.rules); renderList('tipsList', combinedTips, function(t) { return `<div class="item-box"><div class="item-info"><h3>${safe(t.title)}</h3></div>${act('tips',t.id)}</div>`; });
  renderList('faqList', data.faqs, function(f) { return `<div class="item-box"><div class="item-info"><h3>${safe(f.question)}</h3></div>${act('faq',f.id)}</div>`; });
  renderList('showcaseList', data.showcases, function(s) { return `<div class="item-box"><div class="item-info"><h3>${safe(s.name)}</h3><p>${safe(s.achievement)}</p></div>${act('showcase',s.id)}</div>`; });
@@ -372,7 +379,8 @@ function openForm(type,id){
  guide:[['title','Judul Arahan','text'],['category','Kategori Label','text'],['content','Isi Arahan Teks','textarea'],['videoUrl','Link Video (Opsional)','url']],
  announcement:[['title','Judul','text'],['category','Kategori Label','text'],['date','Tanggal (YYYY-MM-DD)','date'],['content','Isi Pengumuman','textarea']],
  video:[['title','Judul','text'],['category','Kategori Label','text'],['url','Link Video (YouTube, TikTok, Drive, mp4)','url'],['desc','Deskripsi Singkat','textarea']],
- event:[['title','Nama Event / Agenda','text'],['date','Tgl Berakhir (YYYY-MM-DD)','date'],['time','Waktu (Opsional)','time'],['desc','Detail Teks','textarea']],
+ // PENAMBAHAN KOLOM GAMBAR & LINK DI FORM EVENT
+ event:[['title','Nama Event / Agenda','text'],['date','Tgl Berakhir (YYYY-MM-DD)','date'],['time','Waktu (Opsional)','time'],['imgUrl','📸 Link Gambar / Poster Event (Opsional)','url'],['link','🔗 Link Tautan Event (Opsional)','url'],['desc','Detail Teks','textarea']],
  tips:[['title','Judul Tips / SOP','text'],['content','Isi Teks','textarea']], faq:[['question','Pertanyaan','text'],['answer','Jawaban','textarea']],
  showcase:[['name','Nama Creator','text'],['achievement','Pencapaian (cth: Top 1 Bulan Ini)','text'],['link','Link Profil CapCut','url']] };
  document.getElementById('formTitle').textContent=(id?'Edit ':'Tambah ')+type.toUpperCase();
@@ -383,14 +391,14 @@ function closeModal(){ document.getElementById('formModal').classList.remove('sh
 
 async function saveContent(){
  var btn = document.getElementById('saveBtn'); btn.textContent="Menyimpan..."; btn.disabled=true;
- var fields = { key:['code','owner'], mentahan:['title','desc','url'], guide:['title','category','content','videoUrl'], announcement:['title','category','date','content'], video:['title','category','url','desc'], event:['title','date','time','desc'], tips:['title','content'], faq:['question','answer'], showcase:['name','achievement','link'] }[currentType];
+ var fields = { key:['code','owner'], mentahan:['title','desc','url'], guide:['title','category','content','videoUrl'], announcement:['title','category','date','content'], video:['title','category','url','desc'], event:['title','date','time','imgUrl','link','desc'], tips:['title','content'], faq:['question','answer'], showcase:['name','achievement','link'] }[currentType];
  var obj={}; var isError = false;
  for(var i = 0; i < fields.length; i++){ 
      var k = fields[i];
      var el = document.getElementById('f_'+k); 
      if (el) { 
          obj[k] = el.value.trim(); 
-         if(!obj[k] && k !== 'time' && k !== 'videoUrl' && k !== 'owner'){ 
+         if(!obj[k] && k !== 'time' && k !== 'videoUrl' && k !== 'owner' && k !== 'imgUrl' && k !== 'link'){ 
              showToast('Isi semua kolom wajib!', 'error'); isError = true; break; 
          } 
      } 
