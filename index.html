@@ -121,10 +121,10 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
       <div class="nav-title">MENU UTAMA AGENCY</div>
       <button class="active" onclick="go('home')"><span>⌂</span>Beranda</button>
       <button onclick="go('pendaftaran')"><span>📝</span>Daftar Creator</button>
-      <button onclick="go('aicreator')"><span>🤖</span>Daftar AI Creator</button>
       <button onclick="go('bimbingan')"><span>📚</span>Bimbingan Pendaftaran</button>
       <button onclick="bukaLink('capcutPro')" style="color:#10b981;"><span>💎</span>Promo CapCut Pro</button>
       <button onclick="go('group')"><span>👥</span>Group Resmi</button>
+      <button onclick="go('aicreator')"><span>🤖</span>Daftar AI Creator</button>
       <button onclick="go('testimoni')"><span>🌟</span>Testimoni</button>
      </div>
  </div>
@@ -165,11 +165,6 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
           <h3>Daftar Creator</h3>
           <p style="font-size:11px;">Arahan & Link Formulir</p>
        </div>
-       <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('aicreator')">
-          <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #06b6d4, #2563eb);">🤖</div>
-          <h3>Daftar AI Creator</h3>
-          <p style="font-size:11px;">Daftar & Group Creator AI</p>
-       </div>
        <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('bimbingan')">
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #8b5cf6, #6d28d9);">📚</div>
           <h3>Bimbingan</h3>
@@ -184,6 +179,11 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #f59e0b, #d97706);">👥</div>
           <h3>Group Resmi</h3>
           <p style="font-size:11px;">Registrasi, info & event</p>
+       </div>
+       <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('aicreator')">
+          <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #06b6d4, #2563eb);">🤖</div>
+          <h3>Daftar AI Creator</h3>
+          <p style="font-size:11px;">Daftar & Group Creator AI</p>
        </div>
        <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('testimoni')">
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #ec4899, #be185d);">🌟</div>
@@ -213,26 +213,6 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
           
           <div class="panduan-img-box" id="regGuideImgBox1" style="margin-top:0; margin-bottom:0;">
               <img id="regGuideImg1" src="" alt="Panduan Daftar">
-          </div>
-      </div>
-  </div>
- </section>
-
- <!-- 2B. DAFTAR AI CREATOR (BARU) -->
- <section class="page" id="aicreator">
-  <div style="max-width:750px; margin:0 auto;">
-      <div class="hero" style="background:linear-gradient(135deg, #06b6d4, #2563eb); padding:32px; box-shadow:0 10px 30px rgba(6,182,212,0.25); text-align:center;">
-          <div style="font-size:48px; margin-bottom:10px;">🤖</div>
-          <h1 style="font-size:26px; margin:0 auto;">Daftar AI Creator</h1>
-          <p style="font-size:14px; opacity:0.95; margin:10px auto 0; max-width:520px;">Gabung menjadi AI Creator resmi bersama Vibe Trans Agency dan masuk ke grup WhatsApp khusus komunitas Creator AI.</p>
-          
-          <div style="display:flex; flex-direction:column; gap:12px; margin-top:25px; max-width:420px; margin-left:auto; margin-right:auto;">
-              <button onclick="bukaLink('regAiCreator')" class="btn" style="width:100%; font-size:14px; padding:15px 25px; border-radius:30px; background:#ffffff; color:#2563eb; box-shadow:0 5px 15px rgba(0,0,0,0.15); display:flex; justify-content:center; align-items:center; gap:8px;">
-                  🤖 Daftar Creator AI <span style="font-size:16px;">➔</span>
-              </button>
-              <button onclick="bukaLink('groupAiCreator')" class="btn" style="width:100%; font-size:14px; padding:15px 25px; border-radius:30px; background:#25D366; color:#ffffff; box-shadow:0 5px 15px rgba(37,211,102,0.35); display:flex; justify-content:center; align-items:center; gap:8px;">
-                  💬 Group Creator AI (WhatsApp)
-              </button>
           </div>
       </div>
   </div>
@@ -296,6 +276,26 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
         <div id="tipsList"></div>
         <div id="faqList"></div>
     </div>
+ </section>
+
+ <!-- 4B. DAFTAR AI CREATOR -->
+ <section class="page" id="aicreator">
+  <div style="max-width:750px; margin:0 auto;">
+      <div class="hero" style="background:linear-gradient(135deg, #06b6d4, #2563eb); padding:32px; box-shadow:0 10px 30px rgba(6,182,212,0.25); text-align:center;">
+          <div style="font-size:48px; margin-bottom:10px;">🤖</div>
+          <h1 style="font-size:26px; margin:0 auto;">Daftar AI Creator</h1>
+          <p style="font-size:14px; opacity:0.95; margin:10px auto 0; max-width:520px;">Gabung menjadi AI Creator resmi bersama Vibe Trans Agency dan masuk ke grup WhatsApp khusus komunitas Creator AI.</p>
+          
+          <div style="display:flex; flex-direction:column; gap:12px; margin-top:25px; max-width:420px; margin-left:auto; margin-right:auto;">
+              <button onclick="bukaLink('regAiCreator')" class="btn" style="width:100%; font-size:14px; padding:15px 25px; border-radius:30px; background:#ffffff; color:#2563eb; box-shadow:0 5px 15px rgba(0,0,0,0.15); display:flex; justify-content:center; align-items:center; gap:8px;">
+                  🤖 Daftar Creator AI <span style="font-size:16px;">➔</span>
+              </button>
+              <button onclick="bukaLink('groupAiCreator')" class="btn" style="width:100%; font-size:14px; padding:15px 25px; border-radius:30px; background:#25D366; color:#ffffff; box-shadow:0 5px 15px rgba(37,211,102,0.35); display:flex; justify-content:center; align-items:center; gap:8px;">
+                  💬 Group Creator AI (WhatsApp)
+              </button>
+          </div>
+      </div>
+  </div>
  </section>
 
  <!-- 5. TESTIMONI -->
