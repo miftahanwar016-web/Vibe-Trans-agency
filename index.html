@@ -79,6 +79,7 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
 .panduan-img-box img { width: 100%; height: auto; display: block; }
 .event-img-box { width: 100%; border-radius: 10px; overflow: hidden; margin: 12px 0; border: 1px solid var(--border); background: var(--bg); }
 .event-img-box img { width: 100%; height: auto; display: block; }
+.event-btn-group { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
 
 /* STYLE WA BUTTON POPUP */
 .wa-btn-item { display:flex; align-items:center; gap:15px; padding:12px 15px; background:var(--bg); border:1px solid var(--border); border-radius:12px; width:100%; transition:0.3s; text-align:left; cursor:pointer; }
@@ -427,10 +428,12 @@ function renderAll(){
  renderList('videoList', data.videos, v => `<div class="video-card"><div class="video-thumb" onclick="playVideoByUrl('${v.url}', '${safe(v.title).replace(/'/g, "\\'")}', '${safe(v.desc).replace(/'/g, "\\'")}')">▶</div><div class="video-body"><span class="tag">${safe(v.category)}</span><h3>${safe(v.title)}</h3><p>${safe(v.desc)}</p><div class="video-meta"><button class="btn btn-small" onclick="playVideoByUrl('${v.url}', '${safe(v.title).replace(/'/g, "\\'")}', '${safe(v.desc).replace(/'/g, "\\'")}')">Tonton</button></div></div></div>`, 'Belum ada tutorial.');
  renderList('annList', data.announcements.slice().reverse(), a => `<div class="item-box" style="padding:15px;"><div class="card-top"><span class="tag">${safe(a.category)}</span><span class="date">${dateFormat(a.date)}</span></div><h3>${safe(a.title)}</h3><p>${safe(a.content)}</p></div>`, 'Belum ada pengumuman.');
  
- // EVENT & AGENDA DENGAN TANGGAL MULAI - BERAKHIR, GAMBAR, DAN LINK
+ // EVENT & AGENDA DENGAN 2 LINK OPSIONAL (LINK EVENT & LINK FORM)
  const combinedEvents = [...data.events, ...data.agendas].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
  renderList('eventList', combinedEvents, e => {
      const tglEvent = e.startDate ? `${dateFormat(e.startDate)} - ${dateFormat(e.date)}` : dateFormat(e.date);
+     const hasLink = e.link && e.link.trim() !== '';
+     const hasForm = e.formLink && e.formLink.trim() !== '';
      return `
      <div class="item-box" style="padding:18px; border-left:4px solid var(--warn);">
          <div class="card-top">
@@ -440,7 +443,11 @@ function renderAll(){
          <h3>${safe(e.title)}</h3>
          ${e.imgUrl && e.imgUrl.trim() !== '' ? `<div class="event-img-box"><img src="${safe(e.imgUrl)}" alt="${safe(e.title)}"></div>` : ''}
          <p>${safe(e.content || e.desc)}</p>
-         ${e.link && e.link.trim() !== '' ? `<a href="${safe(formatUrl(e.link))}" target="_blank" class="btn" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; margin-top:14px; background:linear-gradient(135deg, #f59e0b, #d97706); border-radius:30px; padding:10px 20px; box-shadow:0 4px 12px rgba(245,158,11,0.3);">🔗 Buka Link Event ➔</a>` : ''}
+         ${(hasLink || hasForm) ? `
+         <div class="event-btn-group">
+             ${hasLink ? `<a href="${safe(formatUrl(e.link))}" target="_blank" class="btn" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; background:linear-gradient(135deg, #f59e0b, #d97706); border-radius:30px; padding:10px 20px; box-shadow:0 4px 12px rgba(245,158,11,0.3);">🔗 Buka Link Event ➔</a>` : ''}
+             ${hasForm ? `<a href="${safe(formatUrl(e.formLink))}" target="_blank" class="btn" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; background:linear-gradient(135deg, #3b82f6, #2563eb); border-radius:30px; padding:10px 20px; box-shadow:0 4px 12px rgba(59,130,246,0.3);">📝 Isi Formulir ➔</a>` : ''}
+         </div>` : ''}
      </div>`;
  }, 'Belum ada event.');
  
