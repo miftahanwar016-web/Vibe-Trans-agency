@@ -354,12 +354,13 @@ function renderAll(){
  renderList('announcementList', data.announcements, function(a) { return `<div class="item-box"><div class="item-info"><h3>${safe(a.title)}</h3><p>${safe(a.category)}</p></div>${act('announcement',a.id)}</div>`; });
  renderList('videoList', data.videos, function(v) { return `<div class="item-box"><div class="item-info"><h3>${safe(v.title)}</h3><p>${safe(v.category)}</p></div>${act('video',v.id)}</div>`; });
  
- // TAMPILAN LIST EVENT DI ADMIN (TGL MULAI - BERAKHIR + GAMBAR + LINK)
+ // TAMPILAN LIST EVENT DI ADMIN (INDIKATOR GAMBAR, LINK, FORM)
  var combinedEvents = [].concat(data.events, data.agendas); 
  renderList('eventList', combinedEvents, function(e) { 
      var badges = [];
      if(e.imgUrl) badges.push('📸 Gambar');
      if(e.link) badges.push('🔗 Link');
+     if(e.formLink) badges.push('📝 Form');
      var tglText = e.startDate ? (safe(e.startDate) + ' s/d ' + safe(e.date)) : safe(e.date);
      return `<div class="item-box"><div class="item-info"><h3>${safe(e.title)}</h3><p>Tanggal: ${tglText} ${badges.length ? ' • ' + badges.join(' ') : ''}</p></div>${act('event',e.id)}</div>`; 
  });
@@ -380,8 +381,8 @@ function openForm(type,id){
  guide:[['title','Judul Arahan','text'],['category','Kategori Label','text'],['content','Isi Arahan Teks','textarea'],['videoUrl','Link Video (Opsional)','url']],
  announcement:[['title','Judul','text'],['category','Kategori Label','text'],['date','Tanggal (YYYY-MM-DD)','date'],['content','Isi Pengumuman','textarea']],
  video:[['title','Judul','text'],['category','Kategori Label','text'],['url','Link Video (YouTube, TikTok, Drive, mp4)','url'],['desc','Deskripsi Singkat','textarea']],
- // PENAMBAHAN KOLOM TGL MULAI & TGL BERAKHIR DI FORM EVENT
- event:[['title','Nama Event / Agenda','text'],['startDate','Tgl Mulai (YYYY-MM-DD)','date'],['date','Tgl Berakhir (YYYY-MM-DD)','date'],['time','Waktu (Opsional)','time'],['imgUrl','📸 Link Gambar / Poster Event (Opsional)','url'],['link','🔗 Link Tautan Event (Opsional)','url'],['desc','Detail Teks','textarea']],
+ // 2 KOLOM LINK OPSIONAL DI FORM EVENT (LINK EVENT + LINK FORM)
+ event:[['title','Nama Event / Agenda','text'],['startDate','Tgl Mulai (YYYY-MM-DD)','date'],['date','Tgl Berakhir (YYYY-MM-DD)','date'],['time','Waktu (Opsional)','time'],['imgUrl','📸 Link Gambar / Poster Event (Opsional)','url'],['link','🔗 Link Tautan Event (Opsional)','url'],['formLink','📝 Link Formulir Event (Opsional)','url'],['desc','Detail Teks','textarea']],
  tips:[['title','Judul Tips / SOP','text'],['content','Isi Teks','textarea']], faq:[['question','Pertanyaan','text'],['answer','Jawaban','textarea']],
  showcase:[['name','Nama Creator','text'],['achievement','Pencapaian (cth: Top 1 Bulan Ini)','text'],['link','Link Profil CapCut','url']] };
  document.getElementById('formTitle').textContent=(id?'Edit ':'Tambah ')+type.toUpperCase();
@@ -392,14 +393,14 @@ function closeModal(){ document.getElementById('formModal').classList.remove('sh
 
 async function saveContent(){
  var btn = document.getElementById('saveBtn'); btn.textContent="Menyimpan..."; btn.disabled=true;
- var fields = { key:['code','owner'], mentahan:['title','desc','url'], guide:['title','category','content','videoUrl'], announcement:['title','category','date','content'], video:['title','category','url','desc'], event:['title','startDate','date','time','imgUrl','link','desc'], tips:['title','content'], faq:['question','answer'], showcase:['name','achievement','link'] }[currentType];
+ var fields = { key:['code','owner'], mentahan:['title','desc','url'], guide:['title','category','content','videoUrl'], announcement:['title','category','date','content'], video:['title','category','url','desc'], event:['title','startDate','date','time','imgUrl','link','formLink','desc'], tips:['title','content'], faq:['question','answer'], showcase:['name','achievement','link'] }[currentType];
  var obj={}; var isError = false;
  for(var i = 0; i < fields.length; i++){ 
      var k = fields[i];
      var el = document.getElementById('f_'+k); 
      if (el) { 
          obj[k] = el.value.trim(); 
-         if(!obj[k] && k !== 'startDate' && k !== 'time' && k !== 'videoUrl' && k !== 'owner' && k !== 'imgUrl' && k !== 'link'){ 
+         if(!obj[k] && k !== 'startDate' && k !== 'time' && k !== 'videoUrl' && k !== 'owner' && k !== 'imgUrl' && k !== 'link' && k !== 'formLink'){ 
              showToast('Isi semua kolom wajib!', 'error'); isError = true; break; 
          } 
      } 
