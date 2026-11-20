@@ -163,6 +163,11 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
        <textarea id="regCreatorDesc" placeholder="Ketik syarat, info, atau tata cara pendaftaran creator di sini..."></textarea>
    </div>
    <div class="form-group"><label style="color:#3b82f6;">Link Form Daftar Creator (Akhir)</label><input id="regCreator" placeholder="https://form..."></div>
+
+   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
+   <!-- PENGATURAN MENU DAFTAR AI CREATOR -->
+   <div class="form-group"><label style="color:#06b6d4;">🤖 Link Daftar Creator AI</label><input id="regAiCreator" placeholder="https://..."></div>
+   <div class="form-group"><label style="color:#25D366;">💬 Link Group Creator AI (WhatsApp)</label><input id="groupAiCreator" placeholder="https://chat.whatsapp.com/..."></div>
    
    <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
    <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
@@ -316,6 +321,8 @@ async function loadDataFromFirebase() {
             if(document.getElementById('capcutPro')) document.getElementById('capcutPro').value = s.capcutPro || '';
             if(document.getElementById('regCreator')) document.getElementById('regCreator').value = s.regCreator || '';
             if(document.getElementById('regCreatorDesc')) document.getElementById('regCreatorDesc').value = s.regCreatorDesc || '';
+            if(document.getElementById('regAiCreator')) document.getElementById('regAiCreator').value = s.regAiCreator || '';
+            if(document.getElementById('groupAiCreator')) document.getElementById('groupAiCreator').value = s.groupAiCreator || '';
             if(document.getElementById('regAgency')) document.getElementById('regAgency').value = s.regAgency || '';
             if(document.getElementById('groupBimbingan')) document.getElementById('groupBimbingan').value = s.groupBimbingan || '';
             if(document.getElementById('groupMentahan')) document.getElementById('groupMentahan').value = s.groupMentahan || '';
@@ -354,7 +361,6 @@ function renderAll(){
  renderList('announcementList', data.announcements, function(a) { return `<div class="item-box"><div class="item-info"><h3>${safe(a.title)}</h3><p>${safe(a.category)}</p></div>${act('announcement',a.id)}</div>`; });
  renderList('videoList', data.videos, function(v) { return `<div class="item-box"><div class="item-info"><h3>${safe(v.title)}</h3><p>${safe(v.category)}</p></div>${act('video',v.id)}</div>`; });
  
- // TAMPILAN LIST EVENT DI ADMIN (INDIKATOR GAMBAR, LINK, FORM)
  var combinedEvents = [].concat(data.events, data.agendas); 
  renderList('eventList', combinedEvents, function(e) { 
      var badges = [];
@@ -381,7 +387,6 @@ function openForm(type,id){
  guide:[['title','Judul Arahan','text'],['category','Kategori Label','text'],['content','Isi Arahan Teks','textarea'],['videoUrl','Link Video (Opsional)','url']],
  announcement:[['title','Judul','text'],['category','Kategori Label','text'],['date','Tanggal (YYYY-MM-DD)','date'],['content','Isi Pengumuman','textarea']],
  video:[['title','Judul','text'],['category','Kategori Label','text'],['url','Link Video (YouTube, TikTok, Drive, mp4)','url'],['desc','Deskripsi Singkat','textarea']],
- // 2 KOLOM LINK OPSIONAL DI FORM EVENT (LINK EVENT + LINK FORM)
  event:[['title','Nama Event / Agenda','text'],['startDate','Tgl Mulai (YYYY-MM-DD)','date'],['date','Tgl Berakhir (YYYY-MM-DD)','date'],['time','Waktu (Opsional)','time'],['imgUrl','📸 Link Gambar / Poster Event (Opsional)','url'],['link','🔗 Link Tautan Event (Opsional)','url'],['formLink','📝 Link Formulir Event (Opsional)','url'],['desc','Detail Teks','textarea']],
  tips:[['title','Judul Tips / SOP','text'],['content','Isi Teks','textarea']], faq:[['question','Pertanyaan','text'],['answer','Jawaban','textarea']],
  showcase:[['name','Nama Creator','text'],['achievement','Pencapaian (cth: Top 1 Bulan Ini)','text'],['link','Link Profil CapCut','url']] };
@@ -442,6 +447,8 @@ async function saveSettings(){
          name: agencyName, 
          regCreator: val('regCreator'),
          regCreatorDesc: val('regCreatorDesc'),
+         regAiCreator: val('regAiCreator'),
+         groupAiCreator: val('groupAiCreator'),
          regAgency: val('regAgency'), 
          regLink: val('regAgency'), 
          logoUrl: val('logoUrl'), 
