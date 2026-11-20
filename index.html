@@ -121,6 +121,7 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
       <div class="nav-title">MENU UTAMA AGENCY</div>
       <button class="active" onclick="go('home')"><span>⌂</span>Beranda</button>
       <button onclick="go('pendaftaran')"><span>📝</span>Daftar Creator</button>
+      <button onclick="go('aicreator')"><span>🤖</span>Daftar AI Creator</button>
       <button onclick="go('bimbingan')"><span>📚</span>Bimbingan Pendaftaran</button>
       <button onclick="bukaLink('capcutPro')" style="color:#10b981;"><span>💎</span>Promo CapCut Pro</button>
       <button onclick="go('group')"><span>👥</span>Group Resmi</button>
@@ -163,6 +164,11 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #3b82f6, #2563eb);">📝</div>
           <h3>Daftar Creator</h3>
           <p style="font-size:11px;">Arahan & Link Formulir</p>
+       </div>
+       <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('aicreator')">
+          <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #06b6d4, #2563eb);">🤖</div>
+          <h3>Daftar AI Creator</h3>
+          <p style="font-size:11px;">Daftar & Group Creator AI</p>
        </div>
        <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('bimbingan')">
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #8b5cf6, #6d28d9);">📚</div>
@@ -207,6 +213,26 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
           
           <div class="panduan-img-box" id="regGuideImgBox1" style="margin-top:0; margin-bottom:0;">
               <img id="regGuideImg1" src="" alt="Panduan Daftar">
+          </div>
+      </div>
+  </div>
+ </section>
+
+ <!-- 2B. DAFTAR AI CREATOR (BARU) -->
+ <section class="page" id="aicreator">
+  <div style="max-width:750px; margin:0 auto;">
+      <div class="hero" style="background:linear-gradient(135deg, #06b6d4, #2563eb); padding:32px; box-shadow:0 10px 30px rgba(6,182,212,0.25); text-align:center;">
+          <div style="font-size:48px; margin-bottom:10px;">🤖</div>
+          <h1 style="font-size:26px; margin:0 auto;">Daftar AI Creator</h1>
+          <p style="font-size:14px; opacity:0.95; margin:10px auto 0; max-width:520px;">Gabung menjadi AI Creator resmi bersama Vibe Trans Agency dan masuk ke grup WhatsApp khusus komunitas Creator AI.</p>
+          
+          <div style="display:flex; flex-direction:column; gap:12px; margin-top:25px; max-width:420px; margin-left:auto; margin-right:auto;">
+              <button onclick="bukaLink('regAiCreator')" class="btn" style="width:100%; font-size:14px; padding:15px 25px; border-radius:30px; background:#ffffff; color:#2563eb; box-shadow:0 5px 15px rgba(0,0,0,0.15); display:flex; justify-content:center; align-items:center; gap:8px;">
+                  🤖 Daftar Creator AI <span style="font-size:16px;">➔</span>
+              </button>
+              <button onclick="bukaLink('groupAiCreator')" class="btn" style="width:100%; font-size:14px; padding:15px 25px; border-radius:30px; background:#25D366; color:#ffffff; box-shadow:0 5px 15px rgba(37,211,102,0.35); display:flex; justify-content:center; align-items:center; gap:8px;">
+                  💬 Group Creator AI (WhatsApp)
+              </button>
           </div>
       </div>
   </div>
@@ -406,7 +432,7 @@ function go(id){
     document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); 
     const btn = Array.from(document.querySelectorAll('.nav button')).find(b => b.getAttribute('onclick')?.includes(`go('${id}')`));
     if(btn) btn.classList.add('active'); 
-    const titles = { home:'Beranda', pendaftaran:'Pendaftaran Creator', bimbingan:'Bimbingan Pendaftaran', group:'Group Resmi', testimoni:'Testimoni Creator' }; 
+    const titles = { home:'Beranda', pendaftaran:'Pendaftaran Creator', aicreator:'Daftar AI Creator', bimbingan:'Bimbingan Pendaftaran', group:'Group Resmi', testimoni:'Testimoni Creator' }; 
     const pt = document.getElementById('pageTitle'); if(pt && titles[id]) { pt.textContent = titles[id]; } 
     const s = document.getElementById('sidebar'); if(window.innerWidth <= 650 && s) { s.classList.remove('open'); const ov = document.getElementById('sidebarOverlay'); if(ov) ov.remove(); } 
     window.scrollTo({top:0, behavior:'smooth'}); 
@@ -428,7 +454,6 @@ function renderAll(){
  renderList('videoList', data.videos, v => `<div class="video-card"><div class="video-thumb" onclick="playVideoByUrl('${v.url}', '${safe(v.title).replace(/'/g, "\\'")}', '${safe(v.desc).replace(/'/g, "\\'")}')">▶</div><div class="video-body"><span class="tag">${safe(v.category)}</span><h3>${safe(v.title)}</h3><p>${safe(v.desc)}</p><div class="video-meta"><button class="btn btn-small" onclick="playVideoByUrl('${v.url}', '${safe(v.title).replace(/'/g, "\\'")}', '${safe(v.desc).replace(/'/g, "\\'")}')">Tonton</button></div></div></div>`, 'Belum ada tutorial.');
  renderList('annList', data.announcements.slice().reverse(), a => `<div class="item-box" style="padding:15px;"><div class="card-top"><span class="tag">${safe(a.category)}</span><span class="date">${dateFormat(a.date)}</span></div><h3>${safe(a.title)}</h3><p>${safe(a.content)}</p></div>`, 'Belum ada pengumuman.');
  
- // EVENT & AGENDA DENGAN 2 LINK OPSIONAL (LINK EVENT & LINK FORM)
  const combinedEvents = [...data.events, ...data.agendas].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
  renderList('eventList', combinedEvents, e => {
      const tglEvent = e.startDate ? `${dateFormat(e.startDate)} - ${dateFormat(e.date)}` : dateFormat(e.date);
