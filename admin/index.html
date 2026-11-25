@@ -172,9 +172,11 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
    <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
    <div class="form-group"><label style="color:#3b82f6;">📁 Link Group Mentahan Tambahan</label><input id="groupMentahan" placeholder="https://chat.whatsapp..."></div>
    <div class="form-group"><label style="color:#f59e0b;">ℹ️ Link Informasi Tahapan Daftar Creator</label><input id="infoTahapanLink" placeholder="https://..."></div>
-   <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
    
-   <!-- LINK FORM PENGAJUAN AUTO PUBLISH (BARU) -->
+   <!-- LINK REGISTRASI KEANGGOTAAN (BARU) -->
+   <div class="form-group"><label style="color:#f59e0b;">📝 Link Registrasi Keanggotaan</label><input id="regKeanggotaan" placeholder="https://..."></div>
+   
+   <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
    <div class="form-group"><label style="color:#7652e8;">🚀 Link Form Pengajuan Auto Publish</label><input id="autoPublishLink" placeholder="https://..."></div>
    
    <button class="btn" onclick="saveSettings()" id="btnSaveSettings" style="margin-top:20px; font-size:14px; padding:15px;">Simpan Semua Pengaturan</button>
@@ -325,6 +327,7 @@ async function loadDataFromFirebase() {
             if(document.getElementById('regCreatorDesc')) document.getElementById('regCreatorDesc').value = s.regCreatorDesc || '';
             if(document.getElementById('regAiCreator')) document.getElementById('regAiCreator').value = s.regAiCreator || '';
             if(document.getElementById('groupAiCreator')) document.getElementById('groupAiCreator').value = s.groupAiCreator || '';
+            if(document.getElementById('regKeanggotaan')) document.getElementById('regKeanggotaan').value = s.regKeanggotaan || '';
             if(document.getElementById('regAgency')) document.getElementById('regAgency').value = s.regAgency || '';
             if(document.getElementById('autoPublishLink')) document.getElementById('autoPublishLink').value = s.autoPublishLink || '';
             if(document.getElementById('groupBimbingan')) document.getElementById('groupBimbingan').value = s.groupBimbingan || '';
@@ -452,6 +455,7 @@ async function saveSettings(){
          regCreatorDesc: val('regCreatorDesc'),
          regAiCreator: val('regAiCreator'),
          groupAiCreator: val('groupAiCreator'),
+         regKeanggotaan: val('regKeanggotaan'),
          regAgency: val('regAgency'), 
          regLink: val('regAgency'), 
          autoPublishLink: val('autoPublishLink'),
