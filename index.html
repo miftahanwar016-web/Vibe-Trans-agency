@@ -268,7 +268,19 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
         </div>
         
         <div class="grid-2" style="margin-top:25px;">
-            <div><h3 style="margin-bottom:15px; color:var(--primary); font-size:17px;">📢 Pengumuman Group</h3><div id="annList"></div></div>
+            <div>
+                <h3 style="margin-bottom:15px; color:var(--primary); font-size:17px;">📢 Pengumuman Group</h3>
+                <div id="annList"></div>
+
+                <!-- FORM PENGAJUAN AUTO PUBLISH (TEPAT DI BAWAH PENGUMUMAN & DI ATAS EVENT) -->
+                <div class="item-box" style="border-color:var(--primary2); background:linear-gradient(135deg, rgba(118,82,232,0.06), rgba(59,130,246,0.06)); text-align:center;">
+                    <h3 style="color:var(--primary); margin-bottom:6px;">🚀 Pengajuan Auto Publish</h3>
+                    <p style="font-size:12px; margin-bottom:15px;">Klik tombol di bawah untuk mengisi formulir pengajuan fitur Auto Publish CapCut.</p>
+                    <button onclick="bukaLink('autoPublishLink')" class="btn" style="width:100%; border-radius:30px; padding:13px 20px; background:linear-gradient(135deg, #7652e8, #3b82f6); box-shadow:0 5px 15px rgba(118,82,232,0.3); font-size:13px;">
+                        📝 Form Pengajuan Auto Publish ➔
+                    </button>
+                </div>
+            </div>
             <div><h3 style="margin-bottom:15px; color:var(--warn); font-size:17px;">🏆 Event & Agenda</h3><div id="eventList"></div></div>
         </div>
 
