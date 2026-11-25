@@ -165,7 +165,6 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
    <div class="form-group"><label style="color:#3b82f6;">Link Form Daftar Creator (Akhir)</label><input id="regCreator" placeholder="https://form..."></div>
 
    <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
-   <!-- PENGATURAN MENU DAFTAR AI CREATOR -->
    <div class="form-group"><label style="color:#06b6d4;">🤖 Link Daftar Creator AI</label><input id="regAiCreator" placeholder="https://..."></div>
    <div class="form-group"><label style="color:#25D366;">💬 Link Group Creator AI (WhatsApp)</label><input id="groupAiCreator" placeholder="https://chat.whatsapp.com/..."></div>
    
@@ -174,6 +173,9 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
    <div class="form-group"><label style="color:#3b82f6;">📁 Link Group Mentahan Tambahan</label><input id="groupMentahan" placeholder="https://chat.whatsapp..."></div>
    <div class="form-group"><label style="color:#f59e0b;">ℹ️ Link Informasi Tahapan Daftar Creator</label><input id="infoTahapanLink" placeholder="https://..."></div>
    <div class="form-group"><label style="color:#f59e0b;">👥 Link Group Resmi Agency</label><input id="regAgency" placeholder="https://chat.whatsapp..."></div>
+   
+   <!-- LINK FORM PENGAJUAN AUTO PUBLISH (BARU) -->
+   <div class="form-group"><label style="color:#7652e8;">🚀 Link Form Pengajuan Auto Publish</label><input id="autoPublishLink" placeholder="https://..."></div>
    
    <button class="btn" onclick="saveSettings()" id="btnSaveSettings" style="margin-top:20px; font-size:14px; padding:15px;">Simpan Semua Pengaturan</button>
   </div>
@@ -324,6 +326,7 @@ async function loadDataFromFirebase() {
             if(document.getElementById('regAiCreator')) document.getElementById('regAiCreator').value = s.regAiCreator || '';
             if(document.getElementById('groupAiCreator')) document.getElementById('groupAiCreator').value = s.groupAiCreator || '';
             if(document.getElementById('regAgency')) document.getElementById('regAgency').value = s.regAgency || '';
+            if(document.getElementById('autoPublishLink')) document.getElementById('autoPublishLink').value = s.autoPublishLink || '';
             if(document.getElementById('groupBimbingan')) document.getElementById('groupBimbingan').value = s.groupBimbingan || '';
             if(document.getElementById('groupMentahan')) document.getElementById('groupMentahan').value = s.groupMentahan || '';
             if(document.getElementById('infoTahapanLink')) document.getElementById('infoTahapanLink').value = s.infoTahapanLink || '';
@@ -451,6 +454,7 @@ async function saveSettings(){
          groupAiCreator: val('groupAiCreator'),
          regAgency: val('regAgency'), 
          regLink: val('regAgency'), 
+         autoPublishLink: val('autoPublishLink'),
          logoUrl: val('logoUrl'), 
          capcutPro: val('capcutPro'),
          groupBimbingan: val('groupBimbingan'),
