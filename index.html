@@ -264,7 +264,12 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
         <div class="hero" style="background:linear-gradient(135deg, #f59e0b, #d97706); padding:30px; box-shadow:0 10px 30px rgba(245,158,11,0.2);">
             <h1 style="font-size:24px;">Group Resmi Vibe Trans</h1>
             <p style="font-size:14px; opacity:1; margin-top:8px;">Alur: <b>Registrasi Keanggotaan ➔ Masuk Group ➔ Informasi, Event & Tutorial</b></p>
-            <button class="btn" style="background:#ffffff; color:#d97706; margin-top:20px; border-radius:30px; padding:12px 25px;" onclick="bukaLink('regAgency')">Masuk Group WhatsApp</button>
+            
+            <!-- TOMBOL REGISTRASI KEANGGOTAAN + MASUK GROUP WA -->
+            <div style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;">
+                <button class="btn" style="background:#ffffff; color:#d97706; border-radius:30px; padding:12px 25px; flex-grow:1;" onclick="bukaLink('regKeanggotaan')">📝 Registrasi Keanggotaan</button>
+                <button class="btn" style="background:rgba(255,255,255,0.2); color:#ffffff; border:1px solid rgba(255,255,255,0.6); border-radius:30px; padding:12px 25px; flex-grow:1;" onclick="bukaLink('regAgency')">Masuk Group WhatsApp</button>
+            </div>
         </div>
         
         <div class="grid-2" style="margin-top:25px;">
@@ -272,7 +277,7 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
                 <h3 style="margin-bottom:15px; color:var(--primary); font-size:17px;">📢 Pengumuman Group</h3>
                 <div id="annList"></div>
 
-                <!-- FORM PENGAJUAN AUTO PUBLISH (TEPAT DI BAWAH PENGUMUMAN & DI ATAS EVENT) -->
+                <!-- FORM PENGAJUAN AUTO PUBLISH -->
                 <div class="item-box" style="border-color:var(--primary2); background:linear-gradient(135deg, rgba(118,82,232,0.06), rgba(59,130,246,0.06)); text-align:center;">
                     <h3 style="color:var(--primary); margin-bottom:6px;">🚀 Pengajuan Auto Publish</h3>
                     <p style="font-size:12px; margin-bottom:15px;">Klik tombol di bawah untuk mengisi formulir pengajuan fitur Auto Publish CapCut.</p>
