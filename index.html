@@ -366,7 +366,7 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
  </div>
 </div>
 
-<!-- MODAL KIRIM TESTIMONI MEMBER (DENGAN UPLOAD GAMBAR OPSIONAL) -->
+<!-- MODAL KIRIM TESTIMONI MEMBER -->
 <div class="modal" id="testimoniModal">
  <div class="modal-box" style="max-width:440px; padding:25px;">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -533,6 +533,14 @@ function dateFormat(date){ if(!date)return '-'; const d=new Date(date+'T00:00:00
 function safe(text){ return String(text??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function formatUrl(url){ if(!url) return ''; let u = url.trim(); return u.startsWith('http') ? u : 'https://' + u; }
 
+// CEK EVENT SUDAH BERAKHIR OTOMATIS (LEWAT 23:59 TGL BERAKHIR)
+function isEventExpired(e) {
+    if (!e || !e.date) return false;
+    const end = new Date(e.date + 'T23:59:59');
+    if (isNaN(end.getTime())) return false;
+    return new Date() > end;
+}
+
 function openFullImg(src) {
     document.getElementById('fullImgSrc').src = src;
     document.getElementById('imgPreviewModal').classList.add('show');
@@ -550,7 +558,11 @@ function renderAll(){
  renderList('videoList', data.videos, v => `<div class="video-card"><div class="video-thumb" onclick="playVideoByUrl('${v.url}', '${safe(v.title).replace(/'/g, "\\'")}', '${safe(v.desc).replace(/'/g, "\\'")}')">▶</div><div class="video-body"><span class="tag">${safe(v.category)}</span><h3>${safe(v.title)}</h3><p>${safe(v.desc)}</p><div class="video-meta"><button class="btn btn-small" onclick="playVideoByUrl('${v.url}', '${safe(v.title).replace(/'/g, "\\'")}', '${safe(v.desc).replace(/'/g, "\\'")}')">Tonton</button></div></div></div>`, 'Belum ada tutorial.');
  renderList('annList', data.announcements.slice().reverse(), a => `<div class="item-box" style="padding:15px;"><div class="card-top"><span class="tag">${safe(a.category)}</span><span class="date">${dateFormat(a.date)}</span></div><h3>${safe(a.title)}</h3><p>${safe(a.content)}</p></div>`, 'Belum ada pengumuman.');
  
- const combinedEvents = [...data.events, ...data.agendas].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+ // FILTER OTOMATIS: HANYA TAMPILKAN EVENT YANG BELUM BERAKHIR
+ const combinedEvents = [...data.events, ...data.agendas]
+     .filter(e => !isEventExpired(e))
+     .sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+     
  renderList('eventList', combinedEvents, e => {
      const tglEvent = e.startDate ? `${dateFormat(e.startDate)} - ${dateFormat(e.date)}` : dateFormat(e.date);
      const hasLink = e.link && e.link.trim() !== '';
@@ -570,12 +582,11 @@ function renderAll(){
              ${hasForm ? `<a href="${safe(formatUrl(e.formLink))}" target="_blank" class="btn" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; background:linear-gradient(135deg, #3b82f6, #2563eb); border-radius:30px; padding:10px 20px; box-shadow:0 4px 12px rgba(59,130,246,0.3);">📝 Isi Formulir ➔</a>` : ''}
          </div>` : ''}
      </div>`;
- }, 'Belum ada event.');
+ }, 'Belum ada event aktif saat ini.');
  
  const combinedTips = [...data.tips, ...data.rules]; renderList('tipsList', combinedTips, t => `<div class="item-box"><h3>💡 ${safe(t.title)}</h3><p>${safe(t.content)}</p></div>`, 'Belum ada tips & SOP.');
  renderList('faqList', data.faqs, f => `<div class="item-box"><details><summary style="font-weight:bold; cursor:pointer; color:var(--primary);">${safe(f.question)}</summary><p style="margin-top:15px; padding-left:15px; border-left:2px solid var(--border);">${safe(f.answer)}</p></details></div>`, 'Belum ada FAQ.');
  
- // TESTIMONI YANG SUDAH DI-ACC (DENGAN GAMBAR OPSIONAL)
  const approvedShowcases = data.showcases
      .filter(s => !s.status || s.status === 'approved')
      .sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
@@ -598,9 +609,6 @@ function renderAll(){
  document.getElementById('year').textContent=new Date().getFullYear();
 }
 
-// ==========================================
-// FITUR KIRIM TESTIMONI + KOMPRES GAMBAR
-// ==========================================
 function openTestimoniModal() {
     document.getElementById('testimoniModal').classList.add('show');
 }
