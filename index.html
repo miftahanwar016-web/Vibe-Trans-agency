@@ -78,6 +78,8 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:11px}
 .showcase-ava{width:70px; height:70px; background:#f0edff; border-radius:50%; margin:0 auto 12px; display:grid; place-items:center; font-size:26px; font-weight:bold; color:var(--primary);}
 body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
 .stars-display{color:#f59e0b; font-size:15px; letter-spacing:2px; margin:6px 0 10px;}
+.testi-img-wrap{width:100%; border-radius:10px; overflow:hidden; margin:10px 0 14px; border:1px solid var(--border); background:var(--bg);}
+.testi-img-wrap img{width:100%; max-height:240px; object-fit:cover; display:block; cursor:pointer;}
 
 /* FORM TESTIMONI */
 .form-group{margin-bottom:14px; text-align:left;}
@@ -325,7 +327,7 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
   </div>
  </section>
 
- <!-- 5. TESTIMONI (DENGAN TOMBOL KIRIM TESTIMONI) -->
+ <!-- 5. TESTIMONI -->
  <section class="page" id="testimoni">
   <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
       <div>
@@ -364,7 +366,7 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
  </div>
 </div>
 
-<!-- MODAL KIRIM TESTIMONI MEMBER -->
+<!-- MODAL KIRIM TESTIMONI MEMBER (DENGAN UPLOAD GAMBAR OPSIONAL) -->
 <div class="modal" id="testimoniModal">
  <div class="modal-box" style="max-width:440px; padding:25px;">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -392,6 +394,14 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
       <textarea id="t_achievement" placeholder="Ceritakan pengalamanmu gabung agency atau pencapaianmu..."></textarea>
   </div>
   <div class="form-group">
+      <label>📸 Upload Foto / Bukti (Opsional)</label>
+      <input type="file" id="t_image" accept="image/*" onchange="handleTestiImage(this)" style="padding:9px;">
+      <div id="t_imgPreviewWrap" style="display:none; margin-top:10px; position:relative;">
+          <img id="t_imgPreview" src="" style="width:100%; max-height:180px; object-fit:cover; border-radius:10px; border:1px solid var(--border);">
+          <button type="button" onclick="clearTestiImage()" style="position:absolute; top:6px; right:6px; background:rgba(0,0,0,0.65); color:white; border-radius:50%; width:26px; height:26px; font-size:12px; display:grid; place-items:center;">✕</button>
+      </div>
+  </div>
+  <div class="form-group">
       <label>Link Profil CapCut / TikTok (Opsional)</label>
       <input type="url" id="t_link" placeholder="https://...">
   </div>
@@ -400,6 +410,13 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
       <button class="btn btn-light" style="flex:1;" onclick="closeTestimoniModal()">Batal</button>
       <button class="btn" id="btnSubmitTesti" style="flex:2; background:linear-gradient(135deg, #ec4899, #7652e8);" onclick="submitTestimoni()">Kirim Testimoni</button>
   </div>
+ </div>
+</div>
+
+<!-- MODAL PREVIEW GAMBAR FULL -->
+<div class="modal" id="imgPreviewModal" onclick="this.classList.remove('show')">
+ <div class="modal-box" style="max-width:500px; padding:10px; background:transparent; box-shadow:none; text-align:center;">
+  <img id="fullImgSrc" src="" style="width:100%; max-height:80vh; object-fit:contain; border-radius:12px;">
  </div>
 </div>
 
@@ -453,6 +470,7 @@ const db = firebase.firestore();
 
 let globalSettings = {};
 let data = { announcements:[], videos:[], events:[], tips:[], faqs:[], showcases:[], agendas:[], rules:[], guides:[], keys:[], mentahans:[] };
+let testiImageData = '';
 
 async function loadDataFromFirebase() {
     const collections = ['announcements', 'videos', 'events', 'tips', 'faqs', 'showcases', 'agendas', 'rules', 'guides', 'keys', 'mentahans'];
@@ -515,6 +533,11 @@ function dateFormat(date){ if(!date)return '-'; const d=new Date(date+'T00:00:00
 function safe(text){ return String(text??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function formatUrl(url){ if(!url) return ''; let u = url.trim(); return u.startsWith('http') ? u : 'https://' + u; }
 
+function openFullImg(src) {
+    document.getElementById('fullImgSrc').src = src;
+    document.getElementById('imgPreviewModal').classList.add('show');
+}
+
 function renderAll(){
  if(sessionStorage.getItem('groupUnlocked') === 'true') {
      const lock = document.getElementById('groupLockScreen'); const content = document.getElementById('groupContent');
@@ -552,7 +575,7 @@ function renderAll(){
  const combinedTips = [...data.tips, ...data.rules]; renderList('tipsList', combinedTips, t => `<div class="item-box"><h3>💡 ${safe(t.title)}</h3><p>${safe(t.content)}</p></div>`, 'Belum ada tips & SOP.');
  renderList('faqList', data.faqs, f => `<div class="item-box"><details><summary style="font-weight:bold; cursor:pointer; color:var(--primary);">${safe(f.question)}</summary><p style="margin-top:15px; padding-left:15px; border-left:2px solid var(--border);">${safe(f.answer)}</p></details></div>`, 'Belum ada FAQ.');
  
- // HANYA TAMPILKAN TESTIMONI YANG SUDAH DI-ACC (status === 'approved' atau data lama tanpa status)
+ // TESTIMONI YANG SUDAH DI-ACC (DENGAN GAMBAR OPSIONAL)
  const approvedShowcases = data.showcases
      .filter(s => !s.status || s.status === 'approved')
      .sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
@@ -560,11 +583,13 @@ function renderAll(){
  renderList('showcaseList', approvedShowcases, s => {
      const stars = '★'.repeat(Number(s.rating) || 5);
      const hasLink = s.link && s.link.trim() !== '';
+     const hasImg = s.imgUrl && s.imgUrl.trim() !== '';
      return `
      <div class="showcase-card">
          <div class="showcase-ava">${safe(s.name).charAt(0).toUpperCase()}</div>
          <h3 style="margin-bottom:2px;">${safe(s.name)}</h3>
          <div class="stars-display">${stars}</div>
+         ${hasImg ? `<div class="testi-img-wrap"><img src="${safe(s.imgUrl)}" alt="Foto Testimoni" onclick="openFullImg(this.src)"></div>` : ''}
          <p style="font-size:13px; color:var(--muted); line-height:1.6; white-space:pre-wrap; margin-bottom:${hasLink ? '16px' : '0'};">"${safe(s.achievement)}"</p>
          ${hasLink ? `<a href="${safe(formatUrl(s.link))}" target="_blank" class="btn btn-light btn-small" style="margin-top:auto; text-decoration:none;">Lihat Profil</a>` : ''}
      </div>`;
@@ -574,13 +599,52 @@ function renderAll(){
 }
 
 // ==========================================
-// FITUR KIRIM TESTIMONI MEMBER (PENDING ACC)
+// FITUR KIRIM TESTIMONI + KOMPRES GAMBAR
 // ==========================================
 function openTestimoniModal() {
     document.getElementById('testimoniModal').classList.add('show');
 }
 function closeTestimoniModal() {
     document.getElementById('testimoniModal').classList.remove('show');
+}
+
+function handleTestiImage(input) {
+    const file = input.files && input.files[0];
+    if (!file) { clearTestiImage(); return; }
+    if (!file.type.startsWith('image/')) {
+        showToast('Pilih file gambar yang valid!', 'error');
+        clearTestiImage();
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const maxDim = 650;
+            let w = img.width, h = img.height;
+            if (w > maxDim || h > maxDim) {
+                if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+                else { w = Math.round(w * maxDim / h); h = maxDim; }
+            }
+            canvas.width = w; canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            testiImageData = canvas.toDataURL('image/jpeg', 0.72);
+            document.getElementById('t_imgPreview').src = testiImageData;
+            document.getElementById('t_imgPreviewWrap').style.display = 'block';
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearTestiImage() {
+    testiImageData = '';
+    const inp = document.getElementById('t_image');
+    if (inp) inp.value = '';
+    const wrap = document.getElementById('t_imgPreviewWrap');
+    if (wrap) wrap.style.display = 'none';
 }
 
 async function submitTestimoni() {
@@ -594,7 +658,6 @@ async function submitTestimoni() {
         return;
     }
     
-    // Anti-spam: jeda 5 menit per perangkat
     const lastSent = Number(localStorage.getItem('lastTestiSent') || 0);
     const now = Date.now();
     if(now - lastSent < 5 * 60 * 1000) {
@@ -612,6 +675,7 @@ async function submitTestimoni() {
             rating: rating,
             achievement: achievement,
             link: link,
+            imgUrl: testiImageData || '',
             status: 'pending',
             createdAt: now
         });
@@ -621,6 +685,7 @@ async function submitTestimoni() {
         document.getElementById('t_rating').value = '5';
         document.getElementById('t_achievement').value = '';
         document.getElementById('t_link').value = '';
+        clearTestiImage();
         
         closeTestimoniModal();
         showToast('Testimoni terkirim! Menunggu ACC Admin.', 'success');
