@@ -42,6 +42,7 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
 
 .badge-pending{display:inline-block;background:rgba(245,158,11,0.15);color:#d97706;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:bold;margin-bottom:6px;}
 .badge-approved{display:inline-block;background:rgba(22,163,106,0.15);color:#16a36a;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:bold;margin-bottom:6px;}
+.badge-expired{display:inline-block;background:rgba(239,68,68,0.15);color:#ef4444;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:bold;margin-bottom:6px;}
 
 .form-group{margin-bottom:15px} .form-group label{display:block;font-size:12px;font-weight:bold;margin-bottom:5px; color:var(--text);}
 .form-group input,.form-group textarea,.form-group select{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;outline:none;font-size:13px; background:var(--bg); color:var(--text); transition:0.3s;}
@@ -209,7 +210,12 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
 </section>
  
  <section class="page" id="announcement"> <button class="btn" onclick="openForm('announcement')" style="width:auto; margin-bottom:20px;">+ Tambah Pengumuman</button> <div id="announcementList"></div> </section>
- <section class="page" id="event"> <button class="btn" onclick="openForm('event')" style="width:auto; margin-bottom:20px;">+ Tambah Event / Agenda</button> <div id="eventList"></div> </section>
+ <section class="page" id="event">
+     <h1 style="margin-bottom:8px;">Event & Agenda</h1>
+     <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Event otomatis disembunyikan dari web member setelah melewati <b>Tgl Berakhir</b>.</p>
+     <button class="btn" onclick="openForm('event')" style="width:auto; margin-bottom:20px;">+ Tambah Event / Agenda</button>
+     <div id="eventList"></div>
+ </section>
  <section class="page" id="tips"> <button class="btn" onclick="openForm('tips')" style="width:auto; margin-bottom:20px;">+ Tambah Tips / SOP</button> <div id="tipsList"></div> </section>
  <section class="page" id="faq"> <button class="btn" onclick="openForm('faq')" style="width:auto; margin-bottom:20px;">+ Tambah FAQ</button> <div id="faqList"></div> </section>
  
@@ -367,6 +373,13 @@ function safe(text){ return String(text ?? '').replace(/[&<>"']/g, function(c) {
 function renderList(id, arr, template) { try { var el = document.getElementById(id); if(el) el.innerHTML = (arr && arr.length > 0) ? arr.map(template).join('') : '<div class="empty">Belum ada data tersimpan.</div>'; } catch(e) {} }
 function act(type, id) { return `<div class="admin-actions"><button class="btn btn-small btn-light" onclick="openForm('${type}','${id}')">Edit</button><button class="btn btn-danger btn-small" onclick="deleteContent('${type}','${id}')">Hapus</button></div>`; }
 
+function isEventExpired(e) {
+    if (!e || !e.date) return false;
+    var end = new Date(e.date + 'T23:59:59');
+    if (isNaN(end.getTime())) return false;
+    return new Date() > end;
+}
+
 async function approveShowcase(id) {
     try {
         await db.collection('showcases').doc(id).update({ status: 'approved' });
@@ -384,6 +397,7 @@ function renderAll(){
  renderList('announcementList', data.announcements, function(a) { return `<div class="item-box"><div class="item-info"><h3>${safe(a.title)}</h3><p>${safe(a.category)}</p></div>${act('announcement',a.id)}</div>`; });
  renderList('videoList', data.videos, function(v) { return `<div class="item-box"><div class="item-info"><h3>${safe(v.title)}</h3><p>${safe(v.category)}</p></div>${act('video',v.id)}</div>`; });
  
+ // EVENT & AGENDA DENGAN STATUS AKTIF / BERAKHIR OTOMATIS
  var combinedEvents = [].concat(data.events, data.agendas); 
  renderList('eventList', combinedEvents, function(e) { 
      var badges = [];
@@ -391,13 +405,14 @@ function renderAll(){
      if(e.link) badges.push('🔗 Link');
      if(e.formLink) badges.push('📝 Form');
      var tglText = e.startDate ? (safe(e.startDate) + ' s/d ' + safe(e.date)) : safe(e.date);
-     return `<div class="item-box"><div class="item-info"><h3>${safe(e.title)}</h3><p>Tanggal: ${tglText} ${badges.length ? ' • ' + badges.join(' ') : ''}</p></div>${act('event',e.id)}</div>`; 
+     var expired = isEventExpired(e);
+     var statusBadge = expired ? '<span class="badge-expired">🔴 Berakhir (Disembunyikan)</span>' : '<span class="badge-approved">🟢 Aktif</span>';
+     return `<div class="item-box" style="${expired ? 'opacity:0.75; border-left:4px solid #ef4444;' : ''}"><div class="item-info">${statusBadge}<h3>${safe(e.title)}</h3><p>Tanggal: ${tglText} ${badges.length ? ' • ' + badges.join(' ') : ''}</p></div>${act('event',e.id)}</div>`; 
  });
  
  var combinedTips = [].concat(data.tips, data.rules); renderList('tipsList', combinedTips, function(t) { return `<div class="item-box"><div class="item-info"><h3>${safe(t.title)}</h3></div>${act('tips',t.id)}</div>`; });
  renderList('faqList', data.faqs, function(f) { return `<div class="item-box"><div class="item-info"><h3>${safe(f.question)}</h3></div>${act('faq',f.id)}</div>`; });
  
- // URUTKAN TESTIMONI: PENDING PALING ATAS + PREVIEW FOTO
  var sortedShowcases = data.showcases.slice().sort(function(a, b) {
      var aPend = a.status === 'pending' ? 1 : 0;
      var bPend = b.status === 'pending' ? 1 : 0;
