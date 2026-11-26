@@ -56,6 +56,7 @@ body.dark-mode .tag { background: #2a2a3c; color: #a78bfa; }
 .btn{background:var(--primary);color:white;padding:12px 18px;border-radius:9px;font-size:12px;font-weight:bold; transition: 0.2s; cursor:pointer; border:none;} 
 .btn:hover{opacity: 0.9; transform: translateY(-1px); box-shadow: 0 5px 15px rgba(118,82,232,0.3);}
 .btn-light{background:#f0edff;color:var(--primary)} body.dark-mode .btn-light { background: #2a2a3c; color: #a78bfa; }
+.btn-small{padding:8px 14px; font-size:12px;}
 
 .item-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:15px; transition: 0.2s;} .item-box:hover {border-color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
 .item-box h3{font-size:15px;margin-bottom:8px} .item-box p{font-size:13px;color:var(--muted);line-height:1.7;white-space:pre-wrap} .date{font-size:11px;color:#aaa}
@@ -70,9 +71,20 @@ body.dark-mode .tag { background: #2a2a3c; color: #a78bfa; }
 .modal-box{background:var(--card);border-radius:17px;width:100%;max-width:600px;max-height:90vh;overflow:auto;padding:22px; transition:0.3s;}
 .player{width:100%;background:#000;border-radius:12px;overflow:hidden;margin:15px 0; transition: aspect-ratio 0.3s ease;} .player iframe{width:100%;height:100%;border:0}
 footer{text-align:center;padding:25px;color:var(--muted);font-size:11px}
-.showcase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px} .showcase-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px; text-align:center; transition:0.3s;}
-.showcase-ava{width:80px; height:80px; background:#f0edff; border-radius:50%; margin:0 auto 15px; display:grid; place-items:center; font-size:30px; font-weight:bold; color:var(--primary);}
+
+.showcase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px}
+.showcase-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px; text-align:center; transition:0.3s; display:flex; flex-direction:column; align-items:center;}
+.showcase-card:hover{border-color:var(--primary); box-shadow:0 6px 20px rgba(118,82,232,0.08);}
+.showcase-ava{width:70px; height:70px; background:#f0edff; border-radius:50%; margin:0 auto 12px; display:grid; place-items:center; font-size:26px; font-weight:bold; color:var(--primary);}
 body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
+.stars-display{color:#f59e0b; font-size:15px; letter-spacing:2px; margin:6px 0 10px;}
+
+/* FORM TESTIMONI */
+.form-group{margin-bottom:14px; text-align:left;}
+.form-group label{display:block; font-size:12px; font-weight:bold; margin-bottom:6px; color:var(--text);}
+.form-group input, .form-group textarea, .form-group select{width:100%; padding:12px; border:1px solid var(--border); border-radius:9px; background:var(--bg); color:var(--text); font-size:13px; outline:none;}
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus{border-color:var(--primary);}
+.form-group textarea{min-height:95px; resize:vertical;}
 
 /* STYLE GAMBAR PANDUAN & EVENT */
 .panduan-img-box { width: 100%; border-radius: 12px; overflow: hidden; margin-top: 15px; margin-bottom: 25px; border: 1px solid var(--border); background: var(--bg); display: none; }
@@ -265,7 +277,6 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
             <h1 style="font-size:24px;">Group Resmi Vibe Trans</h1>
             <p style="font-size:14px; opacity:1; margin-top:8px;">Alur: <b>Registrasi Keanggotaan ➔ Masuk Group ➔ Informasi, Event & Tutorial</b></p>
             
-            <!-- TOMBOL REGISTRASI KEANGGOTAAN + MASUK GROUP WA -->
             <div style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;">
                 <button class="btn" style="background:#ffffff; color:#d97706; border-radius:30px; padding:12px 25px; flex-grow:1;" onclick="bukaLink('regKeanggotaan')">📝 Registrasi Keanggotaan</button>
                 <button class="btn" style="background:rgba(255,255,255,0.2); color:#ffffff; border:1px solid rgba(255,255,255,0.6); border-radius:30px; padding:12px 25px; flex-grow:1;" onclick="bukaLink('regAgency')">Masuk Group WhatsApp</button>
@@ -277,7 +288,6 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
                 <h3 style="margin-bottom:15px; color:var(--primary); font-size:17px;">📢 Pengumuman Group</h3>
                 <div id="annList"></div>
 
-                <!-- FORM PENGAJUAN AUTO PUBLISH -->
                 <div class="item-box" style="border-color:var(--primary2); background:linear-gradient(135deg, rgba(118,82,232,0.06), rgba(59,130,246,0.06)); text-align:center;">
                     <h3 style="color:var(--primary); margin-bottom:6px;">🚀 Pengajuan Auto Publish</h3>
                     <p style="font-size:12px; margin-bottom:15px;">Klik tombol di bawah untuk mengisi formulir pengajuan fitur Auto Publish CapCut.</p>
@@ -315,10 +325,17 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
   </div>
  </section>
 
- <!-- 5. TESTIMONI -->
+ <!-- 5. TESTIMONI (DENGAN TOMBOL KIRIM TESTIMONI) -->
  <section class="page" id="testimoni">
-  <h1>Testimoni & Karya Creator</h1>
-  <p class="subtitle">Inspirasi dan pencapaian dari kreator-kreator unggulan bulan ini.</p>
+  <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
+      <div>
+          <h1 style="margin-bottom:6px;">Testimoni & Karya Creator</h1>
+          <p class="subtitle" style="margin-bottom:0;">Inspirasi dan pencapaian dari kreator-kreator unggulan bulan ini.</p>
+      </div>
+      <button onclick="openTestimoniModal()" class="btn" style="border-radius:30px; padding:12px 22px; background:linear-gradient(135deg, #ec4899, #7652e8); box-shadow:0 5px 15px rgba(236,72,153,0.3);">
+          ✍️ Kirim Testimoni
+      </button>
+  </div>
   <div class="showcase-grid" id="showcaseList"></div>
  </section>
 
@@ -344,6 +361,45 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
   </div>
   <div id="waListArea" style="display:flex; flex-direction:column; gap:10px;"></div>
   <button class="btn btn-light" style="width:100%; margin-top:20px; font-weight:bold;" onclick="closeWaModal()">✕ Batal</button>
+ </div>
+</div>
+
+<!-- MODAL KIRIM TESTIMONI MEMBER -->
+<div class="modal" id="testimoniModal">
+ <div class="modal-box" style="max-width:440px; padding:25px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <h2 style="font-size:18px; color:var(--text); margin:0;">✍️ Kirim Testimoni</h2>
+      <button class="btn btn-light btn-small" onclick="closeTestimoniModal()">✕</button>
+  </div>
+  <p style="font-size:12px; color:var(--muted); margin-bottom:18px; line-height:1.5;">Bagikan pengalaman atau pencapaian kamu di Vibe Trans Agency. Testimoni akan ditinjau oleh Admin sebelum ditayangkan.</p>
+  
+  <div class="form-group">
+      <label>Nama / Username Creator *</label>
+      <input type="text" id="t_name" placeholder="Contoh: Raka Editz">
+  </div>
+  <div class="form-group">
+      <label>Rating Kepuasan *</label>
+      <select id="t_rating">
+          <option value="5">⭐⭐⭐⭐⭐ (5 - Sangat Memuaskan)</option>
+          <option value="4">⭐⭐⭐⭐ (4 - Memuaskan)</option>
+          <option value="3">⭐⭐⭐ (3 - Cukup Baik)</option>
+          <option value="2">⭐⭐ (2 - Kurang)</option>
+          <option value="1">⭐ (1 - Sangat Kurang)</option>
+      </select>
+  </div>
+  <div class="form-group">
+      <label>Isi Testimoni / Pencapaian *</label>
+      <textarea id="t_achievement" placeholder="Ceritakan pengalamanmu gabung agency atau pencapaianmu..."></textarea>
+  </div>
+  <div class="form-group">
+      <label>Link Profil CapCut / TikTok (Opsional)</label>
+      <input type="url" id="t_link" placeholder="https://...">
+  </div>
+  
+  <div style="display:flex; gap:10px; margin-top:18px;">
+      <button class="btn btn-light" style="flex:1;" onclick="closeTestimoniModal()">Batal</button>
+      <button class="btn" id="btnSubmitTesti" style="flex:2; background:linear-gradient(135deg, #ec4899, #7652e8);" onclick="submitTestimoni()">Kirim Testimoni</button>
+  </div>
  </div>
 </div>
 
@@ -495,9 +551,85 @@ function renderAll(){
  
  const combinedTips = [...data.tips, ...data.rules]; renderList('tipsList', combinedTips, t => `<div class="item-box"><h3>💡 ${safe(t.title)}</h3><p>${safe(t.content)}</p></div>`, 'Belum ada tips & SOP.');
  renderList('faqList', data.faqs, f => `<div class="item-box"><details><summary style="font-weight:bold; cursor:pointer; color:var(--primary);">${safe(f.question)}</summary><p style="margin-top:15px; padding-left:15px; border-left:2px solid var(--border);">${safe(f.answer)}</p></details></div>`, 'Belum ada FAQ.');
- renderList('showcaseList', data.showcases, s => `<div class="showcase-card"><div class="showcase-ava">${safe(s.name).charAt(0).toUpperCase()}</div><h3>${safe(s.name)}</h3><p style="margin:10px 0; color:var(--primary); font-weight:bold;">${safe(s.achievement)}</p><a href="${safe(formatUrl(s.link))}" target="_blank" class="btn btn-light btn-small">Lihat Profil</a></div>`, 'Belum ada Testimoni.');
+ 
+ // HANYA TAMPILKAN TESTIMONI YANG SUDAH DI-ACC (status === 'approved' atau data lama tanpa status)
+ const approvedShowcases = data.showcases
+     .filter(s => !s.status || s.status === 'approved')
+     .sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+     
+ renderList('showcaseList', approvedShowcases, s => {
+     const stars = '★'.repeat(Number(s.rating) || 5);
+     const hasLink = s.link && s.link.trim() !== '';
+     return `
+     <div class="showcase-card">
+         <div class="showcase-ava">${safe(s.name).charAt(0).toUpperCase()}</div>
+         <h3 style="margin-bottom:2px;">${safe(s.name)}</h3>
+         <div class="stars-display">${stars}</div>
+         <p style="font-size:13px; color:var(--muted); line-height:1.6; white-space:pre-wrap; margin-bottom:${hasLink ? '16px' : '0'};">"${safe(s.achievement)}"</p>
+         ${hasLink ? `<a href="${safe(formatUrl(s.link))}" target="_blank" class="btn btn-light btn-small" style="margin-top:auto; text-decoration:none;">Lihat Profil</a>` : ''}
+     </div>`;
+ }, 'Belum ada Testimoni. Jadilah yang pertama mengirim testimoni!');
  
  document.getElementById('year').textContent=new Date().getFullYear();
+}
+
+// ==========================================
+// FITUR KIRIM TESTIMONI MEMBER (PENDING ACC)
+// ==========================================
+function openTestimoniModal() {
+    document.getElementById('testimoniModal').classList.add('show');
+}
+function closeTestimoniModal() {
+    document.getElementById('testimoniModal').classList.remove('show');
+}
+
+async function submitTestimoni() {
+    const name = document.getElementById('t_name').value.trim();
+    const rating = Number(document.getElementById('t_rating').value) || 5;
+    const achievement = document.getElementById('t_achievement').value.trim();
+    const link = document.getElementById('t_link').value.trim();
+    
+    if(!name || !achievement) {
+        showToast('Nama dan isi testimoni wajib diisi!', 'error');
+        return;
+    }
+    
+    // Anti-spam: jeda 5 menit per perangkat
+    const lastSent = Number(localStorage.getItem('lastTestiSent') || 0);
+    const now = Date.now();
+    if(now - lastSent < 5 * 60 * 1000) {
+        showToast('Tunggu beberapa menit sebelum mengirim testimoni lagi.', 'error');
+        return;
+    }
+    
+    const btn = document.getElementById('btnSubmitTesti');
+    btn.textContent = 'Mengirim...';
+    btn.disabled = true;
+    
+    try {
+        await db.collection('showcases').add({
+            name: name,
+            rating: rating,
+            achievement: achievement,
+            link: link,
+            status: 'pending',
+            createdAt: now
+        });
+        
+        localStorage.setItem('lastTestiSent', String(now));
+        document.getElementById('t_name').value = '';
+        document.getElementById('t_rating').value = '5';
+        document.getElementById('t_achievement').value = '';
+        document.getElementById('t_link').value = '';
+        
+        closeTestimoniModal();
+        showToast('Testimoni terkirim! Menunggu ACC Admin.', 'success');
+    } catch(e) {
+        showToast('Gagal mengirim testimoni: ' + e.message, 'error');
+    }
+    
+    btn.textContent = 'Kirim Testimoni';
+    btn.disabled = false;
 }
 
 function playVideoByUrl(url, title, desc='') {
