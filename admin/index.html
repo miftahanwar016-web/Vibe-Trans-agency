@@ -173,6 +173,14 @@ body.dark-mode .topbar { background: rgba(30, 30, 45, 0.85); }
    <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
    <div class="form-group"><label style="color:#06b6d4;">🤖 Link Daftar Creator AI</label><input id="regAiCreator" placeholder="https://..."></div>
    <div class="form-group"><label style="color:#25D366;">💬 Link Group Creator AI (WhatsApp)</label><input id="groupAiCreator" placeholder="https://chat.whatsapp.com/..."></div>
+
+   <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
+   <!-- PENGATURAN MENU AJUKAN BANDING -->
+   <div class="form-group">
+       <label style="color:#ef4444;">⚖️ Informasi / Teks Ajukan Banding</label>
+       <textarea id="bandingDesc" placeholder="Ketik informasi, syarat, atau ketentuan pengajuan banding di sini..."></textarea>
+   </div>
+   <div class="form-group"><label style="color:#ef4444;">🔗 Link Ajukan Banding</label><input id="bandingLink" placeholder="https://..."></div>
    
    <hr style="border:0; border-top:1px dashed var(--border); margin:20px 0;">
    <div class="form-group"><label style="color:#8b5cf6;">📚 Link Group Bimbingan Pendaftaran</label><input id="groupBimbingan" placeholder="https://chat.whatsapp..."></div>
@@ -340,6 +348,8 @@ async function loadDataFromFirebase() {
             if(document.getElementById('regCreatorDesc')) document.getElementById('regCreatorDesc').value = s.regCreatorDesc || '';
             if(document.getElementById('regAiCreator')) document.getElementById('regAiCreator').value = s.regAiCreator || '';
             if(document.getElementById('groupAiCreator')) document.getElementById('groupAiCreator').value = s.groupAiCreator || '';
+            if(document.getElementById('bandingDesc')) document.getElementById('bandingDesc').value = s.bandingDesc || '';
+            if(document.getElementById('bandingLink')) document.getElementById('bandingLink').value = s.bandingLink || '';
             if(document.getElementById('regKeanggotaan')) document.getElementById('regKeanggotaan').value = s.regKeanggotaan || '';
             if(document.getElementById('regAgency')) document.getElementById('regAgency').value = s.regAgency || '';
             if(document.getElementById('autoPublishLink')) document.getElementById('autoPublishLink').value = s.autoPublishLink || '';
@@ -397,7 +407,6 @@ function renderAll(){
  renderList('announcementList', data.announcements, function(a) { return `<div class="item-box"><div class="item-info"><h3>${safe(a.title)}</h3><p>${safe(a.category)}</p></div>${act('announcement',a.id)}</div>`; });
  renderList('videoList', data.videos, function(v) { return `<div class="item-box"><div class="item-info"><h3>${safe(v.title)}</h3><p>${safe(v.category)}</p></div>${act('video',v.id)}</div>`; });
  
- // EVENT & AGENDA DENGAN STATUS AKTIF / BERAKHIR OTOMATIS
  var combinedEvents = [].concat(data.events, data.agendas); 
  renderList('eventList', combinedEvents, function(e) { 
      var badges = [];
@@ -529,6 +538,8 @@ async function saveSettings(){
          regCreatorDesc: val('regCreatorDesc'),
          regAiCreator: val('regAiCreator'),
          groupAiCreator: val('groupAiCreator'),
+         bandingDesc: val('bandingDesc'),
+         bandingLink: val('bandingLink'),
          regKeanggotaan: val('regKeanggotaan'),
          regAgency: val('regAgency'), 
          regLink: val('regAgency'), 
