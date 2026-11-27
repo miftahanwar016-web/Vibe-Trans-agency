@@ -139,6 +139,7 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
       <button onclick="bukaLink('capcutPro')" style="color:#10b981;"><span>💎</span>Promo CapCut Pro</button>
       <button onclick="go('group')"><span>👥</span>Group Resmi</button>
       <button onclick="go('aicreator')"><span>🤖</span>Daftar AI Creator</button>
+      <button onclick="go('banding')"><span>⚖️</span>Ajukan Banding</button>
       <button onclick="go('testimoni')"><span>🌟</span>Testimoni</button>
      </div>
  </div>
@@ -198,6 +199,11 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #06b6d4, #2563eb);">🤖</div>
           <h3>Daftar AI Creator</h3>
           <p style="font-size:11px;">Daftar & Group Creator AI</p>
+       </div>
+       <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('banding')">
+          <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #ef4444, #dc2626);">⚖️</div>
+          <h3>Ajukan Banding</h3>
+          <p style="font-size:11px;">Informasi & Link Banding</p>
        </div>
        <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('testimoni')">
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #ec4899, #be185d);">🌟</div>
@@ -323,6 +329,27 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
                   💬 Group Creator AI (WhatsApp)
               </button>
           </div>
+      </div>
+  </div>
+ </section>
+
+ <!-- 4C. AJUKAN BANDING (BARU) -->
+ <section class="page" id="banding">
+  <div style="max-width:800px; margin:0 auto;">
+      <h1 style="margin-bottom:5px; text-align:center;">Ajukan Banding</h1>
+      <p class="subtitle" style="text-align:center; margin-bottom:30px;">Silakan baca informasi pengajuan banding di bawah ini dengan teliti sebelum menekan tombol banding.</p>
+      
+      <div class="item-box" style="padding:30px; border-color:#ef4444; box-shadow: 0 10px 30px rgba(239,68,68,0.1);">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:15px;">
+              <span style="font-size:24px;">⚖️</span>
+              <h2 style="color:#ef4444; font-size:18px;">Informasi Pengajuan Banding</h2>
+          </div>
+          
+          <div id="bandingDescArea" style="font-size:14px; color:var(--text); line-height:1.8; white-space:pre-wrap; margin-bottom:25px; padding:10px 0;">Memuat informasi banding...</div>
+          
+          <button onclick="bukaLink('bandingLink')" class="btn" style="width:100%; font-size:14px; padding:15px; border-radius:30px; background:linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 5px 20px rgba(239, 68, 68, 0.35); display:flex; justify-content:center; align-items:center; gap:10px;">
+              ⚖️ Silahkan Banding <span style="font-size:18px;">➔</span>
+          </button>
       </div>
   </div>
  </section>
@@ -482,6 +509,9 @@ async function loadDataFromFirebase() {
             
             const descArea = document.getElementById('regCreatorDescArea');
             if(descArea) { descArea.innerHTML = globalSettings.regCreatorDesc ? safe(globalSettings.regCreatorDesc) : '<i style="color:var(--muted)">Belum ada arahan dari Admin. Silakan langsung klik tombol di bawah.</i>'; }
+
+            const bandingArea = document.getElementById('bandingDescArea');
+            if(bandingArea) { bandingArea.innerHTML = globalSettings.bandingDesc ? safe(globalSettings.bandingDesc) : '<i style="color:var(--muted)">Belum ada informasi banding dari Admin. Silakan klik tombol di bawah untuk mengajukan banding.</i>'; }
             
             const imgBox1 = document.getElementById('regGuideImgBox1');
             const imgBox2 = document.getElementById('regGuideImgBox2');
@@ -523,7 +553,7 @@ function go(id){
     document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); 
     const btn = Array.from(document.querySelectorAll('.nav button')).find(b => b.getAttribute('onclick')?.includes(`go('${id}')`));
     if(btn) btn.classList.add('active'); 
-    const titles = { home:'Beranda', pendaftaran:'Pendaftaran Creator', aicreator:'Daftar AI Creator', bimbingan:'Bimbingan Pendaftaran', group:'Group Resmi', testimoni:'Testimoni Creator' }; 
+    const titles = { home:'Beranda', pendaftaran:'Pendaftaran Creator', aicreator:'Daftar AI Creator', banding:'Ajukan Banding', bimbingan:'Bimbingan Pendaftaran', group:'Group Resmi', testimoni:'Testimoni Creator' }; 
     const pt = document.getElementById('pageTitle'); if(pt && titles[id]) { pt.textContent = titles[id]; } 
     const s = document.getElementById('sidebar'); if(window.innerWidth <= 650 && s) { s.classList.remove('open'); const ov = document.getElementById('sidebarOverlay'); if(ov) ov.remove(); } 
     window.scrollTo({top:0, behavior:'smooth'}); 
@@ -533,7 +563,6 @@ function dateFormat(date){ if(!date)return '-'; const d=new Date(date+'T00:00:00
 function safe(text){ return String(text??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function formatUrl(url){ if(!url) return ''; let u = url.trim(); return u.startsWith('http') ? u : 'https://' + u; }
 
-// CEK EVENT SUDAH BERAKHIR OTOMATIS (LEWAT 23:59 TGL BERAKHIR)
 function isEventExpired(e) {
     if (!e || !e.date) return false;
     const end = new Date(e.date + 'T23:59:59');
@@ -558,7 +587,6 @@ function renderAll(){
  renderList('videoList', data.videos, v => `<div class="video-card"><div class="video-thumb" onclick="playVideoByUrl('${v.url}', '${safe(v.title).replace(/'/g, "\\'")}', '${safe(v.desc).replace(/'/g, "\\'")}')">▶</div><div class="video-body"><span class="tag">${safe(v.category)}</span><h3>${safe(v.title)}</h3><p>${safe(v.desc)}</p><div class="video-meta"><button class="btn btn-small" onclick="playVideoByUrl('${v.url}', '${safe(v.title).replace(/'/g, "\\'")}', '${safe(v.desc).replace(/'/g, "\\'")}')">Tonton</button></div></div></div>`, 'Belum ada tutorial.');
  renderList('annList', data.announcements.slice().reverse(), a => `<div class="item-box" style="padding:15px;"><div class="card-top"><span class="tag">${safe(a.category)}</span><span class="date">${dateFormat(a.date)}</span></div><h3>${safe(a.title)}</h3><p>${safe(a.content)}</p></div>`, 'Belum ada pengumuman.');
  
- // FILTER OTOMATIS: HANYA TAMPILKAN EVENT YANG BELUM BERAKHIR
  const combinedEvents = [...data.events, ...data.agendas]
      .filter(e => !isEventExpired(e))
      .sort((a,b)=> (b.date||'').localeCompare(a.date||''));
