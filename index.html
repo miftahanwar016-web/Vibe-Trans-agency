@@ -81,6 +81,12 @@ body.dark-mode .showcase-ava { background: #2a2a3c; color: #a78bfa; }
 .testi-img-wrap{width:100%; border-radius:10px; overflow:hidden; margin:10px 0 14px; border:1px solid var(--border); background:var(--bg);}
 .testi-img-wrap img{width:100%; max-height:240px; object-fit:cover; display:block; cursor:pointer;}
 
+/* TOMBOL LIKE TESTIMONI */
+.showcase-actions{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:auto; width:100%; flex-wrap:wrap;}
+.btn-like{display:inline-flex; align-items:center; gap:5px; padding:8px 13px; border-radius:9px; font-size:12px; font-weight:bold; background:var(--bg); color:var(--muted); border:1px solid var(--border); transition:0.2s; cursor:pointer;}
+.btn-like:hover{border-color:#ec4899; color:#ec4899; transform:translateY(-1px);}
+.btn-like.liked{background:rgba(236,72,153,0.12); color:#ec4899; border-color:rgba(236,72,153,0.4);}
+
 /* FORM TESTIMONI */
 .form-group{margin-bottom:14px; text-align:left;}
 .form-group label{display:block; font-size:12px; font-weight:bold; margin-bottom:6px; color:var(--text);}
@@ -301,7 +307,7 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
             <div><h3 style="margin-bottom:15px; color:var(--warn); font-size:17px;">🏆 Event & Agenda</h3><div id="eventList"></div></div>
         </div>
 
-        <!-- KOTAK AJUKAN BANDING (DI BAWAH EVENT & DI ATAS TIPS, SOP & FAQ) -->
+        <!-- KOTAK AJUKAN BANDING -->
         <div class="item-box" style="margin-top:20px; border-color:#ef4444; background:linear-gradient(135deg, rgba(239,68,68,0.05), rgba(220,38,38,0.03));">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:12px;">
                 <span style="font-size:22px;">⚖️</span>
@@ -560,6 +566,48 @@ function openFullImg(src) {
     document.getElementById('imgPreviewModal').classList.add('show');
 }
 
+function getLikedShowcases() {
+    try { return JSON.parse(localStorage.getItem('likedShowcases') || '[]'); } catch(e) { return []; }
+}
+
+async function toggleLike(id, btnEl) {
+    if (!id || btnEl.dataset.busy === '1') return;
+    btnEl.dataset.busy = '1';
+    
+    let liked = getLikedShowcases();
+    const isLiked = liked.includes(id);
+    const item = data.showcases.find(x => x.id === id);
+    let currentLikes = item ? Math.max(0, Number(item.likes) || 0) : 0;
+    let delta = 0;
+
+    if (isLiked) {
+        liked = liked.filter(x => x !== id);
+        delta = currentLikes > 0 ? -1 : 0;
+        currentLikes = Math.max(0, currentLikes - 1);
+    } else {
+        liked.push(id);
+        delta = 1;
+        currentLikes += 1;
+    }
+
+    localStorage.setItem('likedShowcases', JSON.stringify(liked));
+    if (item) item.likes = currentLikes;
+
+    btnEl.classList.toggle('liked', !isLiked);
+    btnEl.innerHTML = `${!isLiked ? '❤️' : '🤍'}${currentLikes > 0 ? ' <span>' + currentLikes + '</span>' : ''}`;
+
+    try {
+        if (delta !== 0) {
+            await db.collection('showcases').doc(id).update({
+                likes: firebase.firestore.FieldValue.increment(delta)
+            });
+        }
+    } catch (e) {
+        console.log('Like update error:', e);
+    }
+    btnEl.dataset.busy = '0';
+}
+
 function renderAll(){
  if(sessionStorage.getItem('groupUnlocked') === 'true') {
      const lock = document.getElementById('groupLockScreen'); const content = document.getElementById('groupContent');
@@ -603,19 +651,25 @@ function renderAll(){
  const approvedShowcases = data.showcases
      .filter(s => !s.status || s.status === 'approved')
      .sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+ const likedIds = getLikedShowcases();
      
  renderList('showcaseList', approvedShowcases, s => {
      const stars = '★'.repeat(Number(s.rating) || 5);
      const hasLink = s.link && s.link.trim() !== '';
      const hasImg = s.imgUrl && s.imgUrl.trim() !== '';
+     const likesCount = Math.max(0, Number(s.likes) || 0);
+     const isLiked = likedIds.includes(s.id);
      return `
      <div class="showcase-card">
          <div class="showcase-ava">${safe(s.name).charAt(0).toUpperCase()}</div>
          <h3 style="margin-bottom:2px;">${safe(s.name)}</h3>
          <div class="stars-display">${stars}</div>
          ${hasImg ? `<div class="testi-img-wrap"><img src="${safe(s.imgUrl)}" alt="Foto Testimoni" onclick="openFullImg(this.src)"></div>` : ''}
-         <p style="font-size:13px; color:var(--muted); line-height:1.6; white-space:pre-wrap; margin-bottom:${hasLink ? '16px' : '0'};">"${safe(s.achievement)}"</p>
-         ${hasLink ? `<a href="${safe(formatUrl(s.link))}" target="_blank" class="btn btn-light btn-small" style="margin-top:auto; text-decoration:none;">Lihat Profil</a>` : ''}
+         <p style="font-size:13px; color:var(--muted); line-height:1.6; white-space:pre-wrap; margin-bottom:16px;">"${safe(s.achievement)}"</p>
+         <div class="showcase-actions">
+             ${hasLink ? `<a href="${safe(formatUrl(s.link))}" target="_blank" class="btn btn-light btn-small" style="text-decoration:none;">Lihat Profil</a>` : ''}
+             <button type="button" class="btn-like ${isLiked ? 'liked' : ''}" onclick="toggleLike('${s.id}', this)" title="Sukai testimoni ini">${isLiked ? '❤️' : '🤍'}${likesCount > 0 ? ' <span>' + likesCount + '</span>' : ''}</button>
+         </div>
      </div>`;
  }, 'Belum ada Testimoni. Jadilah yang pertama mengirim testimoni!');
  
@@ -697,6 +751,7 @@ async function submitTestimoni() {
             achievement: achievement,
             link: link,
             imgUrl: testiImageData || '',
+            likes: 0,
             status: 'pending',
             createdAt: now
         });
