@@ -139,7 +139,6 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
       <button onclick="bukaLink('capcutPro')" style="color:#10b981;"><span>💎</span>Promo CapCut Pro</button>
       <button onclick="go('group')"><span>👥</span>Group Resmi</button>
       <button onclick="go('aicreator')"><span>🤖</span>Daftar AI Creator</button>
-      <button onclick="go('banding')"><span>⚖️</span>Ajukan Banding</button>
       <button onclick="go('testimoni')"><span>🌟</span>Testimoni</button>
      </div>
  </div>
@@ -199,11 +198,6 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #06b6d4, #2563eb);">🤖</div>
           <h3>Daftar AI Creator</h3>
           <p style="font-size:11px;">Daftar & Group Creator AI</p>
-       </div>
-       <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('banding')">
-          <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #ef4444, #dc2626);">⚖️</div>
-          <h3>Ajukan Banding</h3>
-          <p style="font-size:11px;">Informasi & Link Banding</p>
        </div>
        <div class="item-box" style="cursor:pointer; text-align:center;" onclick="go('testimoni')">
           <div class="brand-icon" style="margin:0 auto 15px; width:50px; height:50px; font-size:25px; background:linear-gradient(135deg, #ec4899, #be185d);">🌟</div>
@@ -307,6 +301,18 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
             <div><h3 style="margin-bottom:15px; color:var(--warn); font-size:17px;">🏆 Event & Agenda</h3><div id="eventList"></div></div>
         </div>
 
+        <!-- KOTAK AJUKAN BANDING (DI BAWAH EVENT & DI ATAS TIPS, SOP & FAQ) -->
+        <div class="item-box" style="margin-top:20px; border-color:#ef4444; background:linear-gradient(135deg, rgba(239,68,68,0.05), rgba(220,38,38,0.03));">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+                <span style="font-size:22px;">⚖️</span>
+                <h3 style="color:#ef4444; font-size:16px; margin:0;">Ajukan Banding</h3>
+            </div>
+            <div id="bandingDescArea" style="font-size:13px; color:var(--text); line-height:1.7; white-space:pre-wrap; margin-bottom:18px;">Memuat informasi banding...</div>
+            <button onclick="bukaLink('bandingLink')" class="btn" style="width:100%; font-size:13px; padding:13px 20px; border-radius:30px; background:linear-gradient(135deg, #ef4444, #dc2626); box-shadow:0 5px 15px rgba(239,68,68,0.3); display:flex; justify-content:center; align-items:center; gap:8px;">
+                ⚖️ Silahkan Banding ➔
+            </button>
+        </div>
+
         <h2 style="margin: 30px 0 15px; font-size:17px;">💡 Tips, SOP & FAQ</h2>
         <div id="tipsList"></div>
         <div id="faqList"></div>
@@ -329,27 +335,6 @@ body.dark-mode .wa-btn-item:hover { background:rgba(37,211,102,0.1); }
                   💬 Group Creator AI (WhatsApp)
               </button>
           </div>
-      </div>
-  </div>
- </section>
-
- <!-- 4C. AJUKAN BANDING (BARU) -->
- <section class="page" id="banding">
-  <div style="max-width:800px; margin:0 auto;">
-      <h1 style="margin-bottom:5px; text-align:center;">Ajukan Banding</h1>
-      <p class="subtitle" style="text-align:center; margin-bottom:30px;">Silakan baca informasi pengajuan banding di bawah ini dengan teliti sebelum menekan tombol banding.</p>
-      
-      <div class="item-box" style="padding:30px; border-color:#ef4444; box-shadow: 0 10px 30px rgba(239,68,68,0.1);">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:15px;">
-              <span style="font-size:24px;">⚖️</span>
-              <h2 style="color:#ef4444; font-size:18px;">Informasi Pengajuan Banding</h2>
-          </div>
-          
-          <div id="bandingDescArea" style="font-size:14px; color:var(--text); line-height:1.8; white-space:pre-wrap; margin-bottom:25px; padding:10px 0;">Memuat informasi banding...</div>
-          
-          <button onclick="bukaLink('bandingLink')" class="btn" style="width:100%; font-size:14px; padding:15px; border-radius:30px; background:linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 5px 20px rgba(239, 68, 68, 0.35); display:flex; justify-content:center; align-items:center; gap:10px;">
-              ⚖️ Silahkan Banding <span style="font-size:18px;">➔</span>
-          </button>
       </div>
   </div>
  </section>
@@ -553,7 +538,7 @@ function go(id){
     document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); 
     const btn = Array.from(document.querySelectorAll('.nav button')).find(b => b.getAttribute('onclick')?.includes(`go('${id}')`));
     if(btn) btn.classList.add('active'); 
-    const titles = { home:'Beranda', pendaftaran:'Pendaftaran Creator', aicreator:'Daftar AI Creator', banding:'Ajukan Banding', bimbingan:'Bimbingan Pendaftaran', group:'Group Resmi', testimoni:'Testimoni Creator' }; 
+    const titles = { home:'Beranda', pendaftaran:'Pendaftaran Creator', aicreator:'Daftar AI Creator', bimbingan:'Bimbingan Pendaftaran', group:'Group Resmi', testimoni:'Testimoni Creator' }; 
     const pt = document.getElementById('pageTitle'); if(pt && titles[id]) { pt.textContent = titles[id]; } 
     const s = document.getElementById('sidebar'); if(window.innerWidth <= 650 && s) { s.classList.remove('open'); const ov = document.getElementById('sidebarOverlay'); if(ov) ov.remove(); } 
     window.scrollTo({top:0, behavior:'smooth'}); 
